@@ -1,5 +1,7 @@
 package priv.hkon.theseq.world;
 
+import priv.hkon.theseq.sprites.NonBlock;
+
 public abstract class Building extends Structure{
 	
 	boolean closed[][];

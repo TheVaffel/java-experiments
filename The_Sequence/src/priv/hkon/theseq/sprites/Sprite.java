@@ -1,6 +1,10 @@
-package priv.hkon.theseq.world;
+package priv.hkon.theseq.sprites;
 
+import java.util.LinkedList;
 import java.util.Random;
+
+import priv.hkon.theseq.world.Tile;
+import priv.hkon.theseq.world.Village;
 
 public abstract class Sprite {
 	
@@ -17,11 +21,16 @@ public abstract class Sprite {
 	protected boolean showDialog = false;
 	protected int dialogDuration;
 	protected int timeSinceDialogReset;
-		
+	
+	protected Conversation conversation;
+	
+	LinkedList<String> sentence = new LinkedList<String>();
 	
 	public static final Random RAND = new Random(1234);
 	
 	protected Village village;
+	
+	public boolean debug = false;
 	
 	public static final int DRAW_OFFSET_Y = (int)(0.0*Tile.HEIGHT);
 	
@@ -50,6 +59,11 @@ public abstract class Sprite {
 		showDialog = true;
 		timeSinceDialogReset = 0;
 		dialogDuration = dur;
+		
+	}
+	
+	public int distTo(Sprite s){
+		return Math.abs(s.getX() - getX()) + Math.abs(s.getY() - getY());
 	}
 	
 	public void hideDialog(){
@@ -74,6 +88,20 @@ public abstract class Sprite {
 	}
 	
 	public boolean tick(){
+		if(showDialog){
+			timeSinceDialogReset++;
+			if(timeSinceDialogReset >= dialogDuration){
+				if(!sentence.isEmpty()){
+					setDialogString(sentence.poll());
+					timeSinceDialogReset = 0;
+				}else{
+					if(conversation != null){
+						conversation.finishedSentence();
+					}
+					hideDialog();
+				}
+			}
+		}
 		return false;
 	}
 	
@@ -83,6 +111,34 @@ public abstract class Sprite {
 	
 	public int getY(){
 		return y;
+	}
+	
+	public void talk(){}
+	
+	void engageConversation(Sprite s, int importance){
+		conversation = new Conversation(this, s, importance);
+		setDialogString("Hey, you!");
+		showDialog(60*2);
+	}
+	
+	void inviteTo(Conversation c){
+		if(importantEnough(c)){
+			conversation = c;
+		}
+	}
+	
+	protected boolean importantEnough(Conversation c){
+		return true;
+	}
+	
+	public void deniedConversation(){
+		conversation = null;
+		setDialogString("Aaaah, why will nobody listen?");
+		showDialog(60*2);
+	}
+	
+	public boolean isStationary(){
+		return true;
 	}
 	
 }

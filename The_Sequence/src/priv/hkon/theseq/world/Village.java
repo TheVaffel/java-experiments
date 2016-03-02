@@ -5,6 +5,14 @@ import java.util.Random;
 
 import priv.hkon.theseq.main.Controller;
 import priv.hkon.theseq.main.Screen;
+import priv.hkon.theseq.sprites.Citizen;
+import priv.hkon.theseq.sprites.DialogBubble;
+import priv.hkon.theseq.sprites.Mayor;
+import priv.hkon.theseq.sprites.Movable;
+import priv.hkon.theseq.sprites.NonBlock;
+import priv.hkon.theseq.sprites.Player;
+import priv.hkon.theseq.sprites.Sprite;
+import priv.hkon.theseq.sprites.Villager;
 
 public class Village {
 	
@@ -18,6 +26,8 @@ public class Village {
 	Sprite[][] sprites = new Sprite[H][W];
 	NonBlock[][] nonBlocks = new NonBlock[H][W];
 	Building[][] ownedBy = new Building[H][W];
+	
+	Citizen[] citizenList;
 	
 	boolean[][] closed = new boolean[H][W];
 	boolean shouldDrawInside = false;
@@ -75,12 +85,18 @@ public class Village {
 			addArea(r);
 		}
 		
-		player = new Player(townGridStartX + houseSpread - 1, townGridStartY + houseSpread - 1, this);
+		citizenList = new Citizen[numVillagers + 1];
+		
+		player = new Player(townGridStartX + houseSpread - 1, townGridStartY + houseSpread - 1, this, numVillagers);
 		addSprite(player); 
-		for(int i = 0; i< numVillagers; i++){
-			villagers[i]= new Villager(townGridStartX + i, townGridStartY - 5, this, townGrid[i/townGridSide][i%townGridSide]);
+		for(int i = 0; i< numVillagers - 1; i++){
+			villagers[i]= new Villager(townGridStartX + i, townGridStartY - 5, this, townGrid[i/townGridSide][i%townGridSide], i);
 			addSprite(villagers[i]);
 		}
+		
+		villagers[numVillagers - 1] = new Mayor(player.getX() - 2, player.getY() - 2, this, townGrid[0][0], numVillagers - 1);
+		addSprite(villagers[numVillagers - 1]);
+		villagers[0].debug = true;
 		
 	}
 	
@@ -206,6 +222,7 @@ public class Village {
 				}
 			}
 		}
+		//player.tick();
 		
 		handlePlayerInput();
 		centerCameraOnPlayer();
@@ -214,13 +231,17 @@ public class Village {
 	}
 	
 	public void setDrawMode(){
-		if(ownedBy[player.y][player.x] == null){
+		if(ownedBy[player.getY()][player.getX()] == null){
 			shouldDrawInside = false;
 			currBuilding = null;
 		}else{
 			shouldDrawInside = true;
-			currBuilding = ownedBy[player.y][player.x];
+			currBuilding = ownedBy[player.getY()][player.getX()];
 		}
+	}
+	
+	public long getTime(){
+		return time;
 	}
 	
 	public void centerCameraOnPlayer(){
@@ -246,6 +267,10 @@ public class Village {
 		}
 		if(dir != -1)
 			player.tryStartMoving(dir);
+		
+		/*if(getTime()% 60 == 0){
+			System.out.println(player.getX() + ", " + player.getY());
+		}*/
 	}
 	
 	
@@ -304,6 +329,14 @@ public class Village {
 		return sprites[y][x];
 	}
 	
+	public void switchPlaces(Movable s, Movable t){
+		sprites[s.getY()][s.getX()] = null;
+		t.tryStartMoving(t.getMovingDirection());
+		sprites[t.getY()][t.getX()] = s;
+		s.tryStartMoving(s.getMovingDirection());
+		sprites[t.getY()][t.getX()] = t;
+	}
+	
 	public float getNightFactor(){
 		return Math.max( Math.min((float)(0.65+ 1*Math.sin((time%dayCycleDuration)*2*Math.PI/dayCycleDuration)), 1), 0);
 	}
@@ -312,5 +345,44 @@ public class Village {
 		return ownedBy[y][x] == b;
 	}
 	
+	public Building ownedBy(int x, int y){
+		return ownedBy[y][x];
+	}
+	
+	public Citizen getCitizen(int i){
+		return citizenList[i];
+	}
+	
+	public int getNumCitizens(){
+		return numVillagers + 1;
+	}
+	
+	public int getHouseSpread(){
+		return houseSpread;
+	}
+	
+	public int getTownStartX(){
+		return townGridMiddleX - houseSpread*townGridSide/2; 
+	}
+	
+	public int getTownStartY(){
+		return townGridMiddleY - houseSpread*townGridSide/2;
+	}
+	
+	public int getTownWidth(){
+		return houseSpread*townGridSide;
+	}
+	
+	public int getTownHeight(){
+		return houseSpread*townGridSide;
+	}
+	
+	public int getHouseSide(){
+		return houseSide;
+	}
+	
+	public boolean contains(int x, int y){
+		return x >= getTownStartX() && y >= getTownStartY() && x < getTownStartX() + getTownWidth() && y < getTownStartY() + getTownWidth();
+	}
 	
 }

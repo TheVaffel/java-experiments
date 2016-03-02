@@ -1,6 +1,8 @@
-package priv.hkon.theseq.world;
+package priv.hkon.theseq.sprites;
 
 import java.util.LinkedList;
+
+import priv.hkon.theseq.world.Village;
 
 public abstract class Movable extends Sprite implements Runnable{
 	
@@ -16,6 +18,8 @@ public abstract class Movable extends Sprite implements Runnable{
 	boolean moving = false;
 	int movingDirection = 0;
 	
+	boolean requestingSwitch = false;
+	
 	boolean hasPath = false;
 	boolean isPlanningPath;
 	byte[] path;
@@ -27,11 +31,26 @@ public abstract class Movable extends Sprite implements Runnable{
 	}
 	
 	public boolean tryStartMoving(int dir){
-		if(moving|| !(village.isEmpty(x + dx[dir], y + dy[dir]))){
+		if(moving){
 			return false;
 		}
-		movedFraction = 0;
 		movingDirection = dir;
+		if(!(village.isEmpty(x + dx[dir], y + dy[dir]))){
+			if(village.getSpriteAt(x + dx[dir], y + dy[dir]) instanceof Movable){
+				Movable m = (Movable)(village.getSpriteAt(x + dx[dir], y + dy[dir]));
+				if(m.getMovingDirection() == (movingDirection + 2)% 4){
+					if(m.isRequestingSwitch()){
+						village.switchPlaces(this, m);
+					}else{
+						requestingSwitch = true;
+					}
+				}
+			}
+			return false;
+		}
+		requestingSwitch = false;
+		movedFraction = 0;
+		
 		x += dx[movingDirection];
 		y += dy[movingDirection];
 		village.notifyMove(this);
@@ -76,6 +95,7 @@ public abstract class Movable extends Sprite implements Runnable{
 	}
 	
 	public void run(){
+		
 		isPlanningPath = true;
 		for(int i = 0; i < 1; i++){
 			hasPath = djikstra(targetX, targetY);
@@ -86,11 +106,14 @@ public abstract class Movable extends Sprite implements Runnable{
 		}
 		
 		isPlanningPath = false;
-		
+		try{
+		Thread.currentThread().join();
+		}catch(Exception e){}
 	}
 	
 	
 	public boolean tick(){ //return whether the turn should be ended or not
+		super.tick();
 		if(isPlanningPath){
 			return true;
 		}
@@ -99,7 +122,7 @@ public abstract class Movable extends Sprite implements Runnable{
 			if(movedFraction >= 1){
 				movedFraction = 1;
 				moving = false;
-				
+				//return false;
 			}
 			return true;
 		}
@@ -120,30 +143,31 @@ public abstract class Movable extends Sprite implements Runnable{
 		int nx = x + dx[path[pathIndex]];
 		int ny = y + dy[path[pathIndex]];
 		
+		movingDirection = path[pathIndex];
+		
 		if(tryStartMoving(path[pathIndex])){
 			pathIndex++;
 			if(pathIndex == path.length - 1){
 				hasPath = false;
 				
 			}
-		}else if(village.getSpriteAt(nx, ny) instanceof Movable&& !(village.getSpriteAt(nx, ny) instanceof Player)&&pathIndex >0){
-			
-			if(path[pathIndex ]< 2){
-				boolean b = tryStartMoving(UP);
-				if(b){
-					pathIndex--;
-					path[pathIndex] = DOWN;
-					return true;
-				}
-				b = tryStartMoving(RIGHT);
-				if(b){
-					pathIndex--;
-					path[pathIndex] = LEFT;
-					return true;
-				}
-			}
+			return true;
+		}else if(village.getSpriteAt(nx, ny).isStationary()){
+			startPathTo(targetX,targetY);
 		}
 		return false;
+	}
+
+	public int getMovingDirection(){
+		return movingDirection;
+	}
+	
+	public boolean isRequestingSwitch(){
+		return requestingSwitch;
+	}
+	
+	public boolean isStationary(){
+		return !moving&&!isRequestingSwitch();
 	}
 	
 	public boolean djikstra(int x, int y){
@@ -176,7 +200,7 @@ public abstract class Movable extends Sprite implements Runnable{
 					continue;
 				}
 				if(village.getSpriteAt(nx, ny) != null){
-					if(!(p.dist > 0&&village.getSpriteAt(nx, ny) instanceof Movable)){
+					if(!(p.dist > 0&&!village.getSpriteAt(nx, ny).isStationary())){
 						continue;
 					}
 				}
@@ -217,6 +241,72 @@ public abstract class Movable extends Sprite implements Runnable{
 			this(nx, ny);
 			dist = d;
 		}
+	}
+	
+	public void turnTowards(int dir){
+		if(moving == false){
+			movingDirection = dir;
+		}
+	}
+	
+	int getDirectionTo(int nx, int ny){
+		int dx = nx - x;
+		int dy = ny - y;
+		
+		if(Math.abs(dx) > Math.abs(dy)){
+			if(dx > 0){
+				return RIGHT;
+			}else {
+				return LEFT;
+			}
+		}
+		if(dy > 0){
+			return DOWN;
+		}else{
+			return UP;
+		}
+	}
+	
+	int getDirectionTo(Sprite s){
+		return getDirectionTo(s.getX(), s.getY());
+	}
+	
+	void strollTownGrid(){
+		
+		if(!village.contains(x,y)){
+			startPathTo(village.getTownStartX() + village.getTownWidth()/2, village.getTownStartY() + village.getTownHeight());
+			return;
+		}
+
+		if((x - village.getTownStartX())%village.getHouseSpread() < village.getHouseSide()){
+			if(x < village.getTownStartX() + village.getTownWidth()/2){
+				startPathTo(village.getTownWidth() + (x - village.getTownWidth() + village.getHouseSpread())/village.getHouseSide()*village.getHouseSide(), y);
+			}else{
+				startPathTo(village.getTownWidth() + (x - village.getTownWidth())/village.getHouseSide()*village.getHouseSide(), y);
+			}
+			return;
+		}else if((y - village.getTownStartY())% village.getHouseSpread() < village.getHouseSide()){
+			if(y < village.getTownStartY() + village.getTownHeight()/2){
+				startPathTo(village.getTownHeight() + (y - village.getTownHeight() + village.getHouseSpread())/village.getHouseSide()*village.getHouseSide(), y);
+			}else{
+				startPathTo(village.getTownHeight() + (y - village.getTownHeight())/village.getHouseSide()*village.getHouseSide(), y);
+			}
+			return;
+		}
+		int n = RAND.nextInt(4);
+		int i = 0;
+		while((!village.contains(x + dx[n]*village.getHouseSpread(), y + dy[n]*village.getHouseSpread())) ||
+				village.ownedBy(x + dx[n]*village.getHouseSpread(), y + dy[n]*village.getHouseSpread()) != null){
+			//System.out.println((x + dx[n]*village.getHouseSpread())+ ", " + (y + dy[n]*village.getHouseSpread()) + " was not ok");
+			n = (n + 1)%4;
+			i++;
+			if(i == 4){
+				//System.out.println("Couldn't stroll");
+				return;
+			}
+			
+		}
+		startPathTo(x + dx[n]*village.getHouseSpread(), y + dy[n]*village.getHouseSpread());
 	}
 	
 	/*class PairComparator implements Comparator<Pair>{

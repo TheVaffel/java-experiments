@@ -2,6 +2,8 @@ package priv.hkon.theseq.world;
 
 import java.util.Random;
 
+import priv.hkon.theseq.sprites.Sprite;
+
 public class Tile {
 	public static final int TYPE_EMPTY = 0;
 	public static final int TYPE_GRASS = 1;

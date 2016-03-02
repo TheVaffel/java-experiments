@@ -1,6 +1,11 @@
-package priv.hkon.theseq.world;
+package priv.hkon.theseq.sprites;
+
+import priv.hkon.theseq.world.Tile;
+import priv.hkon.theseq.world.Village;
 
 public class Door extends NonBlock{
+	
+	int timeSinceUnblocked = 0;
 
 	public Door(int nx, int ny, Village v) {
 		super(nx, ny, v);
@@ -31,8 +36,10 @@ public class Door extends NonBlock{
 	public boolean tick(){
 		if(village.getSpriteAt(x, y) != null){
 			data = animationFrames[0][1];
+			timeSinceUnblocked = 0;
 		}else{
 			data = animationFrames[0][0];
+			timeSinceUnblocked++;
 		}
 		return false;
 	}

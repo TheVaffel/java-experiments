@@ -1,6 +1,7 @@
-package priv.hkon.theseq.world;
+package priv.hkon.theseq.sprites;
 
 import priv.hkon.theseq.main.Screen;
+import priv.hkon.theseq.world.Tile;
 
 public class DialogBubble {
 	

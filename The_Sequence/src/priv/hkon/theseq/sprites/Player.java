@@ -1,10 +1,13 @@
-package priv.hkon.theseq.world;
+package priv.hkon.theseq.sprites;
 
-public class Player extends Movable {
+import priv.hkon.theseq.world.Tile;
+import priv.hkon.theseq.world.Village;
+
+public class Player extends Citizen {
 	
-	public Player(int x, int y, Village v){
-		super(x, y, v);
-		moveSpeed = 0.5f;
+	public Player(int x, int y, Village v, int i){
+		super(x, y, v, i);
+		//moveSpeed = 0.5f;
 	}
 	
 	@Override

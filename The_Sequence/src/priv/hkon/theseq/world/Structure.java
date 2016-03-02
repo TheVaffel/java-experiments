@@ -1,5 +1,8 @@
 package priv.hkon.theseq.world;
 
+import priv.hkon.theseq.sprites.Block;
+import priv.hkon.theseq.sprites.NonBlock;
+
 public abstract class Structure extends Area{
 	
 	Block[][] blocks;

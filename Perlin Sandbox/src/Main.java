@@ -7,9 +7,6 @@ import javax.swing.JFrame;
 
 public class Main extends JFrame implements KeyListener{
 	
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 
 	float tileSize = 100.0f;
@@ -93,7 +90,14 @@ public class Main extends JFrame implements KeyListener{
 		
 		for(int i = 0; i< h; i++){
 			for(int j = 0 ; j < w; j++){
-				data[i*w + j] = (data1[i*w + j] + data1[((i*2+ 5*count) % h)* w + ((j*2) % w)] + data1[((i*7/4 +3*count)% h)* w + (j*7/4 % w)]+ data1[((i*18/7 + 4*count) % h)* w + (j*18/7 % w)])/4 *((1 << 16) + (1 << 8) + 1) | (255<<24);
+				data[i*w + j] = (data1[i*w + j] + data1[((i*2+ 5*count) % h)* w + ((j*2) % w)] + data1[((i*7/4 +3*count)% h)* w + (j*7/4 % w)]+ data1[((i*18/7 + 4*count) % h)* w + (j*18/7 % w)])/4; //*((1 << 16) + (1 << 8) + 1) | (255<<24);
+				if(data[i*w + j] < 150){
+					data[i*w + j] = data[i*w + j] * ((1<<16) | (255 << 24));
+				}
+				else{
+					data[i*w + j] = (data[i*w + j] * (1<<16)) | ((data[i*w + j] - 190)*4 *(1<<8)) | (255 << 24);
+				}
+				
 			}
 		}
 		

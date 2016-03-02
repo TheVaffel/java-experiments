@@ -1,5 +1,7 @@
 package priv.hkon.theseq.world;
 
+import priv.hkon.theseq.sprites.Sprite;
+
 public abstract class Stationary extends Sprite {
 	
 	protected Structure structure = null;

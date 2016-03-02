@@ -1,4 +1,8 @@
-package priv.hkon.theseq.world;
+package priv.hkon.theseq.sprites;
+
+import priv.hkon.theseq.world.Stationary;
+import priv.hkon.theseq.world.Structure;
+import priv.hkon.theseq.world.Village;
 
 public abstract class Block extends Stationary{
 	

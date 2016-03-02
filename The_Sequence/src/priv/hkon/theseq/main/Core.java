@@ -38,9 +38,9 @@ public class Core {
 			currentTime = System.nanoTime();
 			unprocessedSeconds += (currentTime - lastTime)/1000000000.0;
 			lastTime = currentTime;
-			while(unprocessedSeconds > 1/TICKS_PER_SECOND){
+			while(unprocessedSeconds > 1.0/TICKS_PER_SECOND){
 				numTicks++;
-				unprocessedSeconds -= 1/TICKS_PER_SECOND;
+				unprocessedSeconds -= 1.0/TICKS_PER_SECOND;
 				tick();
 				if(numTicks == 60){
 					System.out.println("FPS: " + fps);
@@ -53,7 +53,8 @@ public class Core {
 			fps++;
 			
 			try{
-				Thread.sleep((long)(1000/TICKS_PER_SECOND - (System.nanoTime() - lastTime)/1000000.0));
+				if(System.nanoTime() - lastTime < 1000000000L/TICKS_PER_SECOND)
+					Thread.sleep((long)(1000.0/TICKS_PER_SECOND - (System.nanoTime() - lastTime)/1000000.0));
 			}catch(Exception e){}
 		}
 	}

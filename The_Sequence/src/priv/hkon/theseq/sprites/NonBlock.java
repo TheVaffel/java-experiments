@@ -1,4 +1,8 @@
-package priv.hkon.theseq.world;
+package priv.hkon.theseq.sprites;
+
+import priv.hkon.theseq.world.Stationary;
+import priv.hkon.theseq.world.Structure;
+import priv.hkon.theseq.world.Village;
 
 public abstract class NonBlock extends Stationary {// A class for things that doesn't block, but neither lies on the ground
 

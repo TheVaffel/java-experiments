@@ -1,5 +1,8 @@
 package priv.hkon.theseq.world;
 
+import priv.hkon.theseq.sprites.Door;
+import priv.hkon.theseq.sprites.Wall;
+
 public class House extends Building{
 	
 	//TODO: Furniture, please!
