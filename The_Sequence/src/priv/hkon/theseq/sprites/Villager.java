@@ -231,7 +231,7 @@ public class Villager extends Citizen{
 			conditions[CONDITION_FEAR] += 0.1;
 		}
 	}
-	
+	Citizen intruder;
 	void relaxAtHome(){
 		if(timeSinceHome > 60*3){
 			setDialogString("Aah, finally home!");
@@ -240,15 +240,15 @@ public class Villager extends Citizen{
 		timeSinceHome = 0;
 		
 		if(!expectingSeveralVisits){
-			Citizen c;
 			
-			if((c = findIntruder()) != null){
+			
+			if((intruder = findIntruder()) != null){
 				targetMode = MODE_CHASE_OUT_OF_HOUSE;
 				timeToWait = 30;
 				setDialogString(getRandomDialogString(MODE_SURPRISED));
 				
 				showDialog(30);
-				targetSprite = c;
+				targetSprite = intruder;
 			}else if(!showDialog){
 				if(RAND.nextInt(60*60) == 0){
 					setDialogString(getRandomDialogString(MODE_RELAX_AT_HOME));
@@ -388,16 +388,18 @@ public class Villager extends Citizen{
 		return null;
 	}
 	
+	Citizen guest;
+	
 	public Citizen findIntruder(){
-		Citizen c;
+		
 		for(int i = 1; i < RANGE_OF_VIEW; i++){
 			for(int j = (int)(-TAN_FOV*i + 1); j <TAN_FOV*i ;j++){
 				if(village.getSpriteAt(x + dx[movingDirection]*i + dx[(movingDirection+1)%4]*j,
 						y + dy[movingDirection]*i + dy[(movingDirection+1)%4]*j) instanceof Citizen){
-					c = (Citizen)village.getSpriteAt(x + dx[movingDirection]*i + dx[(movingDirection+1)%4]*j,
+					guest = (Citizen)village.getSpriteAt(x + dx[movingDirection]*i + dx[(movingDirection+1)%4]*j,
 							y + dy[movingDirection]*i + dy[(movingDirection+1)%4]*j);
-					if(expectingVisit != c.getCitizenNumber()&& village.isOwnedBy(c.getX(), c.getY(), village.ownedBy(x, y))){
-						return c;
+					if(expectingVisit != guest.getCitizenNumber()&& village.isOwnedBy(guest.getX(), guest.getY(), village.ownedBy(x, y))){
+						return guest;
 					}
 				}
 			}
@@ -409,9 +411,9 @@ public class Villager extends Citizen{
 					continue;
 				if(village.getSpriteAt(x + i,
 						y + j) instanceof Citizen){
-					c = (Citizen)village.getSpriteAt(x + i, y + j);
-					if(c != this&& expectingVisit != c.getCitizenNumber()&& village.isOwnedBy(c.getX(), c.getY(), village.ownedBy(x, y))){
-						return c;
+					guest = (Citizen)village.getSpriteAt(x + i, y + j);
+					if(guest != this&& expectingVisit != guest.getCitizenNumber()&& village.isOwnedBy(guest.getX(), guest.getY(), village.ownedBy(x, y))){
+						return guest;
 					}
 				}
 			}

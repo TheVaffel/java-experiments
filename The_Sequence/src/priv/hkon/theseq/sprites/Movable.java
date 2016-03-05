@@ -59,6 +59,9 @@ public abstract class Movable extends Sprite implements Runnable{
 	}
 	
 	public void startPathTo(int x, int y){
+		if(isPlanningPath){
+			return;
+		}
 		targetX = x;
 		targetY = y;
 		try{
@@ -272,20 +275,20 @@ public abstract class Movable extends Sprite implements Runnable{
 	}
 	
 	void strollTownGrid(){
-		
+		System.out.println("Trying to startPath");
 		if(!village.contains(x,y)){
 			startPathTo(village.getTownStartX() + village.getTownWidth()/2, village.getTownStartY() + village.getTownHeight());
 			return;
 		}
 
-		if((x - village.getTownStartX())%village.getHouseSpread() < village.getHouseSide()){
+		if((x - village.getTownStartX())%village.getHouseSpread() <= village.getHouseSide()){
 			if(x < village.getTownStartX() + village.getTownWidth()/2){
 				startPathTo(village.getTownWidth() + (x - village.getTownWidth() + village.getHouseSpread())/village.getHouseSide()*village.getHouseSide(), y);
 			}else{
 				startPathTo(village.getTownWidth() + (x - village.getTownWidth())/village.getHouseSide()*village.getHouseSide(), y);
 			}
 			return;
-		}else if((y - village.getTownStartY())% village.getHouseSpread() < village.getHouseSide()){
+		}else if((y - village.getTownStartY())% village.getHouseSpread() <= village.getHouseSide()){
 			if(y < village.getTownStartY() + village.getTownHeight()/2){
 				startPathTo(village.getTownHeight() + (y - village.getTownHeight() + village.getHouseSpread())/village.getHouseSide()*village.getHouseSide(), y);
 			}else{
@@ -306,7 +309,9 @@ public abstract class Movable extends Sprite implements Runnable{
 			}
 			
 		}
+		
 		startPathTo(x + dx[n]*village.getHouseSpread(), y + dy[n]*village.getHouseSpread());
+		
 	}
 	
 	/*class PairComparator implements Comparator<Pair>{

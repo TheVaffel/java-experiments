@@ -47,10 +47,12 @@ public class Conversation {
 	}
 	
 	void tick(){
+		
 		if(finished){
 			return;
 		}
 		if(!isOn){
+			//System.out.println("Conversation not on!");
 			if(owner.distTo(partner) == 1){
 				isOn = true;
 				owner.hideDialog();
