@@ -1,5 +1,7 @@
 package priv.hkon.theseq.sprites;
 
+import priv.hkon.theseq.misc.Conversation;
+import priv.hkon.theseq.misc.Notification;
 import priv.hkon.theseq.world.House;
 import priv.hkon.theseq.world.Village;
 
@@ -43,6 +45,7 @@ public class Villager extends Citizen{
 	public static final int MODE_CURIOUS = 3;
 	public static final int MODE_TALKING = 4;
 	public static final int MODE_WORKING = 5;
+	public static final int MODE_FLEEING = 6;
 	
 	public static final int IMPORTANT_NOT = 0;
 	public static final int IMPORTANT_LITTLE = 1;
@@ -71,8 +74,6 @@ public class Villager extends Citizen{
 	int coatColor = Sprite.getColor(40, 60, 80);
 	
 	public static final int HEAD_SQ_RADIUS = W*W/9 - 1;
-	
-	//TODO: add some personality!
 
 	public Villager(int x, int y, Village v, House h, int i) {
 		super(x, y, v, i);
@@ -115,6 +116,9 @@ public class Villager extends Citizen{
 		if(!isInsideHome()){
 			timeSinceHome++;
 		}
+		if(hasPausedMode){
+			timePaused++;
+		}
 		if(timeToWait >0){
 			timeToWait--;
 			return false;
@@ -124,6 +128,12 @@ public class Villager extends Citizen{
 		
 		data = animationFrames[movingDirection][0];
 		
+		while(!receivedNotifications.isEmpty()){
+			if(reactToNotification(receivedNotifications.poll())){
+				return true;
+			}
+		}
+		
 		if(conversation != null&& targetMode != MODE_TALKING){
 			pauseMode();
 			targetMode = MODE_TALKING;
@@ -131,10 +141,6 @@ public class Villager extends Citizen{
 			hasPath = false;
 		}
 
-		if(hasPausedMode){
-			timePaused++;
-		}
-		
 		switch(targetMode){
 			case MODE_RELAX_AT_HOME: 
 				if(!isInsideHome()){
@@ -156,11 +162,53 @@ public class Villager extends Citizen{
 			case MODE_WORKING:
 				work();
 				break;
+			case MODE_FLEEING:
+				if(distTo(targetSprite) > RANGE_OF_VIEW*1.5){
+					if(hasPausedMode){
+						revertPausedMode();
+					}else{
+						runAway();
+					}
+				}
 		}
 		if(super.tick()){
 			return true;
 		}
 		return false;
+	}
+	
+	boolean reactToNotification(Notification n){
+		if(n.getType() == Notification.TYPE_INVITATION_TO_CONVERSATION){
+			if(n.getCreator() instanceof Citizen && affections[((Citizen)(n.getCreator())).getCitizenNumber()] * n.getImportance() > modeImportance){
+				if(targetMode != MODE_RELAX_AT_HOME){
+					pauseMode();
+				}
+				targetMode = MODE_TALKING;
+				targetSprite = conversation.getOwner();
+				hasPath = false;
+				return true;
+			}else{
+				return false;
+			}
+		}else if(n.getType() == Notification.TYPE_UNFRIENDLY){
+			pauseMode();
+			targetMode = MODE_FLEEING;
+			targetSprite = n.getCreator();
+			hasPath = false;
+			return true;
+		}
+		return false;
+	}
+	
+	void runAway(){
+		int i = 0;
+		if(hasPath){
+			return;
+		}
+		while(village.ownedBy(getX(), getY() + 2 + i) != null){
+			i++;
+		}
+		startPathTo(getX(), getY() + 2 + i);
 	}
 	
 	void openRandomConversation(){
@@ -243,6 +291,8 @@ public class Villager extends Citizen{
 			
 			
 			if((intruder = findIntruder()) != null){
+				intruder.receiveNotification(new Notification(Notification.TYPE_UNFRIENDLY,
+						IMPORTANT_MEDIUM, this));
 				targetMode = MODE_CHASE_OUT_OF_HOUSE;
 				timeToWait = 30;
 				setDialogString(getRandomDialogString(MODE_SURPRISED));
@@ -283,12 +333,6 @@ public class Villager extends Citizen{
 	
 	String getRandomDialogString(int mode){
 		return DIALOG_STRINGS[mode][RAND.nextInt(DIALOG_STRINGS[mode].length)];
-	}
-	
-	
-	
-	boolean tryStepTowards(int nx, int ny){
-		return tryStartMoving(getDirectionTo(nx, ny));
 	}
 	
 	void chase(Sprite s){

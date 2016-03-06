@@ -5,13 +5,14 @@ import java.util.Random;
 
 import priv.hkon.theseq.main.Controller;
 import priv.hkon.theseq.main.Screen;
+import priv.hkon.theseq.misc.DialogBubble;
 import priv.hkon.theseq.sprites.Citizen;
-import priv.hkon.theseq.sprites.DialogBubble;
 import priv.hkon.theseq.sprites.Mayor;
 import priv.hkon.theseq.sprites.Movable;
 import priv.hkon.theseq.sprites.NonBlock;
 import priv.hkon.theseq.sprites.Player;
 import priv.hkon.theseq.sprites.Sprite;
+import priv.hkon.theseq.sprites.TalkativeSprite;
 import priv.hkon.theseq.sprites.Villager;
 
 public class Village {
@@ -135,11 +136,12 @@ public class Village {
 							dy = (int)(((Movable)(sprites[beginTileY + i][beginTileX + j])).getMovedY()*Tile.HEIGHT);
 						}
 						Screen.draw(rawdata, tilesInWidth*Tile.WIDTH, tilesInHeight*Tile.HEIGHT, sprites[beginTileY + i][beginTileX+ j].getData(), Sprite.W, Sprite.H, j*Tile.WIDTH + dx , (i + 1)*Tile.HEIGHT - Sprite.H - Sprite.DRAW_OFFSET_Y + dy);
-						if(sprites[beginTileY + i][beginTileX + j].shouldDrawDialog()){
-							DialogBubble d = sprites[beginTileY + i][beginTileX + j].getDialog();
-							Screen.draw(rawdata, tilesInWidth*Tile.WIDTH, tilesInHeight*Tile.HEIGHT, d.getData(), d.getWidth(), d.getHeight(), j*Tile.WIDTH + dx + d.getOffsetX(), i*Tile.HEIGHT + dy + d.getOffsetY());
+						if(sprites[beginTileY + i][beginTileX + j] instanceof TalkativeSprite){
+							if(((TalkativeSprite)(sprites[beginTileY + i][beginTileX + j])).shouldDrawDialog()){
+								DialogBubble d = ((TalkativeSprite)(sprites[beginTileY + i][beginTileX + j])).getDialog();
+								Screen.draw(rawdata, tilesInWidth*Tile.WIDTH, tilesInHeight*Tile.HEIGHT, d.getData(), d.getWidth(), d.getHeight(), j*Tile.WIDTH + dx + d.getOffsetX(), i*Tile.HEIGHT + dy + d.getOffsetY());
+							}
 						}
-							
 					}
 					if(nonBlocks[beginTileY + i][beginTileX + j] != null){
 						Screen.draw(rawdata, tilesInWidth*Tile.WIDTH, tilesInHeight*Tile.HEIGHT, nonBlocks[beginTileY + i][beginTileX+ j].getData(), Sprite.W, Sprite.H, j*Tile.WIDTH, (i + 1)*Tile.HEIGHT - Sprite.H - Sprite.DRAW_OFFSET_Y);
@@ -157,13 +159,13 @@ public class Village {
 				int dy = 0;
 				if(((!closed[beginTileY + i][beginTileX + j] && !shouldDrawInside) || (isOwnedBy(beginTileX + j, beginTileY + i, currBuilding)))){
 					
-					if(sprites[beginTileY + i][beginTileX + j] != null){
+					if(sprites[beginTileY + i][beginTileX + j] != null&& sprites[beginTileY + i][beginTileX + j] instanceof TalkativeSprite){
 						if(sprites[beginTileY + i][beginTileX + j] instanceof Movable){
 							dx = (int)((((Movable)(sprites[beginTileY + i][beginTileX + j])).getExactX()-sprites[beginTileY + i][beginTileX + j].getX())*(Tile.WIDTH));
 							dy = (int)(((Movable)(sprites[beginTileY + i][beginTileX + j])).getMovedY()*Tile.HEIGHT);
 						}
-						if(sprites[beginTileY + i][beginTileX + j].shouldDrawDialog()){
-							DialogBubble d = sprites[beginTileY + i][beginTileX + j].getDialog();
+						if(((TalkativeSprite)(sprites[beginTileY + i][beginTileX + j])).shouldDrawDialog()){
+							DialogBubble d = ((TalkativeSprite)(sprites[beginTileY + i][beginTileX + j])).getDialog();
 							Screen.draw(rawdata, tilesInWidth*Tile.WIDTH, tilesInHeight*Tile.HEIGHT, d.getData(), d.getWidth(), d.getHeight(), j*Tile.WIDTH + dx + d.getOffsetX(), i*Tile.HEIGHT + dy + d.getOffsetY());
 						}
 					}

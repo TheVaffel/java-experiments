@@ -4,7 +4,7 @@ import java.util.LinkedList;
 
 import priv.hkon.theseq.world.Village;
 
-public abstract class Movable extends Sprite implements Runnable{
+public abstract class Movable extends TalkativeSprite implements Runnable{
 	
 	public static final int LEFT = 0;
 	public static final int DOWN = 1;
@@ -58,8 +58,12 @@ public abstract class Movable extends Sprite implements Runnable{
 		return true;
 	}
 	
+	boolean tryStepTowards(int nx, int ny){
+		return tryStartMoving(getDirectionTo(nx, ny));
+	}
+	
 	public void startPathTo(int x, int y){
-		if(isPlanningPath){
+		if(isPlanningPath || (x == this.x && y == this.y)){
 			return;
 		}
 		targetX = x;
@@ -275,24 +279,23 @@ public abstract class Movable extends Sprite implements Runnable{
 	}
 	
 	void strollTownGrid(){
-		System.out.println("Trying to startPath");
 		if(!village.contains(x,y)){
-			startPathTo(village.getTownStartX() + village.getTownWidth()/2, village.getTownStartY() + village.getTownHeight());
+			startPathTo(village.getTownStartX() + village.getTownWidth()/2, village.getTownStartY() + village.getTownHeight()/2);
 			return;
 		}
 
 		if((x - village.getTownStartX())%village.getHouseSpread() <= village.getHouseSide()){
 			if(x < village.getTownStartX() + village.getTownWidth()/2){
-				startPathTo(village.getTownWidth() + (x - village.getTownWidth() + village.getHouseSpread())/village.getHouseSide()*village.getHouseSide(), y);
+				startPathTo(village.getTownWidth() + (x - village.getTownWidth() + village.getHouseSpread())/village.getHouseSpread()*village.getHouseSpread() - 3, y);
 			}else{
-				startPathTo(village.getTownWidth() + (x - village.getTownWidth())/village.getHouseSide()*village.getHouseSide(), y);
+				startPathTo(village.getTownWidth() + (x - village.getTownWidth())/village.getHouseSpread()*village.getHouseSpread() - 3, y);
 			}
 			return;
 		}else if((y - village.getTownStartY())% village.getHouseSpread() <= village.getHouseSide()){
 			if(y < village.getTownStartY() + village.getTownHeight()/2){
-				startPathTo(village.getTownHeight() + (y - village.getTownHeight() + village.getHouseSpread())/village.getHouseSide()*village.getHouseSide(), y);
+				startPathTo(x,village.getTownHeight() + (y - village.getTownHeight() + village.getHouseSpread())/village.getHouseSpread()*village.getHouseSpread() - 3);
 			}else{
-				startPathTo(village.getTownHeight() + (y - village.getTownHeight())/village.getHouseSide()*village.getHouseSide(), y);
+				startPathTo(x, village.getTownHeight() + (y - village.getTownHeight())/village.getHouseSpread()*village.getHouseSpread() - 3);
 			}
 			return;
 		}

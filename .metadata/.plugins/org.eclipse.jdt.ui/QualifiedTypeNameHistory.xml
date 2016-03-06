@@ -1,2 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<qualifiedTypeNameHistroy/>
+<qualifiedTypeNameHistroy>
+<fullyQualifiedTypeName name="priv.hkon.theseq.sprites.TalkativeSprite"/>
+<fullyQualifiedTypeName name="priv.hkon.theseq.sprites.Sprite"/>
+<fullyQualifiedTypeName name="priv.hkon.theseq.misc.Notification"/>
+<fullyQualifiedTypeName name="priv.hkon.theseq.sprites.Mayor"/>
+</qualifiedTypeNameHistroy>

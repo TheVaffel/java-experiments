@@ -1,0 +1,11 @@
+package priv.hkon.theseq.sprites;
+
+import priv.hkon.theseq.world.Village;
+
+public abstract class TalkativeSprite extends Sprite{
+
+	public TalkativeSprite(int nx, int ny, Village v) {
+		super(nx, ny, v);
+	}
+
+}

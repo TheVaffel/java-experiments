@@ -1,0 +1,6 @@
+package priv.hkon.theseq.misc;
+
+public class Notification {
+	
+	public static final int TYPE_INVITATION_TO_CONVERSATION = 0;
+	public static final int TYPE_UNFRIENDLY = 1;
