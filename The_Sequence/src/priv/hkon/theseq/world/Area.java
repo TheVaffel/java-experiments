@@ -3,7 +3,7 @@ package priv.hkon.theseq.world;
 public abstract class Area {
 	
 	protected int x, y, w, h;
-	Village village;
+	protected Village village;
 	
 	protected int tiles[][];
 	

@@ -19,6 +19,7 @@ import priv.hkon.theseq.sprites.Player;
 import priv.hkon.theseq.sprites.Sprite;
 import priv.hkon.theseq.sprites.TalkativeSprite;
 import priv.hkon.theseq.sprites.Villager;
+import priv.hkon.theseq.structures.Bed;
 import priv.hkon.theseq.structures.Building;
 import priv.hkon.theseq.structures.House;
 import priv.hkon.theseq.structures.Structure;
@@ -95,9 +96,9 @@ public class Village {
 		
 		
 		for(int i = 0; i < townGridSide; i++){
-			Road r = new Road(townGridStartX - houseSpread + houseSide + 1, townGridStartY+ houseSpread*i +houseSide + 1, (townGridSide-1)*houseSpread + houseSide, 3, this);
+			Road r = new Road(townGridStartX - houseSpread + houseSide + 1, townGridStartY+ houseSpread*i +houseSide + 1, (townGridSide-1)*houseSpread + houseSpread - 1, 3, this);
 			addArea(r);
-			r = new Road(townGridStartX + houseSpread*(i - 1) + houseSide + 1, townGridStartY, 3, (townGridSide - 1)*houseSpread + houseSide, this);
+			r = new Road(townGridStartX + houseSpread*(i - 1) + houseSide + 1, townGridStartY, 3, (townGridSide - 1)*houseSpread + houseSpread - 1, this);
 			addArea(r);
 		}
 		
@@ -133,7 +134,7 @@ public class Village {
 		}
 	}
 	
-	public int[][] getScreenData(int w, int h){
+	public int[][] getScreenData(int w, int h){ //TODO: Fix screen continuously filling with black at high Y's
 		int[][] data = new int[h][w];
 		
 		int tilesInWidth = (int)Math.ceil(tilesPerPixelX*w) + 1;
@@ -317,6 +318,8 @@ public class Village {
 			for(int j = 0; j < s.getW(); j++){
 				if(s.getBlockAt(j, i) != null)
 					addSprite(s.getBlockAt(j, i));
+				if(s.getNonBlockAt(j, i) != null)
+					addNonBlock(s.getNonBlockAt(j, i));
 			}
 		}
 	}

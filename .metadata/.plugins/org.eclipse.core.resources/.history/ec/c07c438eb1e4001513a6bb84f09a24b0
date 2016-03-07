@@ -1,0 +1,48 @@
+package priv.hkon.theseq.structures;
+
+import priv.hkon.theseq.blocks.SubBlock;
+import priv.hkon.theseq.nonblocks.SubNonBlock;
+import priv.hkon.theseq.sprites.Sprite;
+import priv.hkon.theseq.world.Tile;
+import priv.hkon.theseq.world.Village;
+
+public class Bed extends Structure {
+
+	public Bed(int nx, int ny, Village v) {
+		super(nx, ny, 1, 2, v);
+	}
+
+	@Override
+	public void makeBlocks() {
+		int[][] data1 = new int[Sprite.H][Sprite.W];//Upper Sprite
+		
+		for(int i = 0; i< Sprite.H; i++){
+			for(int j = 0; j< Sprite.W; j++){
+				if(Math.abs(j - Sprite.W/2 + 0.5) + Math.abs(i )  > 6){
+					data1[i][j] = Sprite.getColor(50,  50, 20);
+				}
+			}
+		}
+		
+		blocks[0][0] = new SubBlock(x, y, data1, this, village);
+		
+		int[][] data2 = new int[Sprite.H][Sprite.W];
+		
+		for(int i = Sprite.H/4; i < Sprite.H; i++){
+			for(int j = 0; j < Sprite.W; j++){
+				int d = Math.sqrt(Math.abs(j - Sprite.W/2));
+				data2[i][j] = Sprite.getColor(200 - 15*d, 200 - 15*d, 200 - 15*d);
+				if( (i - Tile.HEIGHT - 8)*(i - Tile.HEIGHT - 8) + (j - Sprite.W/2)*(j - Sprite.W/2) < 10*10){
+					data2[i][j] = Sprite.getColor(50,  50, 20);
+				}
+			}
+		}
+		
+		nonBlocks[1][0] = new SubNonBlock(x, y + 1, data2, this, village);
+	}
+
+	@Override
+	public void makeTiles() {
+	}
+
+}

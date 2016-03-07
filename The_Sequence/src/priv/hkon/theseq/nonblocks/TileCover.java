@@ -15,7 +15,6 @@ public class TileCover extends Sprite {
 
 	@Override
 	public void makeData() {
-		// TODO Auto-generated method stub
 
 	}
 

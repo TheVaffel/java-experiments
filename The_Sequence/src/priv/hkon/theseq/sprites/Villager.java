@@ -225,7 +225,8 @@ public class Villager extends Citizen{
 	}
 	
 	void openRandomConversation(){
-		//TODO: make this some general conversation starter
+		//TODO: Make this some general conversation starter
+		//TODO: (Might be needed for the above todo) A sentence class containing subject and a message giving better or worse reputation to the subject.
 	}
 	
 	void askQuestion(int r){

@@ -24,7 +24,8 @@ public class House extends Building{
 			blocks[i][w - 1] = new Wall(x + w -1, y + i, village);
 		}
 		
-		
+		Bed bed = new Bed(0, 0, village);
+		addStructure(bed, 1, 1);
 	}
 	
 	@Override

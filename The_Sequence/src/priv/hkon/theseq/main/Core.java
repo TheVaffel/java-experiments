@@ -56,6 +56,7 @@ public class Core {
 				if(System.nanoTime() - lastTime < 1000000000L/TICKS_PER_SECOND)
 					Thread.sleep((long)(1000.0/TICKS_PER_SECOND - (System.nanoTime() - lastTime)/1000000.0));
 			}catch(Exception e){}
+			//TODO: Fix some kind of loading screen while the worst FPS-drops lasts
 		}
 	}
 	

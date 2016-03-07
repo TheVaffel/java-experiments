@@ -1,0 +1,24 @@
+package priv.hkon.theseq.nonblocks;
+
+import priv.hkon.theseq.structures.Structure;
+import priv.hkon.theseq.world.Village;
+
+public class SubNonBlock extends NonBlock {
+
+	public SubNonBlock(int nx, int ny, Village v) {
+		super(nx, ny, v);
+		// TODO Auto-generated constructor stub
+	}
+
+	public SubNonBlock(int nx, int ny, Structure s, Village v) {
+		super(nx, ny, s, v);
+		// TODO Auto-generated constructor stub
+	}
+
+	@Override
+	public void makeData() {
+		// TODO Auto-generated method stub
+
+	}
+
+}

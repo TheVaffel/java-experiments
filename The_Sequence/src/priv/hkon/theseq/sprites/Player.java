@@ -11,7 +11,7 @@ public class Player extends Citizen {
 	}
 	
 	@Override
-	public void makeData() {
+	public void makeData() {//TODO: Make some actual design
 		for(int i = 0; i < H; i++){
 			for(int j = 0; j< W; j++){
 				data[i][j] = 0;

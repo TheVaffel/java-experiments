@@ -16,7 +16,7 @@ public abstract class Structure extends Area{
 		
 		blocks = new Block[nh][nw];
 		nonBlocks = new NonBlock[nh][nw];
-		makeBlocks(); 
+		makeBlocks();
 	}
 	
 	
@@ -25,6 +25,17 @@ public abstract class Structure extends Area{
 		return blocks[i][j];
 	}
 	
+	public NonBlock getNonBlockAt(int j, int i){
+		return nonBlocks[i][j];
+	}
+	
 	public abstract void makeBlocks();// including NonBlocks
 	
+	public void setX(int nx){
+		x = nx;
+	}
+	
+	public void setY(int ny){
+		y = ny;
+	}
 }

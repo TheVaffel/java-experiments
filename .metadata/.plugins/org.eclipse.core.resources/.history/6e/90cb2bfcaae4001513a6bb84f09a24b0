@@ -1,0 +1,23 @@
+package priv.hkon.theseq.blocks;
+
+import priv.hkon.theseq.structures.Structure;
+import priv.hkon.theseq.world.Village;
+
+public class SubBlock extends Block { // A class with no particular data, to support custom Structures
+
+	public SubBlock(int nx, int ny, int[][] data, Structure s, Village v) {
+		super(nx, ny, s, v);
+		this.data = data;
+	}
+
+	@Override
+	public void makeData() {
+		// TODO Auto-generated method stub
+
+	}
+	
+	public int[][] getData(){
+		return structure.getData(x - structure.getX(), y - structure.getY());
+	}
+
+}

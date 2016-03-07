@@ -1,0 +1,17 @@
+package priv.hkon.theseq.structures;
+
+public class Bed extends Structure {
+
+	@Override
+	public void makeBlocks() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void makeTiles() {
+		// TODO Auto-generated method stub
+
+	}
+
+}

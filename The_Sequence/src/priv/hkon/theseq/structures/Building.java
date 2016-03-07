@@ -40,4 +40,25 @@ public abstract class Building extends Structure{
 	public int[][] getEntrances(){
 		return entrances;
 	}
+	
+	public void addStructure(Structure structure, int nx, int ny){
+		structure.setX(getX() + nx);
+		structure.setY(getY() + ny);
+		for(int i = 0; i < structure.getH(); i++){
+			for(int j = 0; j < structure.getW(); j++){
+				if(contains(getX() + nx + j, getY() + ny + i)){
+					if(structure.getBlockAt(j, i) != null){
+						structure.getBlockAt(j, i).setX(getX() + nx + j);
+						structure.getBlockAt(j, i).setY(getY() + ny + i);
+					}
+					blocks[ny + i][nx + j] = structure.getBlockAt(j, i);
+					if(structure.getNonBlockAt(j, i) != null){
+						structure.getNonBlockAt(j, i).setX(getX() + nx + j);
+						structure.getNonBlockAt(j, i).setY(getY() + ny + i);
+					}
+					nonBlocks[ny + i][nx + j] = structure.getNonBlockAt(j, i);
+				}
+			}
+		}
+	}
 }

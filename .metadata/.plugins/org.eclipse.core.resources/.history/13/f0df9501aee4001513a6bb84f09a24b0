@@ -1,0 +1,53 @@
+package priv.hkon.theseq.structures;
+
+import priv.hkon.theseq.nonblocks.NonBlock;
+import priv.hkon.theseq.world.Village;
+
+public abstract class Building extends Structure{
+	
+	boolean closed[][];
+	int[][] entrances;
+	
+	public Building(int x, int y, int w, int h, Village v){
+		super(x, y, w, h, v);
+		closed = new boolean[h][w];
+		makeClosedSpace();
+		makeEntrances();
+	}
+	
+	public int getTileAt(int x, int y){
+		return tiles[y][x];
+	}
+	
+	public NonBlock getNonBlockAt(int x, int y){
+		return nonBlocks[y][x];
+	}
+	
+	public boolean isClosedAt(int x, int y){
+		if(x < 0 || x >= w || y < 0 || y >= h){
+			return false;
+		}
+		return closed[y][x];
+	}
+	
+	public boolean isClosedAtGlobal(int x, int y){
+		return isClosedAt(x - this.x, y - this.y);
+	}
+	
+	public abstract void makeClosedSpace();
+	public abstract void makeEntrances();
+	
+	public int[][] getEntrances(){
+		return entrances;
+	}
+	
+	public void addStructure(Structure structure, int nx, int ny){
+		for(int i = structure.getY() ; i < structure.getY() + structure.getH(); i++){
+			for(int j = structure.getX(); j < structure.getX() + structure.getW(); j++){
+				if(contains(j, i)){
+					blocks[i][j] = structure.getBlockAt(j - structure.getX(), i - structure.ge)
+				}
+			}
+		}
+	}
+}
