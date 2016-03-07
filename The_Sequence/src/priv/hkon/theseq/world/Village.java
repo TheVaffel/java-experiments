@@ -3,17 +3,25 @@ package priv.hkon.theseq.world;
 import java.awt.event.KeyEvent;
 import java.util.Random;
 
+import priv.hkon.theseq.blocks.Tree;
 import priv.hkon.theseq.main.Controller;
 import priv.hkon.theseq.main.Screen;
 import priv.hkon.theseq.misc.DialogBubble;
+import priv.hkon.theseq.nonblocks.Door;
+import priv.hkon.theseq.nonblocks.Flowers;
+import priv.hkon.theseq.nonblocks.NonBlock;
+import priv.hkon.theseq.nonblocks.TileCover;
 import priv.hkon.theseq.sprites.Citizen;
+import priv.hkon.theseq.sprites.Gardener;
 import priv.hkon.theseq.sprites.Mayor;
 import priv.hkon.theseq.sprites.Movable;
-import priv.hkon.theseq.sprites.NonBlock;
 import priv.hkon.theseq.sprites.Player;
 import priv.hkon.theseq.sprites.Sprite;
 import priv.hkon.theseq.sprites.TalkativeSprite;
 import priv.hkon.theseq.sprites.Villager;
+import priv.hkon.theseq.structures.Building;
+import priv.hkon.theseq.structures.House;
+import priv.hkon.theseq.structures.Structure;
 
 public class Village {
 	
@@ -26,6 +34,7 @@ public class Village {
 	int[][] tiles = new int[H][W];
 	Sprite[][] sprites = new Sprite[H][W];
 	NonBlock[][] nonBlocks = new NonBlock[H][W];
+	TileCover[][] tileCovers = new TileCover[H][W];
 	Building[][] ownedBy = new Building[H][W];
 	
 	Citizen[] citizenList;
@@ -60,7 +69,13 @@ public class Village {
 	
 	public Village(){
 		random = new Random();
+		Villager.init();
 		
+		buildVillage();
+		
+	}
+	
+	public void buildVillage(){
 		for(int i = 0 ; i < H ; i++){
 			for(int j = 0 ; j < W; j++){
 				tiles[i][j] = Tile.TYPE_GRASS;
@@ -90,15 +105,32 @@ public class Village {
 		
 		player = new Player(townGridStartX + houseSpread - 1, townGridStartY + houseSpread - 1, this, numVillagers);
 		addSprite(player); 
-		for(int i = 0; i< numVillagers - 1; i++){
-			villagers[i]= new Villager(townGridStartX + i, townGridStartY - 5, this, townGrid[i/townGridSide][i%townGridSide], i);
+		for(int i = 0; i< numVillagers - 2; i++){
+			villagers[i]= new Villager( getTownStartX()  + i, getTownStartY() - 2/*townGrid[i/townGridSide][i%townGridSide].getX() + houseSide/2, townGrid[i/townGridSide][i%townGridSide].getY() + houseSide/2*/, this, townGrid[i/townGridSide][i%townGridSide], i);
 			addSprite(villagers[i]);
 		}
+		villagers[numVillagers - 2] = new Gardener(player.getX() - 2, player.getY(), this, townGrid[0][0], numVillagers - 2);
+		addSprite(villagers[numVillagers - 2]);
 		
 		villagers[numVillagers - 1] = new Mayor(player.getX() - 2, player.getY() - 2, this, townGrid[0][0], numVillagers - 1);
 		addSprite(villagers[numVillagers - 1]);
 		villagers[0].debug = true;
 		
+		
+		for(int i = 0; i< H; i++){
+			for(int j = 0; j < W ; j++){
+				if(nonBlocks[i][j] instanceof Door){
+					setTileAt(Tile.TYPE_REFINED_ROCK, j, i +1);
+				}
+				if(tiles[i][j] == Tile.TYPE_GRASS &&sprites[i][j] == null){
+					if(NonBlock.RAND.nextInt(10) == 0){
+						addTileCover(new Flowers(j, i, this));
+					}else if(NonBlock.RAND.nextInt(8) == 0){
+						addSprite(new Tree(j, i, this));
+					}
+				}
+			}
+		}
 	}
 	
 	public int[][] getScreenData(int w, int h){
@@ -118,6 +150,9 @@ public class Village {
 			for(int j = initX; j < tilesInWidth; j++){
 				if((!closed[beginTileY + i][beginTileX + j] && !shouldDrawInside) || isOwnedBy(beginTileX + j, beginTileY + i, currBuilding)){
 					Screen.draw(rawdata, tilesInWidth*Tile.WIDTH, tilesInHeight*Tile.HEIGHT, Tile.getData(tiles[beginTileY + i][beginTileX+ j]), Tile.WIDTH, Tile.HEIGHT, j*Tile.WIDTH, i*Tile.HEIGHT);
+					if(tileCovers[beginTileY + i][beginTileX + j] != null){
+						Screen.draw(rawdata, tilesInWidth*Tile.WIDTH, tilesInHeight*Tile.HEIGHT, tileCovers[beginTileY + i][beginTileX + j].getData(), Tile.WIDTH, Tile.HEIGHT, j*Tile.WIDTH, i*Tile.HEIGHT);
+					}
 				}else{
 					Screen.draw(rawdata, tilesInWidth*Tile.WIDTH, tilesInHeight*Tile.HEIGHT, Tile.getData(Tile.TYPE_EMPTY), Tile.WIDTH, Tile.HEIGHT, j*Tile.WIDTH, i*Tile.HEIGHT);
 				}
@@ -300,8 +335,8 @@ public class Village {
 			for(int j = 0; j < b.getW(); j++){
 				setTileAt(b.getTileAt(j, i), b.getX() + j, b.getY() + i);
 				setNonBlockAt(b.getNonBlockAt(j, i), b.getX() + j, b.getY() + i);
-				closed[b.y + i][b.x + j] = b.closed[i][j];
-				ownedBy[b.y + i][b.x + j] = b;
+				closed[b.getY() + i][b.getX() + j] = b.isClosedAt(j,i);
+				ownedBy[b.getY() + i][b.getX() + j] = b;
 			}
 		}
 	}
@@ -316,6 +351,14 @@ public class Village {
 	
 	public void addSprite(Sprite sprite){
 		sprites[sprite.getY()][sprite.getX()] = sprite;
+	}
+	
+	public void addNonBlock(NonBlock nb){
+		nonBlocks[nb.getY()][nb.getX()] = nb;
+	}
+	
+	public void addTileCover(TileCover tc){
+		tileCovers[tc.getY()][tc.getX()] = tc;
 	}
 	
 	public boolean isEmpty(int x, int y){
@@ -383,8 +426,13 @@ public class Village {
 		return houseSide;
 	}
 	
+	public int getTileAt(int x, int y){
+		return tiles[y][x];
+	}
+	
 	public boolean contains(int x, int y){
 		return x >= getTownStartX() && y >= getTownStartY() && x < getTownStartX() + getTownWidth() && y < getTownStartY() + getTownWidth();
 	}
+	
 	
 }

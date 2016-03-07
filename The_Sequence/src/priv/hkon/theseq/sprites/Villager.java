@@ -2,7 +2,7 @@ package priv.hkon.theseq.sprites;
 
 import priv.hkon.theseq.misc.Conversation;
 import priv.hkon.theseq.misc.Notification;
-import priv.hkon.theseq.world.House;
+import priv.hkon.theseq.structures.House;
 import priv.hkon.theseq.world.Village;
 
 public class Villager extends Citizen{
@@ -23,14 +23,20 @@ public class Villager extends Citizen{
 	int targetMode;
 	int modeImportance;
 	Sprite targetSprite;
+	int modeTargetX;
+	int modeTargetY;
 	
 	boolean hasPausedMode = false;
 	int pausedMode;
 	int timePaused = 0;
 	int pausedModeImportance;
+	int pausedModeTargetX;
+	int pausedModeTargetY;
 	Sprite pausedSprite;
 	
 	boolean hasCalled = false;
+	
+	static int[][][] fovDeltaCoordinates;
 	
 	float[] affections; //Numbers from -1 to 1 which tells how much this citizen likes the others.
 	
@@ -46,6 +52,7 @@ public class Villager extends Citizen{
 	public static final int MODE_TALKING = 4;
 	public static final int MODE_WORKING = 5;
 	public static final int MODE_FLEEING = 6;
+	public static final int MODE_THINKING = 7;
 	
 	public static final int IMPORTANT_NOT = 0;
 	public static final int IMPORTANT_LITTLE = 1;
@@ -55,7 +62,11 @@ public class Villager extends Citizen{
 	public static final String[][] DIALOG_STRINGS = {{"Dum di dum di dum", "La la-laaah lah!"}, 
 			{"Hey, get out!", "You're not welcome here!", "Eyh, you should leave now"},
 			{"Hey...", "What the...","Uhm..","!!"},
-			{"Hum?", "?", "!"}
+			{"Hum?", "?", "!"},
+			{},
+			{},
+			{},
+			{"Hmmmm....", "Maybe...", "Erm.. What about.."}
 	};
 	
 	public static final int QUESTION_SELF_CONDITION = 0;
@@ -113,6 +124,7 @@ public class Villager extends Citizen{
 	}
 	
 	public boolean tick(){
+		data = animationFrames[movingDirection][0];
 		if(!isInsideHome()){
 			timeSinceHome++;
 		}
@@ -125,9 +137,6 @@ public class Villager extends Citizen{
 		}
 		
 		
-		
-		data = animationFrames[movingDirection][0];
-		
 		while(!receivedNotifications.isEmpty()){
 			if(reactToNotification(receivedNotifications.poll())){
 				return true;
@@ -137,14 +146,18 @@ public class Villager extends Citizen{
 		if(conversation != null&& targetMode != MODE_TALKING){
 			pauseMode();
 			targetMode = MODE_TALKING;
-			targetSprite = conversation.getOwner();
+			if(conversation.getOwner() != this){
+				targetSprite = conversation.getOwner();
+			}else{
+				targetSprite = conversation.getPartner();
+			}
 			hasPath = false;
 		}
 
 		switch(targetMode){
 			case MODE_RELAX_AT_HOME: 
 				if(!isInsideHome()){
-					if(hasPath&&home.isClosedAtGlobal(targetX, targetY))
+					if(hasPath&&home.isClosedAtGlobal(pathTargetX, pathTargetY))
 						break;
 					startGoHome();
 				}else{
@@ -260,12 +273,16 @@ public class Villager extends Citizen{
 		targetSprite = pausedSprite;
 		timePaused = 0;
 		modeImportance = pausedModeImportance;
+		modeTargetX = pausedModeTargetX;
+		modeTargetY = pausedModeTargetY;
 	}
 	
 	void pauseMode(){
 		hasPausedMode = true;
 		pausedMode = targetMode;
 		pausedSprite = targetSprite;
+		pausedModeTargetX = modeTargetX;
+		pausedModeTargetY = modeTargetY;
 		timePaused = 0;
 		targetSprite = null;
 		pausedModeImportance = modeImportance;
@@ -492,6 +509,36 @@ public class Villager extends Citizen{
 		setDialogString("Oh... Ok, then...");
 		showDialog(60*2);
 		revertPausedMode();
+	}
+	
+	public static void init(){
+		int count = 0;
+		fovDeltaCoordinates = new int[4][24][2];//Yeah, mystical constant, right? 24 is just the number of tiles we are inspecting
+		
+		for(int dir = 0; dir < 4; dir++){
+			count = 0;
+		
+			for(int i = 1; i < RANGE_OF_VIEW; i++){
+				for(int j = (int)(-TAN_FOV*i + 1); j <TAN_FOV*i ;j++){
+					fovDeltaCoordinates[dir][count][0] = dx[dir]*i + dx[(dir + 1)%4]*j;
+					
+					fovDeltaCoordinates[dir][count][1] = dy[dir]*i + dy[(dir + 1)%4]*j;
+					count ++;
+				}
+			}
+		
+		
+			for(int i = -1; i<=1 ;i++){
+				for(int j = -1; j <= 1; j++){
+					if(j == 0&& i == 0)
+						continue;
+					fovDeltaCoordinates[dir][count][0] = j;
+					fovDeltaCoordinates[dir][count][1] = i;
+					count++;
+				}
+			}
+		}
+		
 	}
 
 }

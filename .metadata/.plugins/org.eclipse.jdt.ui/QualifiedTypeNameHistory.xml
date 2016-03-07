@@ -1,7 +1,17 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <qualifiedTypeNameHistroy>
 <fullyQualifiedTypeName name="priv.hkon.theseq.sprites.TalkativeSprite"/>
-<fullyQualifiedTypeName name="priv.hkon.theseq.sprites.Sprite"/>
 <fullyQualifiedTypeName name="priv.hkon.theseq.misc.Notification"/>
 <fullyQualifiedTypeName name="priv.hkon.theseq.sprites.Mayor"/>
+<fullyQualifiedTypeName name="priv.hkon.theseq.sprites.Villager"/>
+<fullyQualifiedTypeName name="priv.hkon.theseq.sprites.Gardener"/>
+<fullyQualifiedTypeName name="java.util.Random"/>
+<fullyQualifiedTypeName name="priv.hkon.theseq.sprites.Sprite"/>
+<fullyQualifiedTypeName name="priv.hkon.theseq.nonblocks.NonBlock"/>
+<fullyQualifiedTypeName name="priv.hkon.theseq.nonblocks.Flowers"/>
+<fullyQualifiedTypeName name="priv.hkon.theseq.nonblocks.TileCover"/>
+<fullyQualifiedTypeName name="priv.hkon.theseq.blocks.Tree"/>
+<fullyQualifiedTypeName name="priv.hkon.theseq.nonblocks.Door"/>
+<fullyQualifiedTypeName name="priv.hkon.theseq.world.Building"/>
+<fullyQualifiedTypeName name="priv.hkon.theseq.world.Tile"/>
 </qualifiedTypeNameHistroy>

@@ -87,8 +87,7 @@ public class Screen extends JFrame{
 	public void initCharacters(){
 		charPositions = new int[256];
 		font = new Font("Monospaced.plain", Font.PLAIN, FH);
-		System.out.println(font.getFamily());
-		String str = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz,.!? -'";
+		String str = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz,.!? -'0123456789<>";
 		for(int i = 0; i < str.length(); i++){
 			charPositions[str.charAt(i)] = i;
 		}

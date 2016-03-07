@@ -1,0 +1,13 @@
+package priv.hkon.theseq.nonblocks;
+
+import priv.hkon.theseq.sprites.Sprite;
+
+public class TileCover extends Sprite {
+
+	@Override
+	public void makeData() {
+		// TODO Auto-generated method stub
+
+	}
+
+}

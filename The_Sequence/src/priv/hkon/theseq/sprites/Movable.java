@@ -2,6 +2,8 @@ package priv.hkon.theseq.sprites;
 
 import java.util.LinkedList;
 
+import priv.hkon.theseq.structures.Building;
+import priv.hkon.theseq.world.Tile;
 import priv.hkon.theseq.world.Village;
 
 public abstract class Movable extends TalkativeSprite implements Runnable{
@@ -24,7 +26,7 @@ public abstract class Movable extends TalkativeSprite implements Runnable{
 	boolean isPlanningPath;
 	byte[] path;
 	int pathIndex = 0;
-	int targetX, targetY;
+	int pathTargetX, pathTargetY;
 	
 	public Movable(int x, int y, Village v){
 		super(x, y, v);
@@ -66,8 +68,8 @@ public abstract class Movable extends TalkativeSprite implements Runnable{
 		if(isPlanningPath || (x == this.x && y == this.y)){
 			return;
 		}
-		targetX = x;
-		targetY = y;
+		pathTargetX = x;
+		pathTargetY = y;
 		try{
 			new Thread(this).start();
 		}catch(Exception e){}
@@ -105,7 +107,7 @@ public abstract class Movable extends TalkativeSprite implements Runnable{
 		
 		isPlanningPath = true;
 		for(int i = 0; i < 1; i++){
-			hasPath = djikstra(targetX, targetY);
+			hasPath = djikstra(pathTargetX, pathTargetY);
 			if(hasPath){
 				pathIndex = 0;
 				break;
@@ -160,7 +162,7 @@ public abstract class Movable extends TalkativeSprite implements Runnable{
 			}
 			return true;
 		}else if(village.getSpriteAt(nx, ny).isStationary()){
-			startPathTo(targetX,targetY);
+			startPathTo(pathTargetX,pathTargetY);
 		}
 		return false;
 	}
@@ -190,6 +192,7 @@ public abstract class Movable extends TalkativeSprite implements Runnable{
 		LinkedList<Pair> pq = new LinkedList<Pair>();
 		boolean foundTarget = false;
 		pq.add(new Pair(this.x, this.y));
+		int count = 0;
 		while(!(pq.isEmpty())&&!foundTarget){
 			
 			Pair p = pq.poll();
@@ -199,6 +202,7 @@ public abstract class Movable extends TalkativeSprite implements Runnable{
 				fd = p.dist;
 				break;
 			}
+			count++;
 			
 			for(int i = 0; i < 4; i++){
 				int nx = p.x + dx[i];
@@ -207,7 +211,7 @@ public abstract class Movable extends TalkativeSprite implements Runnable{
 					continue;
 				}
 				if(village.getSpriteAt(nx, ny) != null){
-					if(!(p.dist > 0&&!village.getSpriteAt(nx, ny).isStationary())){
+					if(p.dist == 0|| village.getSpriteAt(nx, ny).isStationary()){
 						continue;
 					}
 				}
@@ -216,6 +220,13 @@ public abstract class Movable extends TalkativeSprite implements Runnable{
 				
 			}
 		}
+		/*if(count > 1000){
+			System.out.println(count + " " + getClass().getName());
+			StackTraceElement[] st = Thread.currentThread().getStackTrace();
+			for(int i = 0; i < st.length; i++){
+				System.out.println(st[i].toString());
+			}
+		}*/
 		if(!foundTarget){
 			return false;
 		}
@@ -278,29 +289,59 @@ public abstract class Movable extends TalkativeSprite implements Runnable{
 		return getDirectionTo(s.getX(), s.getY());
 	}
 	
+	public void exitBuilding(){
+		Building b = village.ownedBy(x, y);
+		if( b == null){
+			return;
+		}
+		
+		startPathTo(b.getEntrances()[0][0], b.getEntrances()[0][1]);
+	}
+	
 	void strollTownGrid(){
+		if(moving || hasPath|| isPlanningPath){
+			return;
+		}
+		if(village.ownedBy(x, y) != null){
+			exitBuilding();
+			return;
+		}
 		if(!village.contains(x,y)){
 			startPathTo(village.getTownStartX() + village.getTownWidth()/2, village.getTownStartY() + village.getTownHeight()/2);
 			return;
 		}
-
-		if((x - village.getTownStartX())%village.getHouseSpread() <= village.getHouseSide()){
-			if(x < village.getTownStartX() + village.getTownWidth()/2){
-				startPathTo(village.getTownWidth() + (x - village.getTownWidth() + village.getHouseSpread())/village.getHouseSpread()*village.getHouseSpread() - 3, y);
-			}else{
-				startPathTo(village.getTownWidth() + (x - village.getTownWidth())/village.getHouseSpread()*village.getHouseSpread() - 3, y);
+		if(village.getTileAt(x, y) != Tile.TYPE_REFINED_ROCK){
+			for(int i = 0; i< 4; i++){
+				if(village.getTileAt(x + dx[i], y + dy[i]) == Tile.TYPE_REFINED_ROCK){
+					if(tryStepTowards(x + dx[i], y + dy[i])){
+						return;
+					}
+				}
 			}
 			return;
-		}else if((y - village.getTownStartY())% village.getHouseSpread() <= village.getHouseSide()){
-			if(y < village.getTownStartY() + village.getTownHeight()/2){
-				startPathTo(x,village.getTownHeight() + (y - village.getTownHeight() + village.getHouseSpread())/village.getHouseSpread()*village.getHouseSpread() - 3);
+		}
+		
+			
+		int d;
+		if((d = (x - village.getTownStartX())%village.getHouseSpread()) <= village.getHouseSide() + 1 || d == village.getHouseSpread() - 1){
+			if(x < village.getTownStartX() + village.getTownWidth()/2){
+				startPathTo(village.getTownStartX() + (x - village.getTownStartX() + village.getHouseSpread())/village.getHouseSpread()*village.getHouseSpread() - 3, y);
 			}else{
-				startPathTo(x, village.getTownHeight() + (y - village.getTownHeight())/village.getHouseSpread()*village.getHouseSpread() - 3);
+				startPathTo(village.getTownStartX() + (x - village.getTownStartX())/village.getHouseSpread()*village.getHouseSpread() - 3, y);
+			}
+			return;
+		}else if((d = (y - village.getTownStartY())% village.getHouseSpread()) <= village.getHouseSide() + 1|| d == village.getHouseSpread() - 1){
+			
+			if(y < village.getTownStartY() + village.getTownHeight()/2){
+				startPathTo(x,village.getTownStartY() + (y - village.getTownStartY() + village.getHouseSpread())/village.getHouseSpread()*village.getHouseSpread() - 3);
+			}else{
+				startPathTo(x, village.getTownStartY() + (y - village.getTownStartY())/village.getHouseSpread()*village.getHouseSpread() - 3);
 			}
 			return;
 		}
 		int n = RAND.nextInt(4);
 		int i = 0;
+		
 		while((!village.contains(x + dx[n]*village.getHouseSpread(), y + dy[n]*village.getHouseSpread())) ||
 				village.ownedBy(x + dx[n]*village.getHouseSpread(), y + dy[n]*village.getHouseSpread()) != null){
 			//System.out.println((x + dx[n]*village.getHouseSpread())+ ", " + (y + dy[n]*village.getHouseSpread()) + " was not ok");

@@ -1,0 +1,11 @@
+package priv.hkon.theseq.blocks;
+
+public class Plant extends Block {
+
+	@Override
+	public void makeData() {
+		// TODO Auto-generated method stub
+
+	}
+
+}

@@ -1,6 +1,6 @@
 package priv.hkon.theseq.sprites;
 
-import priv.hkon.theseq.world.House;
+import priv.hkon.theseq.structures.House;
 import priv.hkon.theseq.world.Village;
 
 public class Mayor extends Villager {

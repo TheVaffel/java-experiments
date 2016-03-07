@@ -47,7 +47,14 @@ public abstract class Sprite {
 		return Math.abs(s.getX() - getX()) + Math.abs(s.getY() - getY());
 	}
 	
+	public int distTo(int nx, int ny){
+		return Math.abs(nx - x) + Math.abs(ny - y);
+	}
 	
+
+	public static int distBetween(int x1, int y1, int x2, int y2){
+		return Math.abs(x1 - x2) + Math.abs(y1 - y2);
+	}
 	
 	public static int getColor(int r, int g, int b){
 		return (255<<24) | (r<<16) | (g<<8) | b;
@@ -76,5 +83,17 @@ public abstract class Sprite {
 	public boolean isStationary(){
 		return true;
 	}
+	
+	public static int getRandomInt(int u){
+		int b =  ((u + 2211) << 2)^u *10007 ^ 7532;
+		return b< 0? -b: b;
+	}
+	
+	public static int getRandomInt(int u, int v){
+		int b = ((u + 2552) << 2)^(v + 33443)*33645^5313;
+		return b < 0? -b: b;
+	}
+	
+	
 	
 }

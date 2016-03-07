@@ -2,10 +2,10 @@ package priv.hkon.theseq.world;
 
 public abstract class Area {
 	
-	int x, y, w, h;
+	protected int x, y, w, h;
 	Village village;
 	
-	int tiles[][];
+	protected int tiles[][];
 	
 	public Area(int nx, int ny, int nw, int nh, Village v) {
 		x = nx;
