@@ -6,7 +6,6 @@
 <fullyQualifiedTypeName name="priv.hkon.theseq.sprites.Villager"/>
 <fullyQualifiedTypeName name="priv.hkon.theseq.sprites.Gardener"/>
 <fullyQualifiedTypeName name="java.util.Random"/>
-<fullyQualifiedTypeName name="priv.hkon.theseq.sprites.Sprite"/>
 <fullyQualifiedTypeName name="priv.hkon.theseq.nonblocks.NonBlock"/>
 <fullyQualifiedTypeName name="priv.hkon.theseq.nonblocks.Flowers"/>
 <fullyQualifiedTypeName name="priv.hkon.theseq.nonblocks.TileCover"/>
@@ -14,4 +13,5 @@
 <fullyQualifiedTypeName name="priv.hkon.theseq.nonblocks.Door"/>
 <fullyQualifiedTypeName name="priv.hkon.theseq.world.Building"/>
 <fullyQualifiedTypeName name="priv.hkon.theseq.world.Tile"/>
+<fullyQualifiedTypeName name="priv.hkon.theseq.sprites.Sprite"/>
 </qualifiedTypeNameHistroy>

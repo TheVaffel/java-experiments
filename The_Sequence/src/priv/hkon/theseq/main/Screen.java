@@ -8,6 +8,8 @@ import java.awt.image.DataBufferInt;
 
 import javax.swing.JFrame;
 
+import priv.hkon.theseq.sprites.Sprite;
+
 public class Screen extends JFrame{
 
 	private static final long serialVersionUID = 1L;
@@ -18,7 +20,8 @@ public class Screen extends JFrame{
 	Core core;
 	
 	BufferedImage mainImage;
-	int[] data;
+	BufferedImage gameImage;
+	int[] gameData;
 	Controller controller;
 	public int count = 0;
 	public static int[] charPositions;
@@ -33,13 +36,18 @@ public class Screen extends JFrame{
 	public static final int FW = FONT_WIDTH;
 	public static final int FH = FONT_HEIGHT;
 	
+	public BufferedImage titleScreen = null;
+	int[] titleData;
+	
 	public Screen(Core c){
 		core = c;
 		setSize(W*SCALE, H*SCALE);
 		initCharacters();
 		setResizable(false);
 		mainImage = new BufferedImage(W, H, BufferedImage.TYPE_INT_ARGB);
-		data = ((DataBufferInt)(mainImage.getRaster().getDataBuffer())).getData();
+		
+		gameImage = new BufferedImage(W, H, BufferedImage.TYPE_INT_ARGB);
+		gameData = ((DataBufferInt)(gameImage.getRaster().getDataBuffer())).getData();
 		controller = new Controller();
 		addKeyListener(controller);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -81,7 +89,8 @@ public class Screen extends JFrame{
 	}
 	
 	public void setData(int[][] ndata){
-		draw(data, W, H, ndata, ndata[0].length, ndata.length, 0, 0);
+		draw(gameData, W, H, ndata, ndata[0].length, ndata.length, 0, 0);
+		mainImage = gameImage;
 	}
 	
 	public void initCharacters(){
@@ -132,5 +141,77 @@ public class Screen extends JFrame{
 		b = (int)Math.max(b*factor, av*0.3);
 		
 		return (r<<16) | (g<<8) | b | (255 << 24);
+	}
+	
+	
+	int titleScreenCount = 0;
+	
+	String[] altTitles = {"The Sequence", "The_Sequence"};
+	int titleNum = 0;
+	
+	public void runTitleScreen(){
+		if(titleScreen == null){
+			titleScreen = new BufferedImage(W,H, BufferedImage.TYPE_INT_ARGB);
+			titleData = ((DataBufferInt)(titleScreen.getRaster().getDataBuffer())).getData();
+		}
+		
+		Graphics g = titleScreen.getGraphics();
+		g.setColor(new Color(70, 30, 30));
+		g.fillRect(0, 0, W, H);
+		for(int i = 0; i< H; i++){
+			
+			for(int j = 0; j< W; j++){
+				int re = titleData[i*W + j]>>16 & 255;
+				int gr = titleData[i*W + j] >> 8 & 255;
+				int bl = titleData[i*W + j] & 255;
+				
+				re *= Math.exp(-((i - H/2)*(i - H/2) + (j - W/2)*(j - W/2))/8955.0);
+				gr *= Math.exp(-((i - H/2)*(i - H/2) + (j - W/2)*(j - W/2))/8955.0);
+				bl *= Math.exp(-((i - H/2)*(i - H/2) + (j - W/2)*(j - W/2))/8955.0);
+				
+				
+				
+				/*if((r = Sprite.RAND.nextFloat()) < p/2){
+					re = 150;
+					gr = 60;
+					bl = 60;
+				}else if((r = Sprite.RAND.nextFloat()) < p){
+					re = gr = bl = 0;
+				}*/
+				
+				titleData[i*W + j] = (255 << 24) | re << 16 | gr << 8 | bl;
+				
+			}
+		}
+		
+		
+		
+		Font f = new Font("Courier", Font.PLAIN, 20);
+		g.setFont(f);
+		g.setColor(Color.BLACK);
+		if(Sprite.RAND.nextInt(10) == 0){
+			titleNum = (titleNum+1) % 2;
+		}
+		
+		String str = altTitles[titleNum];
+		
+		g.drawString(str, 30, 2*W/5);for(int i = 0; i< H; i++){
+			float p = Sprite.RAND.nextFloat()/10;
+			for(int j = 0; j < W ;j++){
+				int re = titleData[i*W + j]>>16 & 255;
+				int gr = titleData[i*W + j] >> 8 & 255;
+				int bl = titleData[i*W + j] & 255;
+				float r = Sprite.RAND.nextFloat();
+				
+				re += 3*p*re + 5*r;
+				gr += 3*p*gr + 5*r;
+				bl += 3*p*bl + 5*r;
+				
+				titleData[i*W + j] = (255 << 24) | re << 16 | gr << 8 | bl;
+			}
+		}
+		
+		mainImage = titleScreen;
+		update();
 	}
 }

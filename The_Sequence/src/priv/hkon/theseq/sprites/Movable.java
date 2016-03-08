@@ -192,7 +192,6 @@ public abstract class Movable extends TalkativeSprite implements Runnable{
 		LinkedList<Pair> pq = new LinkedList<Pair>();
 		boolean foundTarget = false;
 		pq.add(new Pair(this.x, this.y));
-		int count = 0;
 		while(!(pq.isEmpty())&&!foundTarget){
 			
 			Pair p = pq.poll();
@@ -202,7 +201,6 @@ public abstract class Movable extends TalkativeSprite implements Runnable{
 				fd = p.dist;
 				break;
 			}
-			count++;
 			
 			for(int i = 0; i < 4; i++){
 				int nx = p.x + dx[i];

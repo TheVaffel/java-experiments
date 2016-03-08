@@ -19,7 +19,6 @@ import priv.hkon.theseq.sprites.Player;
 import priv.hkon.theseq.sprites.Sprite;
 import priv.hkon.theseq.sprites.TalkativeSprite;
 import priv.hkon.theseq.sprites.Villager;
-import priv.hkon.theseq.structures.Bed;
 import priv.hkon.theseq.structures.Building;
 import priv.hkon.theseq.structures.House;
 import priv.hkon.theseq.structures.Structure;

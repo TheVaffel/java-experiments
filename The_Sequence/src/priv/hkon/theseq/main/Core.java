@@ -24,7 +24,24 @@ public class Core {
 	public void start(){
 		playing = true;
 		Tile.init();
+		//System.out.println("At first");
+		screen.runTitleScreen();
 		village = new Village();
+		//System.out.println("At last");
+		for(int i = 0; i< 3*30; i++){
+			village.tick();
+			screen.runTitleScreen();
+			try{
+				Thread.sleep(80);
+			}catch(Exception e){}
+		}
+		
+		//System.out.println("Here");
+		/*try {
+			Thread.sleep(1000000);
+		} catch (InterruptedException e1) {
+			e1.printStackTrace();
+		}*/
 		screen.setData(village.getScreenData(Screen.W, Screen.H));
 		long currentTime = System.nanoTime();
 		long lastTime = currentTime;
