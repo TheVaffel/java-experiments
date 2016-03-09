@@ -213,16 +213,24 @@ public class Screen extends JFrame{
 		}
 		
 		mainImage = titleScreen;
+		update();
 	}
 	
-	public void darkenTitle(int d){
-		float a = 1 - (float)d/255;
-		for(int i = 0; i< H; i++){
-			for(int j = 0 ; j < W ; j++){
-				int rgb = titleData[i*W + j];
-				titleData[i*W + j] = (255 << 24) | ((int)((rgb & (255 << 16))*a) & (255 << 16)) | ((int)((rgb & (255 << 8))*a) & (255<<8)) | ((int)((rgb & (255))*a) & (255));
-				//mainImage.setRGB(j, i, ((int)((rgb & (255 << 16))*a) & (255 << 16)) | ((int)((rgb & (255 << 8))*a) & (255 << 16)) | ((int)((rgb & (255))*a) & (255 << 16)));
+	public void fadeOut(){
+		BufferedImage bi = new BufferedImage(W, H, BufferedImage.TYPE_INT_ARGB);
+		Graphics g = bi.getGraphics();
+		for(int i = 0; i < H; i++){
+			for(int j = 0; j< W ;j++){
+				bi.setRGB(j, i, 3 << 24);
 			}
+		}
+		
+		mainImage = bi;
+		for(int i = 0; i< 50; i++){
+			update(getGraphics());
+			try{
+			Thread.sleep(30);
+			}catch(Exception e){}
 		}
 	}
 }

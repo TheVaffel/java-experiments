@@ -2,13 +2,11 @@ package priv.hkon.theseq.main;
 
 import priv.hkon.theseq.world.*;
 
-public class Core implements Runnable{ 
+public class Core { 
 	Screen screen;
 	public static final String TITLE = "The Sequence";
 	
 	Village village;
-	
-	boolean worldInitiated = false;
 
 	boolean playing = false;
 	static final double TICKS_PER_SECOND = 60;
@@ -25,26 +23,25 @@ public class Core implements Runnable{
 	
 	public void start(){
 		playing = true;
-		
-		new Thread(this).start();
+		Tile.init();
 		//System.out.println("At first");
-		while(!worldInitiated){
+		screen.runTitleScreen();
+		village = new Village();
+		//System.out.println("At last");
+		for(int i = 0; i< 3*30; i++){
+			village.tick();
 			screen.runTitleScreen();
-			screen.update();
 			try{
-				Thread.sleep(40);
-			}catch(Exception e){}
-		}
-		for(int i = 0; i < 255; i++){
-			screen.runTitleScreen();
-			screen.darkenTitle(i);
-			screen.update();
-			try{
-				Thread.sleep(40);
+				Thread.sleep(80);
 			}catch(Exception e){}
 		}
 		
-		
+		//System.out.println("Here");
+		/*try {
+			Thread.sleep(1000000);
+		} catch (InterruptedException e1) {
+			e1.printStackTrace();
+		}*/
 		screen.setData(village.getScreenData(Screen.W, Screen.H));
 		long currentTime = System.nanoTime();
 		long lastTime = currentTime;
@@ -76,6 +73,7 @@ public class Core implements Runnable{
 				if(System.nanoTime() - lastTime < 1000000000L/TICKS_PER_SECOND)
 					Thread.sleep((long)(1000.0/TICKS_PER_SECOND - (System.nanoTime() - lastTime)/1000000.0));
 			}catch(Exception e){}
+			//TODO: Fix some kind of loading screen while the worst FPS-drops lasts
 		}
 	}
 	
@@ -89,22 +87,6 @@ public class Core implements Runnable{
 	void draw(){
 		screen.setData(village.getScreenData(Screen.W, Screen.H));
 		screen.update();
-	}
-
-	@Override
-	public void run() {
-		Tile.init();
-		village = new Village();
-		//System.out.println("At last");
-		for(int i = 0; i< 3*30; i++){
-			village.tick();
-			
-			try{
-				Thread.sleep(30);
-			}catch(Exception e){}
-		}
-		
-		worldInitiated = true;
 	}
 
 }

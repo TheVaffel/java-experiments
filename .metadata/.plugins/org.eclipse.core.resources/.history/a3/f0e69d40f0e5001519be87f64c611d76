@@ -154,7 +154,6 @@ public class Screen extends JFrame{
 			titleScreen = new BufferedImage(W,H, BufferedImage.TYPE_INT_ARGB);
 			titleData = ((DataBufferInt)(titleScreen.getRaster().getDataBuffer())).getData();
 		}
-		titleScreenCount++;
 		
 		Graphics g = titleScreen.getGraphics();
 		g.setColor(new Color(70, 30, 30));
@@ -190,7 +189,7 @@ public class Screen extends JFrame{
 		Font f = new Font("Courier", Font.PLAIN, 20);
 		g.setFont(f);
 		g.setColor(Color.BLACK);
-		if(titleScreenCount%10 == 0){
+		if(Sprite.RAND.nextInt(10) == 0){
 			titleNum = (titleNum+1) % 2;
 		}
 		
@@ -213,16 +212,6 @@ public class Screen extends JFrame{
 		}
 		
 		mainImage = titleScreen;
-	}
-	
-	public void darkenTitle(int d){
-		float a = 1 - (float)d/255;
-		for(int i = 0; i< H; i++){
-			for(int j = 0 ; j < W ; j++){
-				int rgb = titleData[i*W + j];
-				titleData[i*W + j] = (255 << 24) | ((int)((rgb & (255 << 16))*a) & (255 << 16)) | ((int)((rgb & (255 << 8))*a) & (255<<8)) | ((int)((rgb & (255))*a) & (255));
-				//mainImage.setRGB(j, i, ((int)((rgb & (255 << 16))*a) & (255 << 16)) | ((int)((rgb & (255 << 8))*a) & (255 << 16)) | ((int)((rgb & (255))*a) & (255 << 16)));
-			}
-		}
+		update();
 	}
 }

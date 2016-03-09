@@ -216,7 +216,7 @@ public class Screen extends JFrame{
 	}
 	
 	public void darkenTitle(int d){
-		float a = 1 - (float)d/255;
+		float a = (float)d/255;
 		for(int i = 0; i< H; i++){
 			for(int j = 0 ; j < W ; j++){
 				int rgb = titleData[i*W + j];
