@@ -9,6 +9,8 @@ public class Conversation {
 	TalkativeSprite owner;
 	TalkativeSprite partner;
 	
+	Sentence lastSentence;
+	
 	boolean isOn = false;
 	
 	TalkativeSprite currTalker;
@@ -75,6 +77,7 @@ public class Conversation {
 				}
 				
 				currTalker.talk();
+				lastSentence = currTalker.getCurrSentence();
 			}
 		}
 		
@@ -82,6 +85,10 @@ public class Conversation {
 	
 	public Sprite getPartner(){
 		return partner;
+	}
+	
+	public Sentence getLastSentence(){
+		return lastSentence;
 	}
 	
 	public Sprite getOwner(){
@@ -98,5 +105,13 @@ public class Conversation {
 	
 	public boolean isOn(){
 		return isOn;
+	}
+	
+	public TalkativeSprite getOther(TalkativeSprite ts){
+		if(ts == partner){
+			return owner;
+		}
+		
+		return partner;
 	}
 }

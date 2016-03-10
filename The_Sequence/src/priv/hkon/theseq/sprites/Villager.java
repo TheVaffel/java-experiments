@@ -2,6 +2,7 @@ package priv.hkon.theseq.sprites;
 
 import priv.hkon.theseq.misc.Conversation;
 import priv.hkon.theseq.misc.Notification;
+import priv.hkon.theseq.misc.Sentence;
 import priv.hkon.theseq.structures.House;
 import priv.hkon.theseq.world.Village;
 
@@ -69,15 +70,7 @@ public class Villager extends Citizen{
 			{"Hmmmm....", "Maybe...", "Erm.. What about.."}
 	};
 	
-	public static final int QUESTION_SELF_CONDITION = 0;
-	public static final int QUESTION_RELATION_TO_ASKER = 1;
-	public static final int QUESTION_MEANING_OF_LIFE = 2;
 	
-	public static final String[][] GENERAL_QUESTIONS = {
-			{"How are you?", "How is your life by now?", "Are you having a good time?"},
-			{"Honestly, what do you think of me?", "How am I in your eyes?" , "If you were to choose between a night with me or a day with Hitler, what would you do?"},
-			{"What is the meaning of our existence anyway?", "Is there more out there, or is this village all the world has got?", "WHY ARE WE HERE?"}
-	};
 	
 	public int expectingVisit = -1;
 	public boolean expectingSeveralVisits = false;
@@ -230,7 +223,11 @@ public class Villager extends Citizen{
 	}
 	
 	void askQuestion(int r){
-		sentence.add(GENERAL_QUESTIONS[r][RAND.nextInt(GENERAL_QUESTIONS[r].length)]);
+		currSentence = new Sentence(conversation.getOther(this), Sentence.TYPE_QUESTION, r, this);
+		String[] sent = currSentence.getStrings();
+		for(int i = 0; i < sent.length; i++){
+			sentence.add(sent[i]);
+		}
 		setDialogString(sentence.poll());
 		showDialog(3*60);
 	}

@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import priv.hkon.theseq.misc.Conversation;
 import priv.hkon.theseq.misc.DialogBubble;
 import priv.hkon.theseq.misc.Notification;
+import priv.hkon.theseq.misc.Sentence;
 import priv.hkon.theseq.world.Village;
 
 public abstract class TalkativeSprite extends Sprite{
@@ -15,6 +16,7 @@ public abstract class TalkativeSprite extends Sprite{
 	protected int timeSinceDialogReset;
 	
 	protected Conversation conversation;
+	protected Sentence currSentence;
 	
 	LinkedList<String> sentence = new LinkedList<String>();
 	LinkedList<Notification> receivedNotifications = new LinkedList<Notification>();
@@ -89,6 +91,15 @@ public abstract class TalkativeSprite extends Sprite{
 		setDialogString("Aaaah, why will nobody listen?");
 		showDialog(60*2);
 	}
+	
+	public Sentence getCurrSentence(){
+		return currSentence;
+	}
+	
+	public void talk(){
+		conversation.finishedSentence();
+	}
+	
 	
 	
 

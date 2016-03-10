@@ -7,6 +7,7 @@ import priv.hkon.theseq.blocks.Tree;
 import priv.hkon.theseq.main.Controller;
 import priv.hkon.theseq.main.Screen;
 import priv.hkon.theseq.misc.DialogBubble;
+import priv.hkon.theseq.misc.Sentence;
 import priv.hkon.theseq.nonblocks.Door;
 import priv.hkon.theseq.nonblocks.Flowers;
 import priv.hkon.theseq.nonblocks.NonBlock;
@@ -70,6 +71,7 @@ public class Village {
 	public Village(){
 		random = new Random();
 		Villager.init();
+		Sentence.village = this;
 		
 		buildVillage();
 		
