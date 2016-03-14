@@ -24,11 +24,18 @@ public class Bed extends Structure {
 			}
 		}
 		
+		for(int i = Sprite.H/4 + Tile.HEIGHT; i  < Sprite.H; i++){
+			for(int j = 0; j < Sprite.W; j++){
+				data1[i][j] = Sprite.getColor(220, 220, 220);
+			}
+		}
+		
 		blocks[0][0] = new SubBlock(x, y, data1, this, village);
 		
 		int[][] data2 = new int[Sprite.H][Sprite.W];
 		
-		for(int i = Sprite.H/4; i < Sprite.H; i++){
+		
+		for(int i = 2*Sprite.H/5; i < Sprite.H; i++){
 			for(int j = 0; j < Sprite.W; j++){
 				double d = Math.sqrt(Math.abs(j - Sprite.W/2));
 				data2[i][j] = Sprite.getColor((int)(200 - 15*d), (int)(200 - 15*d), (int)(200 - 15*d));

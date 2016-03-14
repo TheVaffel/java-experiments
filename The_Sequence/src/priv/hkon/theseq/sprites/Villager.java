@@ -3,6 +3,7 @@ package priv.hkon.theseq.sprites;
 import priv.hkon.theseq.misc.Conversation;
 import priv.hkon.theseq.misc.Notification;
 import priv.hkon.theseq.misc.Sentence;
+import priv.hkon.theseq.structures.Bed;
 import priv.hkon.theseq.structures.House;
 import priv.hkon.theseq.world.Village;
 
@@ -26,6 +27,8 @@ public class Villager extends Citizen{
 	Sprite targetSprite;
 	int modeTargetX;
 	int modeTargetY;
+	
+	int dayCycleShift;
 	
 	boolean hasPausedMode = false;
 	int pausedMode;
@@ -54,6 +57,8 @@ public class Villager extends Citizen{
 	public static final int MODE_WORKING = 5;
 	public static final int MODE_FLEEING = 6;
 	public static final int MODE_THINKING = 7;
+	public static final int MODE_RELAXING = 8;
+	public static final int MODE_SLEEPING = 9;
 	
 	public static final int IMPORTANT_NOT = 0;
 	public static final int IMPORTANT_LITTLE = 1;
@@ -67,7 +72,9 @@ public class Villager extends Citizen{
 			{},
 			{},
 			{},
-			{"Hmmmm....", "Maybe...", "Erm.. What about.."}
+			{"Hmmmm....", "Maybe...", "Erm.. What about.."},
+			{"Life is good..."},
+			{"Zzz"}
 	};
 	
 	
@@ -86,6 +93,8 @@ public class Villager extends Citizen{
 		for(int j = 0; j < affections.length; j++){
 			affections[j] = .0f + RAND.nextFloat()*.20f;
 		}
+		targetMode = MODE_RELAXING;
+		dayCycleShift = RAND.nextInt(60*60);
 	}
 
 	@Override
@@ -156,6 +165,9 @@ public class Villager extends Citizen{
 				}else{
 					relaxAtHome();
 				}
+				if(isBedTime()){
+					goToBed();
+				}
 				break;
 			case MODE_CHASE_OUT_OF_HOUSE: 
 				chaseOut();
@@ -167,6 +179,9 @@ public class Villager extends Citizen{
 				break;
 			case MODE_WORKING:
 				work();
+				if(isBedTime()){
+					//goToBed();
+				}
 				break;
 			case MODE_FLEEING:
 				if(distTo(targetSprite) > RANGE_OF_VIEW*1.5){
@@ -175,7 +190,21 @@ public class Villager extends Citizen{
 					}else{
 						runAway();
 					}
+				}break;
+			case MODE_RELAXING: {
+				if(!hasPath){
+					strollTownGrid();
 				}
+				if(isBedTime()){
+					goToBed();
+				}
+				break;
+			}
+			
+			case MODE_SLEEPING: {
+				sleep();
+				break;
+			}
 		}
 		if(super.tick()){
 			return true;
@@ -204,6 +233,10 @@ public class Villager extends Citizen{
 			return true;
 		}
 		return false;
+	}
+	
+	boolean isBedTime(){
+		return (village.getTime() - dayCycleShift)%Village.DAYCYCLE_DURATION > 2*Village.DAYCYCLE_DURATION/3;
 	}
 	
 	void runAway(){
@@ -327,6 +360,40 @@ public class Villager extends Citizen{
 				tryStartMoving(n);
 			}
 		}
+	}
+	
+	public void goToBed(){
+		targetMode = MODE_SLEEPING;
+		targetSprite = home.getBed().getBlockAt(0, 1);
+		startPathTo(home.getBed().getX(), home.getBed().getY() + 1);
+	}
+	
+	public void sleep(){//Needs some serious debugging
+		if(moving){
+			return;
+		}
+		if(hasPath && (village.getNonBlockAt(pathTargetX, pathTargetY) == null || !(village.getNonBlockAt(pathTargetX, pathTargetY).getStructure() instanceof Bed))){
+			goToBed();
+			return;
+		}
+		if(!hasPath&&(village.getNonBlockAt(x, y) == null ||!(village.getNonBlockAt(x, y).getStructure() instanceof Bed))){
+			goToBed();
+			return;
+		}
+		
+		if(Sprite.RAND.nextInt(2000) == 0){
+			setDialogString(getRandomDialog(MODE_SLEEPING));
+			showDialog(60*2);
+		}
+		
+		if(!isBedTime()){
+			targetMode = MODE_RELAXING;
+			targetSprite = null;
+		}
+	}
+	
+	public String getRandomDialog(int g){
+		return DIALOG_STRINGS[g][RAND.nextInt(DIALOG_STRINGS[g].length)];
 	}
 	
 	public void chaseOut(){
@@ -535,7 +602,6 @@ public class Villager extends Citizen{
 				}
 			}
 		}
-		
 	}
 
 }

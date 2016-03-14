@@ -46,7 +46,6 @@ public class House extends Building{
 				tiles[i][j] = Tile.TYPE_WOODEN_FLOOR;
 			}
 		}
-		
 	}
 
 	@Override

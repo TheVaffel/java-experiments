@@ -12,7 +12,8 @@
 <fullyQualifiedTypeName name="priv.hkon.theseq.blocks.Tree"/>
 <fullyQualifiedTypeName name="priv.hkon.theseq.nonblocks.Door"/>
 <fullyQualifiedTypeName name="priv.hkon.theseq.world.Building"/>
-<fullyQualifiedTypeName name="priv.hkon.theseq.world.Tile"/>
 <fullyQualifiedTypeName name="priv.hkon.theseq.sprites.Sprite"/>
 <fullyQualifiedTypeName name="priv.hkon.theseq.misc.Sentence"/>
+<fullyQualifiedTypeName name="priv.hkon.theseq.world.Tile"/>
+<fullyQualifiedTypeName name="priv.hkon.theseq.structures.Bed"/>
 </qualifiedTypeNameHistroy>

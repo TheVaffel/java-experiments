@@ -64,9 +64,11 @@ public class Village {
 	double tilesPerPixelX = 1.0/Tile.WIDTH;
 	double tilesPerPixelY = 1.0/Tile.HEIGHT;
 	
-	long time = 0;
 	
-	int dayCycleDuration = 60*60*20;
+	
+	public static final int DAYCYCLE_DURATION = 60*60*20;
+	
+	long time = 3*DAYCYCLE_DURATION/3 - 60*20;
 	
 	public Village(){
 		random = new Random();
@@ -107,7 +109,7 @@ public class Village {
 		
 		
 		for(int i = 0; i< numVillagers - 2; i++){
-			villagers[i]= new Villager( getTownStartX()  + i, getTownStartY() - 2/*townGrid[i/townGridSide][i%townGridSide].getX() + houseSide/2, townGrid[i/townGridSide][i%townGridSide].getY() + houseSide/2*/, this, townGrid[i/townGridSide][i%townGridSide], i);
+			villagers[i]= new Villager(townGrid[i/townGridSide][i%townGridSide].getX() + houseSide/2, townGrid[i/townGridSide][i%townGridSide].getY() + houseSide/2, this, townGrid[i/townGridSide][i%townGridSide], i);
 			addSprite(villagers[i]);
 		}
 		
@@ -131,10 +133,10 @@ public class Village {
 		citizenList[numVillagers] = player;
 		addSprite(player); 
 		
-		villagers[numVillagers - 2] = new Gardener(player.getX() - 2, player.getY(), this, townGrid[0][0], numVillagers - 2);
+		villagers[numVillagers - 2] = new Gardener(player.getX() - 2, player.getY(), this, townGrid[6][6], numVillagers - 2);
 		addSprite(villagers[numVillagers - 2]);
 		
-		villagers[numVillagers - 1] = new Mayor(player.getX() - 2, player.getY() - 2, this, townGrid[0][0], numVillagers - 1);
+		villagers[numVillagers - 1] = new Mayor(player.getX() - 2, player.getY() - 2, this, townGrid[6][5], numVillagers - 1);
 		addSprite(villagers[numVillagers - 1]);
 		villagers[0].debug = true;
 	}
@@ -372,6 +374,10 @@ public class Village {
 		return sprites[y][x];
 	}
 	
+	public NonBlock getNonBlockAt(int x, int y){
+		return nonBlocks[y][x];
+	}
+	
 	public void switchPlaces(Movable s, Movable t){
 		sprites[s.getY()][s.getX()] = null;
 		t.tryStartMoving(t.getMovingDirection());
@@ -381,7 +387,7 @@ public class Village {
 	}
 	
 	public float getNightFactor(){
-		return Math.max( Math.min((float)(0.65+ 1*Math.sin((time%dayCycleDuration)*2*Math.PI/dayCycleDuration)), 1), 0);
+		return Math.max( Math.min((float)(0.65+ 1*Math.sin((time%DAYCYCLE_DURATION)*2*Math.PI/DAYCYCLE_DURATION)), 1), 0);
 	}
 	
 	public boolean isOwnedBy(int x, int y, Building b){
@@ -414,6 +420,14 @@ public class Village {
 	
 	public int getTownWidth(){
 		return houseSpread*townGridSide;
+	}
+	
+	public int getTownMiddleX(){
+		return townGridMiddleX;
+	}
+	
+	public int getTownMiddleY(){
+		return townGridMiddleY;
 	}
 	
 	public int getTownHeight(){
