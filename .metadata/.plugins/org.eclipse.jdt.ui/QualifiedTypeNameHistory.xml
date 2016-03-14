@@ -14,4 +14,5 @@
 <fullyQualifiedTypeName name="priv.hkon.theseq.world.Building"/>
 <fullyQualifiedTypeName name="priv.hkon.theseq.world.Tile"/>
 <fullyQualifiedTypeName name="priv.hkon.theseq.sprites.Sprite"/>
+<fullyQualifiedTypeName name="priv.hkon.theseq.misc.Sentence"/>
 </qualifiedTypeNameHistroy>

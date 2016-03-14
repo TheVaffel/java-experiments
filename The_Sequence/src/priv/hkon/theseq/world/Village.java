@@ -105,18 +105,11 @@ public class Village {
 		
 		citizenList = new Citizen[numVillagers + 1];
 		
-		player = new Player(townGridStartX + houseSpread - 1, townGridStartY + houseSpread - 1, this, numVillagers);
-		addSprite(player); 
+		
 		for(int i = 0; i< numVillagers - 2; i++){
 			villagers[i]= new Villager( getTownStartX()  + i, getTownStartY() - 2/*townGrid[i/townGridSide][i%townGridSide].getX() + houseSide/2, townGrid[i/townGridSide][i%townGridSide].getY() + houseSide/2*/, this, townGrid[i/townGridSide][i%townGridSide], i);
 			addSprite(villagers[i]);
 		}
-		villagers[numVillagers - 2] = new Gardener(player.getX() - 2, player.getY(), this, townGrid[0][0], numVillagers - 2);
-		addSprite(villagers[numVillagers - 2]);
-		
-		villagers[numVillagers - 1] = new Mayor(player.getX() - 2, player.getY() - 2, this, townGrid[0][0], numVillagers - 1);
-		addSprite(villagers[numVillagers - 1]);
-		villagers[0].debug = true;
 		
 		
 		for(int i = 0; i< H; i++){
@@ -133,20 +126,32 @@ public class Village {
 				}
 			}
 		}
+		
+		player = new Player(townGridStartX + houseSpread - 1, townGridStartY + houseSpread - 1 - 450, this, numVillagers);
+		citizenList[numVillagers] = player;
+		addSprite(player); 
+		
+		villagers[numVillagers - 2] = new Gardener(player.getX() - 2, player.getY(), this, townGrid[0][0], numVillagers - 2);
+		addSprite(villagers[numVillagers - 2]);
+		
+		villagers[numVillagers - 1] = new Mayor(player.getX() - 2, player.getY() - 2, this, townGrid[0][0], numVillagers - 1);
+		addSprite(villagers[numVillagers - 1]);
+		villagers[0].debug = true;
 	}
 	
 	public int[][] getScreenData(int w, int h){ //TODO: Fix screen continuously filling with black at high Y's
 		int[][] data = new int[h][w];
 		
-		int tilesInWidth = (int)Math.ceil(tilesPerPixelX*w) + 1;
-		int tilesInHeight = (int) Math.ceil(tilesPerPixelY*h) + 1;
-		
-		int[][] rawdata = new int[tilesInHeight*Tile.HEIGHT][tilesInWidth*Tile.WIDTH];
 		int beginTileX = (int)(Math.floor(camX));
 		int beginTileY = (int)(Math.floor(camY));
 		
 		int initY = Math.max(-beginTileY, 0);
 		int initX = Math.max(-beginTileX, 0);
+		
+		int tilesInWidth = Math.min((int)Math.ceil(tilesPerPixelX*w) + 1, W - beginTileX);
+		int tilesInHeight = Math.min((int) Math.ceil(tilesPerPixelY*h) + 1, H-beginTileY);
+		
+		int[][] rawdata = new int[tilesInHeight*Tile.HEIGHT][tilesInWidth*Tile.WIDTH];
 
 		for(int i = initY; i < tilesInHeight ; i++){
 			for(int j = initX; j < tilesInWidth; j++){
@@ -160,8 +165,9 @@ public class Village {
 				}
 			}
 		}
+		int boundY = Math.min(tilesInHeight  + 1, H - beginTileY);
 		
-		for(int i = initY; i < tilesInHeight +1; i++){
+		for(int i = initY; i < boundY; i++){
 			for(int j = initX; j < tilesInWidth; j++){
 				int dx = 0;
 				int dy = 0;
@@ -190,7 +196,7 @@ public class Village {
 			}
 		}
 		
-		for(int i = initY; i < tilesInHeight +1; i++){
+		for(int i = initY; i < boundY; i++){
 			for(int j = initX; j < tilesInWidth; j++){
 				int dx = 0;
 				int dy = 0;
@@ -225,14 +231,8 @@ public class Village {
 		double sumx = 0;
 		for(int i = 0; i<h ; i++ ){
 			for(int j = 0; j<w; j++){
-				if(camY*Tile.HEIGHT + sumy< 0 || camX*Tile.WIDTH + sumx< 0
-						|| camX + sumx >= W || camY + sumy >= H){
-					
-					data[i][j] = Sprite.getColor(0, 0, 0);
-				}else{
 				
-					data[i][j] = rawdata[(int)(camTileBeginY + sumy)][(int)(camTileBeginX + sumx)];
-				}
+				data[i][j] = rawdata[(int)(camTileBeginY + sumy)][(int)(camTileBeginX + sumx)];
 				sumx+= stepX;
 			}
 			sumx = 0;
