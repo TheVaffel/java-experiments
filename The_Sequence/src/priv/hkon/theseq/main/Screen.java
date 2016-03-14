@@ -15,8 +15,8 @@ public class Screen extends JFrame{
 	private static final long serialVersionUID = 1L;
 	
 	public static final int W = 200;
-	public static final int H = 200;
-	public static final int SCALE = 3;
+	public static final int H = 150;
+	public static final int SCALE = 4;
 	Core core;
 	
 	BufferedImage mainImage;
@@ -196,7 +196,7 @@ public class Screen extends JFrame{
 		
 		String str = altTitles[titleNum];
 		
-		g.drawString(str, 30, 2*W/5);for(int i = 0; i< H; i++){
+		g.drawString(str, 30, 2*H/5);for(int i = 0; i< H; i++){
 			float p = Sprite.RAND.nextFloat()/10;
 			for(int j = 0; j < W ;j++){
 				int re = titleData[i*W + j]>>16 & 255;

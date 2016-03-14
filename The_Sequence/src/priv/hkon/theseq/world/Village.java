@@ -127,7 +127,7 @@ public class Village {
 			}
 		}
 		
-		player = new Player(townGridStartX + houseSpread - 1, townGridStartY + houseSpread - 1 - 450, this, numVillagers);
+		player = new Player(townGridStartX + houseSpread - 1, townGridStartY + houseSpread - 1, this, numVillagers);
 		citizenList[numVillagers] = player;
 		addSprite(player); 
 		

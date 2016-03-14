@@ -11,38 +11,58 @@ public class Player extends Citizen {
 	}
 	
 	@Override
-	public void makeData() {//TODO: Make some actual design
-		for(int i = 0; i < H; i++){
-			for(int j = 0; j< W; j++){
-				data[i][j] = 0;
-			}
+	public void makeData() {
+		byte[] b = new byte[3];
+		RAND.nextBytes(b);
+		for(int i = 0; i < 3; i++){
+			b[i] = (byte) (Math.abs(b[i]));
 		}
-		
+		//coatColor = Sprite.getColor(b[0], b[1], b[2]);
 		for(int i = 0; i < H; i++){
-			for(int j = Tile.WIDTH/3; j< 2*Tile.WIDTH/3; j++){
-				data[i][j] = Sprite.getColor(255, 0, 0);
-			}
-		}
-	}
-	
-	public void makeAnimationFrames(){
-		numFrames = 8;
-		numAnimations = 1;
-		animationFrames = new int[numAnimations][numFrames][H][W];
-		
-		for(int i = 0; i < numFrames; i++){
-			for(int py = H - (int)(2*H/3 + H*Math.sin(((float)(i))/numFrames*Math.PI*2)/3 - 2); py < H; py++){
-				for(int x = W/3; x < 2*W/3; x++){
-					animationFrames[0][i][py][x] = Sprite.getColor(255, 0, 0);
+			for(int j = 0; j < W; j++){
+				int d = (j-W/2)*(j-W/2) + (i - Villager.HEAD_OFFSET_Y)*(i - Villager.HEAD_OFFSET_Y);
+				int c = 255;
+				if(Math.abs(j - W/2) < ((float)i - Villager.HEAD_OFFSET_Y)/3){
+					int p = (int) (30*Math.exp(-0.5*(int)Math.abs((j - W/2 - (float)(i-Villager.HEAD_OFFSET_Y)/5))));
+					data[i][j] = Sprite.getColor( b[0] + p, b[1] + p, b[2] + p);
+				}
+				if(d < Villager.HEAD_SQ_RADIUS){
+					c -= Math.sqrt(d)*15;
+					data[i][j] = Sprite.getColor(c, c, c);
 				}
 			}
 		}
 	}
 	
+	public void makeAnimationFrames(){
+		numFrames = 1;
+		numAnimations = 4;
+		animationFrames = new int[numAnimations][numFrames][H][W];
+
+		//coatColor = Sprite.getColor(b[0], b[1], b[2]);
+		for(int i = 0; i < numAnimations; i++){
+			for(int j = 0; j < H; j++){
+				for( int k = 0; k < W ; k++){
+					animationFrames[i][0][j][k] = data[j][k];
+				}
+			}
+				
+		}
+		//int ringColor = Sprite.getColor(0, 128, 128);
+		int black = Sprite.getColor(0, 0, 0);
+
+		
+		animationFrames[DOWN][0][Villager.HEAD_OFFSET_Y][W/2 - 2] = black;
+		animationFrames[DOWN][0][Villager.HEAD_OFFSET_Y][W/2 + 2] = black;
+		
+		animationFrames[RIGHT][0][Villager.HEAD_OFFSET_Y][W/2 + 4] = black;
+		animationFrames[LEFT][0][Villager.HEAD_OFFSET_Y][W/2 - 4] = black;
+	}
+	
 	public boolean tick(){
 		boolean b = super.tick();
 		
-		data = animationFrames[0][Math.min((int)(getMovedFraction()*numFrames), numFrames - 1)];
+		data = animationFrames[movingDirection][Math.min((int)(getMovedFraction()*numFrames), numFrames - 1)];
 		return b;
 	}
 

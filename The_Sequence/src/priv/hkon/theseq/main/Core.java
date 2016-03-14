@@ -35,7 +35,7 @@ public class Core implements Runnable{
 				Thread.sleep(40);
 			}catch(Exception e){}
 		}
-		for(int i = 0; i < 255; i++){
+		for(int i = 0; i < 255; i+=10){
 			screen.runTitleScreen();
 			screen.darkenTitle(i);
 			screen.update();
