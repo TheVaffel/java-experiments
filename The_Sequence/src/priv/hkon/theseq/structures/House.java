@@ -9,6 +9,8 @@ public class House extends Building{
 	
 	//TODO: Furniture, please!
 	
+	Bed bed;
+	
 	public House(int nx, int ny, int nw, int nh, Village v){
 		super(nx, ny, nw, nh, v);
 	}
@@ -24,7 +26,7 @@ public class House extends Building{
 			blocks[i][w - 1] = new Wall(x + w -1, y + i, village);
 		}
 		
-		Bed bed = new Bed(0, 0, village);
+		bed = new Bed(0, 0, village);
 		addStructure(bed, 1, 1);
 	}
 	
@@ -54,5 +56,9 @@ public class House extends Building{
 		entrances = new int[1][2];
 		entrances[0][0] = w/2;
 		entrances[0][1] = h-1;
+	}
+	
+	public Bed getBed(){
+		return bed;
 	}
 }
