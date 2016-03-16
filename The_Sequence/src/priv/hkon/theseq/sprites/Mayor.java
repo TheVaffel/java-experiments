@@ -39,6 +39,7 @@ public class Mayor extends Villager {
 		return;
 	}
 	
-	
-
+	public String getName(){
+		return "the mayor";
+	}
 }

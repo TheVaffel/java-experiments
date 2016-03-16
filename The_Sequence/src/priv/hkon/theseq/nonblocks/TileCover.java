@@ -4,7 +4,7 @@ import priv.hkon.theseq.sprites.Sprite;
 import priv.hkon.theseq.world.Tile;
 import priv.hkon.theseq.world.Village;
 
-public class TileCover extends Sprite {
+public abstract class TileCover extends Sprite {
 	
 	public static final int W = Tile.WIDTH;
 	public static final int H = Tile.HEIGHT;
@@ -17,5 +17,7 @@ public class TileCover extends Sprite {
 	public void makeData() {
 
 	}
+	
+	public abstract String getName();
 
 }

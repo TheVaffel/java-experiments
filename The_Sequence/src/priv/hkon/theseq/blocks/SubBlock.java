@@ -14,5 +14,9 @@ public class SubBlock extends Block { // A class with no particular data, to sup
 	public void makeData() {
 
 	}
+	
+	public String getName(){
+		return structure.getName();
+	}
 
 }

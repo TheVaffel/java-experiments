@@ -45,9 +45,12 @@ public class Villager extends Citizen{
 	float[] affections; //Numbers from -1 to 1 which tells how much this citizen likes the others.
 	
 	public static final int CONDITION_ANGER = 0;
-	public static final int CONDITION_FEAR = 1;
+	public static final int CONDITION_FEAR = 1;//NB: Assumes that conditions are negative in getSelfConditionInt()
 	
 	float[] conditions = new float[]{0.0f, 0.0f};
+	public static final String[] CONDITION_STRINGS = {
+			"angry", "afraid"
+	};
 	
 	public static final int MODE_RELAX_AT_HOME = 0;
 	public static final int MODE_CHASE_OUT_OF_HOUSE = 1;
@@ -125,7 +128,7 @@ public class Villager extends Citizen{
 		return home.contains(x, y);
 	}
 	
-	public boolean tick(){//TODO: Add a plausible day-night cycle
+	public boolean tick(){
 		data = animationFrames[movingDirection][0];
 		if(!isInsideHome()){
 			timeSinceHome++;
@@ -194,7 +197,8 @@ public class Villager extends Citizen{
 			case MODE_RELAXING: {
 				if(!hasPath){
 					strollTownGrid();
-				}
+				}//TODO: Make Villager working partially on daytime
+				//TODO: Make Villager more talkative in Relax mode
 				if(isBedTime()){
 					goToBed();
 				}
@@ -250,18 +254,19 @@ public class Villager extends Citizen{
 		startPathTo(getX(), getY() + 2 + i);
 	}
 	
-	void openRandomConversation(){
-		//TODO: Make this some general conversation starter
-	}
-	
 	void askQuestion(int r){
 		currSentence = new Sentence(conversation.getOther(this), Sentence.TYPE_QUESTION, r, this);
+		saySentence(currSentence);
+	}
+	
+	void saySentence(Sentence s){
+		currSentence = s;
 		String[] sent = currSentence.getStrings();
 		for(int i = 0; i < sent.length; i++){
 			sentence.add(sent[i]);
 		}
 		setDialogString(sentence.poll());
-		showDialog(3*60);
+		showDialog(2*60);
 	}
 	
 	public void processConversation(){
@@ -286,8 +291,6 @@ public class Villager extends Citizen{
 	}
 	
 	void disconnectFromTalk(){
-		setDialogString("Yeah, yeah...");
-		showDialog(2*60);
 		conversation.disconnect(this);
 		conversation = null;
 		if(hasPausedMode){
@@ -381,15 +384,25 @@ public class Villager extends Citizen{
 			return;
 		}
 		
+		//The villager is in bed
+		
+		movingDirection = UP;
+		
 		if(Sprite.RAND.nextInt(2000) == 0){
 			setDialogString(getRandomDialog(MODE_SLEEPING));
 			showDialog(60*2);
 		}
 		
 		if(!isBedTime()){
+			wakeUp();
 			targetMode = MODE_RELAXING;
 			targetSprite = null;
 		}
+	}
+	
+	public void wakeUp(){
+		movingDirection = DOWN;
+		timeToWait = 60*1;
 	}
 	
 	public String getRandomDialog(int g){
@@ -560,13 +573,133 @@ public class Villager extends Citizen{
 		}
 	}
 	
-	public void talk(){//TODO: Make subject react to previous sentence in conversation
-		if(conversation.getOwner() == this){
-			askQuestion(0);
+	public void talk(){
+		/*if(conversation.getOwner() == this){
+			askQuestion(RAND.nextInt(Sentence.QUESTIONS.length));
 		}else{
+			
+			
 			disconnectFromTalk();
+		}*/
+		
+		int id = RAND.nextInt(village.getNumCitizens());
+		while(id == this.citizenNumber || (conversation.getOther(this) instanceof Citizen && id == ((Citizen)(conversation.getOther(this))).getCitizenNumber())){
+			id = (id + 1)% village.getNumCitizens();
+		}
+		
+		if(conversation.getLastSentence() == null){
+			saySentence(new Sentence(conversation.getOther(this), Sentence.TYPE_GREETING, Sentence.GREETING_NEUTRAL, this));
+		}else{
+			float aff;
+			if(conversation.getOther(this) instanceof Citizen){
+				aff = affections[((Citizen)(conversation.getOther(this))).getCitizenNumber()];
+			}else{
+				aff = 0;
+			}
+			int type = conversation.getLastSentence().getType();
+			if(conversation.getSentenceCount() == 1){
+				saySentence(new Sentence(conversation.getOther(this),Sentence.TYPE_GREETING, Sentence.GREETING_NEUTRAL, this));
+				return;
+			}else if(type == Sentence.TYPE_GREETING){
+				saySentence(new Sentence(conversation.getOther(this), Sentence.TYPE_QUESTION, this, village.getCitizen(id)));
+				return;
+			}
+			if(conversation.getOther(this) instanceof Player){
+				return;
+			}
+			if(type == Sentence.TYPE_QUESTION){
+				saySentence(getAnswer(conversation.getLastSentence().getArg2()));
+				return;
+			}else if(type == Sentence.TYPE_CUSTOM_ANSWER){
+				
+				saySentence(new Sentence(conversation.getOther(this), Sentence.TYPE_RESPONSE, Math.min(Math.max((int)(2*Sentence.meaningWeight[conversation.getLastSentence().getArg2()]*aff) + 1, 0), 2), this));
+				return;
+			}else if(type == Sentence.TYPE_GOODBYE){
+				saySentence(new Sentence(conversation.getOther(this), Sentence.TYPE_GOODBYE, Math.min(Math.max((int)(aff + 1), 0), 2), this));
+				disconnectFromTalk();
+				return;
+			}else{
+				saySentence(new Sentence(conversation.getOther(this), Sentence.TYPE_GOODBYE, Math.min(Math.max((int)(aff + 1), 0), 2), this));
+				return;
+			}
+			//disconnectFromTalk();
 		}
 	}
+	
+	Sentence getAnswer(int type){
+		switch(type){
+		case Sentence.QUESTION_MEANING_OF_LIFE: 
+			return new Sentence(conversation.getOther(this), Sentence.TYPE_CUSTOM_ANSWER, Sentence.CUSTOM_ANSWER_NEUTRAL, new String[] {getMeaningOfLife()}, this);
+		case Sentence.QUESTION_RELATION_TO:
+			return new Sentence(conversation.getOther(this), Sentence.TYPE_CUSTOM_ANSWER, getRelationToInt(conversation.getLastSentence().getTopic()), new String[] {getRelationToString(conversation.getLastSentence().getTopic())}, this);
+		case Sentence.QUESTION_SELF_CONDITION:
+			return new Sentence(conversation.getOther(this), Sentence.TYPE_CUSTOM_ANSWER, getOwnConditionInt(), new String[]{getOwnConditionString()}, this, this);
+		}
+		return new Sentence(conversation.getOther(this), Sentence.TYPE_CUSTOM_ANSWER, Sentence.CUSTOM_ANSWER_NEUTRAL, new String[]{"..."}, this);
+	}
+	
+	public String getRelationToString(Sprite s){
+		if( s instanceof Citizen){
+			float aff = affections[((Citizen)s).getCitizenNumber()];
+			if( Math.abs(aff) < 0.4){
+				return "Ok, I guess";
+			}
+			if(aff < 0){
+				return "Em " + Sentence.VERBS[RAND.nextInt(Sentence.VERBS.length)] + " like "
+						+Sentence.ADJECTIVES[Sentence.ADJECTIVES_NEGATIVE][RAND.nextInt(Sentence.ADJECTIVES[Sentence.ADJECTIVES_NEGATIVE].length)] + 
+						" " + Sentence.NOUNS[Sentence.NOUN_NEGATIVE][RAND.nextInt(Sentence.NOUNS[Sentence.NOUN_NEGATIVE].length)];
+			}else{
+				return "Em " + Sentence.VERBS[RAND.nextInt(Sentence.VERBS.length)] + " like "
+						+Sentence.ADJECTIVES[Sentence.ADJECTIVES_POSITIVE][RAND.nextInt(Sentence.ADJECTIVES[Sentence.ADJECTIVES_POSITIVE].length)] + 
+						" " + Sentence.NOUNS[Sentence.NOUN_POSITIVE][RAND.nextInt(Sentence.NOUNS[Sentence.NOUN_POSITIVE].length)];
+			}
+		}else{
+			return "Ok... I guess?";
+		}
+	}
+	
+	public int getRelationToInt(Sprite s){
+		if( s instanceof Citizen){
+			float aff = affections[((Citizen)s).getCitizenNumber()];
+			if( Math.abs(aff) < 0.4){
+				return Sentence.CUSTOM_ANSWER_NEUTRAL;
+			}
+			if(aff < 0){
+				return Sentence.CUSTOM_ANSWER_NEGATIVE;
+				
+			}else{
+				return Sentence.CUSTOM_ANSWER_POSITIVE;
+			}
+		}else{
+			return Sentence.CUSTOM_ANSWER_NEUTRAL;
+		}
+	}
+	
+	public String getOwnConditionString(){
+		for(int i = 0; i < conditions.length; i++){
+			if(conditions[i] > 0.7){
+				return "I am actually kinda " + CONDITION_STRINGS + " now";
+			}
+		}
+		
+		return "I am totally fine";
+	}
+	
+	public int getOwnConditionInt(){
+		for(int i = 0; i < conditions.length; i++){
+			if(conditions[i] > 0.7){
+				return Sentence.CUSTOM_ANSWER_NEGATIVE;
+			}
+		}
+		
+		return Sentence.CUSTOM_ANSWER_NEUTRAL;
+		
+		
+	}
+	
+	public String getMeaningOfLife(){
+		return "I dunno.";
+	};
 	
 	public void deniedConversation(){
 		conversation = null;
@@ -602,6 +735,10 @@ public class Villager extends Citizen{
 				}
 			}
 		}
+	}
+	
+	public String getName(){
+		return "Number " + getCitizenNumber();
 	}
 
 }

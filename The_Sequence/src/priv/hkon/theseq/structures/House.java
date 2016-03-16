@@ -60,4 +60,8 @@ public class House extends Building{
 	public Bed getBed(){
 		return bed;
 	}
+	
+	public String getName(){
+		return "house";
+	}
 }

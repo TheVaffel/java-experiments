@@ -39,4 +39,8 @@ public class Wall extends Block {
 		}
 	}
 	
+	public String getName(){
+		return "wall";
+	}
+	
 }

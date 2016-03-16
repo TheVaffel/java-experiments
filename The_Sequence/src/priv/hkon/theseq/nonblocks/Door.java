@@ -44,4 +44,8 @@ public class Door extends NonBlock{
 		}
 		return false;
 	}
+	
+	public String getName(){
+		return "door";
+	}
 }

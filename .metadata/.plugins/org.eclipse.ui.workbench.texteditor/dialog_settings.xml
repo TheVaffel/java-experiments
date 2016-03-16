@@ -2,22 +2,23 @@
 <section name="Workbench">
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog">
 		<item value="false" key="isRegEx"/>
-		<item value="goToBed" key="selection"/>
+		<item value="RESPONSE" key="selection"/>
 		<item value="false" key="casesensitive"/>
 		<item value="false" key="incremental"/>
 		<item value="true" key="wrap"/>
 		<item value="false" key="wholeword"/>
 		<list key="findhistory">
+			<item value="ANSWER"/>
+			<item value="sleep"/>
+			<item value="ask"/>
 			<item value="gotobed"/>
 			<item value="run"/>
 			<item value="followx"/>
 			<item value="follow"/>
 			<item value="startPathTo"/>
-			<item value="time"/>
-			<item value="exit"/>
-			<item value="goto"/>
 		</list>
 		<list key="replacehistory">
+			<item value="RESPONSE"/>
 			<item value="guest"/>
 		</list>
 	</section>
@@ -25,7 +26,7 @@
 		<item value="324" key="DIALOG_WIDTH"/>
 		<item value="1|Ubuntu|11.0|0|GTK|1|" key="DIALOG_FONT_NAME"/>
 		<item value="435" key="DIALOG_HEIGHT"/>
-		<item value="472" key="DIALOG_X_ORIGIN"/>
-		<item value="79" key="DIALOG_Y_ORIGIN"/>
+		<item value="893" key="DIALOG_X_ORIGIN"/>
+		<item value="101" key="DIALOG_Y_ORIGIN"/>
 	</section>
 </section>

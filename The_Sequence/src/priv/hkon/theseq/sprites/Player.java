@@ -64,5 +64,9 @@ public class Player extends Citizen {
 		data = animationFrames[movingDirection][Math.min((int)(getMovedFraction()*numFrames), numFrames - 1)];
 		return b;
 	}
+	
+	public String getName(){
+		return "Newcomer";
+	}
 
 }

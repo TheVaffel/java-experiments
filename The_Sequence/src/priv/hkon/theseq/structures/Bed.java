@@ -51,5 +51,9 @@ public class Bed extends Structure {
 	@Override
 	public void makeTiles() {
 	}
+	
+	public String getName(){
+		return "bed";
+	}
 
 }

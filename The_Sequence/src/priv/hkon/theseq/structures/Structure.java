@@ -38,4 +38,6 @@ public abstract class Structure extends Area{
 	public void setY(int ny){
 		y = ny;
 	}
+	
+	public abstract String getName();
 }

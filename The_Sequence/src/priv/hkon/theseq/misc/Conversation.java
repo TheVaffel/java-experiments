@@ -18,7 +18,7 @@ public class Conversation {
 	
 	boolean finished = false;
 	
-	int lastSentenceStart;
+	int sentenceCount = 0;
 
 	public Conversation(TalkativeSprite o, TalkativeSprite p, int importance) {
 		owner = o;
@@ -26,6 +26,7 @@ public class Conversation {
 		currTalker = owner;
 		
 		this.importance = importance;
+		lastSentence = null;
 		
 		invite();
 	}
@@ -74,10 +75,12 @@ public class Conversation {
 			if(isOn){
 				if(owner.distTo(partner) >Villager.RANGE_OF_VIEW*1.5){
 					owner.deniedConversation();
+					return;
 				}
-				
+				sentenceCount++;
 				currTalker.talk();
 				lastSentence = currTalker.getCurrSentence();
+				
 			}
 		}
 		
@@ -105,6 +108,10 @@ public class Conversation {
 	
 	public boolean isOn(){
 		return isOn;
+	}
+	
+	public int getSentenceCount(){
+		return sentenceCount;
 	}
 	
 	public TalkativeSprite getOther(TalkativeSprite ts){

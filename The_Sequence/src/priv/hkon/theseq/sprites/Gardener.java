@@ -93,6 +93,8 @@ public class Gardener extends Villager {
 		}
 	}
 	
-	
+	public String getName(){
+		return "the gardener";
+	}
 
 }

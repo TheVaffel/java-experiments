@@ -139,6 +139,10 @@ public class Village {
 		villagers[numVillagers - 1] = new Mayor(player.getX() - 2, player.getY() - 2, this, townGrid[6][5], numVillagers - 1);
 		addSprite(villagers[numVillagers - 1]);
 		villagers[0].debug = true;
+		
+		for(int i = 0;i < numVillagers; i++){
+			citizenList[i] = villagers[i];
+		}
 	}
 	
 	public int[][] getScreenData(int w, int h){

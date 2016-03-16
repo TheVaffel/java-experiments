@@ -14,5 +14,9 @@ public class SubNonBlock extends NonBlock { // Nonblock equivalent to SubBlock -
 	public void makeData() {
 
 	}
+	
+	public String getName(){
+		return structure.getName();
+	}
 
 }

@@ -26,5 +26,9 @@ public class Flowers extends TileCover {
 		}
 
 	}
+	
+	public String getName(){
+		return "flowers";
+	}
 
 }

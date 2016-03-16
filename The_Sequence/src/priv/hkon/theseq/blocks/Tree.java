@@ -30,4 +30,8 @@ public class Tree extends Plant {
 	/*public boolean tick(){
 		return true;
 	}*/
+	
+	public String getName(){
+		return "tree";
+	}
 }

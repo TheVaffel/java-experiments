@@ -35,6 +35,8 @@ public abstract class Sprite {
 		makeData();
 		makeAnimationFrames();
 	}
+	
+	public abstract String getName();
 
 	
 	public abstract void makeData();
