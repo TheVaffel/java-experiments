@@ -1,11 +1,14 @@
 package priv.hkon.theseq.misc;
 
+import java.io.Serializable;
+
 import priv.hkon.theseq.sprites.Sprite;
 import priv.hkon.theseq.sprites.TalkativeSprite;
 import priv.hkon.theseq.sprites.Villager;
 
-public class Conversation {
+public class Conversation  implements Serializable{
 	
+	private static final long serialVersionUID = -6621616468501779179L;
 	TalkativeSprite owner;
 	TalkativeSprite partner;
 	

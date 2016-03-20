@@ -5,6 +5,7 @@ import priv.hkon.theseq.world.Village;
 
 public class Mayor extends Villager {
 	
+	private static final long serialVersionUID = -1375679852859624804L;
 	Sprite lastVictim;
 
 	public Mayor(int x, int y, Village v, House h, int i) {

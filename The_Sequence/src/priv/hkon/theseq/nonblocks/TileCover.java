@@ -6,6 +6,7 @@ import priv.hkon.theseq.world.Village;
 
 public abstract class TileCover extends Sprite {
 	
+	private static final long serialVersionUID = 6948279460203116282L;
 	public static final int W = Tile.WIDTH;
 	public static final int H = Tile.HEIGHT;
 

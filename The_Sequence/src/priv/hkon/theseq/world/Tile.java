@@ -1,10 +1,13 @@
 package priv.hkon.theseq.world;
 
+import java.io.Serializable;
 import java.util.Random;
 
 import priv.hkon.theseq.sprites.Sprite;
 
-public class Tile {
+public class Tile implements Serializable{
+
+	private static final long serialVersionUID = 1321213765905618212L;
 	public static final int TYPE_EMPTY = 0;
 	public static final int TYPE_GRASS = 1;
 	public static final int TYPE_ROCK = 2;

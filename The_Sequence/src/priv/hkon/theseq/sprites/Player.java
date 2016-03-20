@@ -4,6 +4,8 @@ import priv.hkon.theseq.world.Village;
 
 public class Player extends Citizen {
 	
+	private static final long serialVersionUID = -3488395255346822868L;
+
 	public Player(int x, int y, Village v, int i){
 		super(x, y, v, i);
 		moveSpeed = 0.125f;

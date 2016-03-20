@@ -1,11 +1,17 @@
 package priv.hkon.theseq.misc;
 
+import java.io.Serializable;
+
 import priv.hkon.theseq.main.Screen;
 import priv.hkon.theseq.sprites.Sprite;
 import priv.hkon.theseq.world.Tile;
 
-public class DialogBubble {
+public class DialogBubble implements Serializable{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1658731957901153906L;
 	String[] str;
 	Sprite sprite;
 	int[][] data;

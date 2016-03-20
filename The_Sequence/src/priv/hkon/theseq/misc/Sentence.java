@@ -1,10 +1,13 @@
 package priv.hkon.theseq.misc;
 
+import java.io.Serializable;
+
 import priv.hkon.theseq.sprites.Sprite;
 import priv.hkon.theseq.world.Village;
 
-public class Sentence {
+public class Sentence  implements Serializable{
 	
+	private static final long serialVersionUID = -1551240943294103269L;
 	public static final int TYPE_STATEMENT = 0;
 	public static final int TYPE_QUESTION = 1;
 	public static final int TYPE_RESPONSE = 2;

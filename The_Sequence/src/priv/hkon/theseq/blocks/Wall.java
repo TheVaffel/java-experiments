@@ -7,6 +7,8 @@ import priv.hkon.theseq.world.Village;
 
 public class Wall extends Block {
 
+	private static final long serialVersionUID = -2762765267384958235L;
+
 	public Wall(int nx, int ny, Village v) {
 		super(nx, ny, v);
 	}

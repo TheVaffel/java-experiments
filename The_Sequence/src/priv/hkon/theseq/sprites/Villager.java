@@ -9,6 +9,7 @@ import priv.hkon.theseq.world.Village;
 
 public class Villager extends Citizen{
 	
+	private static final long serialVersionUID = 6040911560799224747L;
 	House home;
 	int timeSinceHome;
 	int citizenNumber;

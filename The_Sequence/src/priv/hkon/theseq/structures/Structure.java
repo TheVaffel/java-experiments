@@ -6,7 +6,8 @@ import priv.hkon.theseq.world.Area;
 import priv.hkon.theseq.world.Village;
 
 public abstract class Structure extends Area{
-	
+
+	private static final long serialVersionUID = 363205869190954961L;
 	Block[][] blocks;
 	NonBlock[][] nonBlocks;
 	

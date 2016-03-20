@@ -1,7 +1,10 @@
 package priv.hkon.theseq.world;
 
-public abstract class Area {
+import java.io.Serializable;
+
+public abstract class Area implements Serializable{
 	
+	private static final long serialVersionUID = 5337909119183453964L;
 	protected int x, y, w, h;
 	protected Village village;
 	

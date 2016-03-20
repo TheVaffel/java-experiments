@@ -5,6 +5,7 @@ import priv.hkon.theseq.world.Village;
 
 public abstract class Building extends Structure{
 	
+	private static final long serialVersionUID = -4378685563749284722L;
 	boolean closed[][];
 	int[][] entrances;
 	

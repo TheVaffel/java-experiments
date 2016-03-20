@@ -1,6 +1,14 @@
 package priv.hkon.theseq.main;
 
-import priv.hkon.theseq.world.*;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+
+import priv.hkon.theseq.world.Tile;
+import priv.hkon.theseq.world.Village;
 
 public class Core implements Runnable{ 
 	Screen screen;
@@ -22,6 +30,9 @@ public class Core implements Runnable{
 	public Core(){
 		screen = new Screen(this);
 	}
+	
+	long currentTime = System.nanoTime();
+	long lastTime = currentTime;
 	
 	public void start(){
 		playing = true;
@@ -46,8 +57,8 @@ public class Core implements Runnable{
 		
 		
 		screen.setData(village.getScreenData(Screen.W, Screen.H));
-		long currentTime = System.nanoTime();
-		long lastTime = currentTime;
+		currentTime = System.nanoTime();
+		lastTime = currentTime;
 		
 		double unprocessedSeconds = 0.0;
 		
@@ -94,11 +105,10 @@ public class Core implements Runnable{
 	@Override
 	public void run() {
 		Tile.init();
-		village = new Village();
+		village = new Village(this);
 		//System.out.println("At last");
 		for(int i = 0; i< 3*30; i++){
 			village.tick();
-			
 			try{
 				Thread.sleep(30);
 			}catch(Exception e){}
@@ -107,4 +117,61 @@ public class Core implements Runnable{
 		worldInitiated = true;
 	}
 
+	public void saveVillage(int savenr){
+		String filename = "saves/" + savenr + ".sav";
+		ObjectOutputStream oos = null;
+		try{
+			oos= new ObjectOutputStream(new FileOutputStream(filename));
+			oos.writeObject(village);
+			village.lastSave = village.getTime();
+		}catch(Exception e){
+			e.printStackTrace();
+			System.out.println(e.toString());
+		}finally{
+			if(oos != null){
+				try {
+					oos.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+	
+	public void loadImage(int savenr){
+		String filename = "saves/"  + savenr + ".sav";
+		ObjectInputStream ois = null;
+		try{
+			ois = new ObjectInputStream(new FileInputStream(filename));
+			village = (Village)ois.readObject();
+			village.setCore(this);
+			currentTime = System.nanoTime();
+			lastTime = currentTime;
+		}catch(FileNotFoundException e){
+			e.printStackTrace();
+		}
+		catch(Exception e){
+			e.printStackTrace();
+		}
+		finally{
+			if(ois != null){
+				try {
+					ois.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		
+		try{
+			Thread.sleep(1000);
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+	
+	public void resyncornizeTime(){
+		currentTime = System.nanoTime();
+		lastTime = currentTime;
+	}
 }

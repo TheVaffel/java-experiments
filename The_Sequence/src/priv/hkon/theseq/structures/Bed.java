@@ -8,6 +8,8 @@ import priv.hkon.theseq.world.Village;
 
 public class Bed extends Structure {
 
+	private static final long serialVersionUID = -937898542135684735L;
+
 	public Bed(int nx, int ny, Village v) {
 		super(nx, ny, 1, 2, v);
 	}

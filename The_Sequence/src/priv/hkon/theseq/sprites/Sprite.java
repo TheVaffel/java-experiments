@@ -1,12 +1,15 @@
 package priv.hkon.theseq.sprites;
 
+import java.io.Serializable;
 import java.util.Random;
 
 import priv.hkon.theseq.world.Tile;
 import priv.hkon.theseq.world.Village;
 
-public abstract class Sprite {
+public abstract class Sprite implements Serializable{
 	
+	private static final long serialVersionUID = -1951040426546012965L;
+
 	protected int x, y;
 	
 	public static int W = Tile.WIDTH;
@@ -77,10 +80,6 @@ public abstract class Sprite {
 	public int getY(){
 		return y;
 	}
-	
-	//TODO: Add an abstract String getName() method, to make sentences more meaningful
-	
-	
 	
 	public boolean isStationary(){
 		return true;

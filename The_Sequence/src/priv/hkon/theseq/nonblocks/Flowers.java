@@ -6,6 +6,8 @@ import priv.hkon.theseq.world.Village;
 
 public class Flowers extends TileCover {
 
+	private static final long serialVersionUID = 3291673876930304108L;
+
 	public Flowers(int nx, int ny, Village v) {
 		super(nx, ny, v);
 	}

@@ -8,7 +8,7 @@ import priv.hkon.theseq.world.Village;
 public class House extends Building{
 	
 	//TODO: Furniture, please!
-	
+	private static final long serialVersionUID = 4881967309687458228L;
 	Bed bed;
 	
 	public House(int nx, int ny, int nw, int nh, Village v){

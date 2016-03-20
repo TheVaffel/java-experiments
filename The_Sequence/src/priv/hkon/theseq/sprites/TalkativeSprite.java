@@ -10,6 +10,7 @@ import priv.hkon.theseq.world.Village;
 
 public abstract class TalkativeSprite extends Sprite{
 	
+	private static final long serialVersionUID = -1535401130566740803L;
 	protected DialogBubble dialog;
 	public boolean showDialog = false;
 	protected int dialogDuration;

@@ -5,6 +5,9 @@ import priv.hkon.theseq.world.Village;
 
 public class Tree extends Plant {
 
+	private static final long serialVersionUID = 1351870665040962763L;
+
+
 	public Tree(int nx, int ny, Village v) {
 		super(nx, ny, v);
 	}

@@ -8,6 +8,7 @@ import priv.hkon.theseq.world.Village;
 
 public abstract class Movable extends TalkativeSprite implements Runnable{
 	
+	private static final long serialVersionUID = -9039857717987864993L;
 	public static final int LEFT = 0;
 	public static final int DOWN = 1;
 	public static final int RIGHT =2;

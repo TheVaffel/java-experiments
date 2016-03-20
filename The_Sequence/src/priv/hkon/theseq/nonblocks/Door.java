@@ -6,6 +6,7 @@ import priv.hkon.theseq.world.Village;
 
 public class Door extends NonBlock{
 	
+	private static final long serialVersionUID = -3739666237324233745L;
 	int timeSinceUnblocked = 0;
 
 	public Door(int nx, int ny, Village v) {

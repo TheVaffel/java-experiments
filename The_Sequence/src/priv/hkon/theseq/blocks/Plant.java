@@ -4,6 +4,7 @@ import priv.hkon.theseq.world.Village;
 
 public abstract class Plant extends Block {
 	
+	private static final long serialVersionUID = -412419105242631929L;
 	float health = 100.0f;
 
 	public Plant(int nx, int ny, Village v) {
