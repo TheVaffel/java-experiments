@@ -1,0 +1,20 @@
+package priv.hkon.theseq.cutscenes;
+
+import java.util.ArrayList;
+
+import priv.hkon.theseq.filters.Filter;
+
+public abstract class Cutscene {
+	int tickCount;
+	Filter currFilter;
+	ArrayList<Happening> happenings;
+	
+	
+	
+	
+	
+	public abstract class Happening{
+		Sprite sprite;
+		public abstract void do();
+	}
+}

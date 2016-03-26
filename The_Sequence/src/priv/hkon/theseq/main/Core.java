@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
+import priv.hkon.theseq.filters.CombinedFilter;
+import priv.hkon.theseq.filters.Filter;
 import priv.hkon.theseq.world.Tile;
 import priv.hkon.theseq.world.Village;
 
@@ -17,6 +19,11 @@ public class Core implements Runnable{
 	Village village;
 	
 	boolean worldInitiated = false;
+	
+	Filter cutsceneFilter = Filter.NO_FILTER;
+	Filter villageFilter = Filter.NO_FILTER;
+	
+	boolean changedFilter = false;
 
 	boolean playing = false;
 	static final double TICKS_PER_SECOND = 60;
@@ -35,7 +42,6 @@ public class Core implements Runnable{
 	long lastTime = currentTime;
 	
 	public void start(){
-		playing = true;
 		
 		new Thread(this).start();
 		//System.out.println("At first");
@@ -48,19 +54,22 @@ public class Core implements Runnable{
 		}
 		for(int i = 0; i < 255; i+=10){
 			screen.runTitleScreen();
-			screen.darkenTitle(i);
+			screen.darkenImage(i);
 			screen.update();
 			try{
 				Thread.sleep(40);
 			}catch(Exception e){}
 		}
+		village.initOpeningScene();
 		
-		
-		screen.setData(village.getScreenData(Screen.W, Screen.H));
+		//screen.setData(village.getScreenData(Screen.W, Screen.H));
 		currentTime = System.nanoTime();
 		lastTime = currentTime;
 		
-		double unprocessedSeconds = 0.0;
+		playing = true;
+		
+		
+		double unprocessedSeconds = .02;
 		
 		int numTicks = 0;
 		int fps = 0;
@@ -92,14 +101,32 @@ public class Core implements Runnable{
 	
 	void tick(){
 		screen.count++;
-		//System.out.println("Into tick");
 		village.tick();
-		//System.out.println("Out of tick");
+	}
+	
+	public void setCutsceneFilter(Filter f){
+		if(f != cutsceneFilter){
+			cutsceneFilter = f;
+			changedFilter = true;
+		}
+	}
+	
+	public void setVillageFilter(Filter f){
+		if(f != villageFilter){
+			changedFilter = true;
+			villageFilter = f;
+		}
+		
 	}
 	
 	void draw(){
 		screen.setData(village.getScreenData(Screen.W, Screen.H));
+		
+		if(changedFilter){
+			screen.setFilter(new CombinedFilter(villageFilter, cutsceneFilter));
+		}
 		screen.update();
+		changedFilter = false;
 	}
 
 	@Override

@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename method &apos;priv.hkon.theseq.world.Village.createStartArea()&apos; to &apos;createStartAreaAndPlayer&apos;&#x0A;- Original project: &apos;The_Sequence&apos;&#x0A;- Original element: &apos;priv.hkon.theseq.world.Village.createStartArea()&apos;&#x0A;- Renamed element: &apos;priv.hkon.theseq.world.Village.createStartAreaAndPlayer()&apos;&#x0A;- Update references to refactored element" delegate="false" deprecate="false" description="Rename method &apos;createStartArea&apos;" flags="589830" id="org.eclipse.jdt.ui.rename.method" input="/src&lt;priv.hkon.theseq.world{Village.java[Village~createStartArea" name="createStartAreaAndPlayer" references="true" stamp="1458929979932" version="1.0"/>
+</session>

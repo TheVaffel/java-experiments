@@ -1,0 +1,26 @@
+package priv.hkon.theseq.cutscenes;
+
+import priv.hkon.theseq.main.Core;
+
+public class OpeningScene extends Cutscene {
+	
+	Player player;
+	Prophet prophet;
+
+	public OpeningScene(Player player, Prophet prophet, Core core) {
+		super(core);
+		this.player = player;
+		this.prophet = prophet;
+	}
+
+	@Override
+	public void tick() {
+
+	}
+
+	@Override
+	public boolean isFinished() {
+		return false;
+	}
+
+}

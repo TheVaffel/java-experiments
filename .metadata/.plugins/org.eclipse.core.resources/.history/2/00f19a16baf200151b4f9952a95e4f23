@@ -1,0 +1,23 @@
+package priv.hkon.theseq.sprites;
+
+import priv.hkon.theseq.structures.House;
+import priv.hkon.theseq.world.Village;
+
+public class Prophet extends Villager {
+
+	public Prophet(int x, int y, Village v, House h, int i) {
+		super(x, y, v, h, i);
+		// TODO Auto-generated constructor stub
+	}
+	
+	public boolean tick(){
+		return super.tick();
+	}
+	
+	public void work(){
+		if(!hasPath){
+			strollTownGrid();
+		}
+	}
+
+}

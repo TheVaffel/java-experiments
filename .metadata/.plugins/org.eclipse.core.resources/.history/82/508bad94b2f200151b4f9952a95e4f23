@@ -1,0 +1,13 @@
+package priv.hkon.theseq.filters;
+
+public class DarkenFilter extends Filter {
+	
+	int darkness = 0;
+	
+	@Override
+	public void apply(int[][] data) {
+		// TODO Auto-generated method stub
+
+	}
+
+}

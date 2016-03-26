@@ -1,0 +1,34 @@
+package priv.hkon.theseq.cutscenes;
+
+import priv.hkon.theseq.filters.DarkenFilter;
+import priv.hkon.theseq.main.Core;
+import priv.hkon.theseq.sprites.Player;
+import priv.hkon.theseq.sprites.Prophet;
+
+public class OpeningScene extends Cutscene {
+	
+	Player player;
+	Prophet prophet;
+	
+	DarkenFilter darkenFilter;
+
+	public OpeningScene(Player player, Prophet prophet, Core core) {
+		super(core);
+		this.player = player;
+		this.prophet = prophet;
+		currFilter = new DarkenFilter(0);
+	}
+
+	@Override
+	public void tick() {
+		if(tickCount < 120){
+			(())
+		}
+	}
+
+	@Override
+	public boolean isFinished() {
+		return false;
+	}
+
+}

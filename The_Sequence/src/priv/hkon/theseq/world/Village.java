@@ -5,6 +5,8 @@ import java.io.Serializable;
 import java.util.Random;
 
 import priv.hkon.theseq.blocks.Tree;
+import priv.hkon.theseq.cutscenes.Cutscene;
+import priv.hkon.theseq.cutscenes.OpeningScene;
 import priv.hkon.theseq.main.Controller;
 import priv.hkon.theseq.main.Core;
 import priv.hkon.theseq.main.Screen;
@@ -19,6 +21,7 @@ import priv.hkon.theseq.sprites.Gardener;
 import priv.hkon.theseq.sprites.Mayor;
 import priv.hkon.theseq.sprites.Movable;
 import priv.hkon.theseq.sprites.Player;
+import priv.hkon.theseq.sprites.Prophet;
 import priv.hkon.theseq.sprites.Sprite;
 import priv.hkon.theseq.sprites.TalkativeSprite;
 import priv.hkon.theseq.sprites.Villager;
@@ -34,6 +37,9 @@ public class Village implements Serializable{
 	public static final int H = 1000;
 	
 	Random random;
+	
+	public Cutscene currScene;
+	public boolean inCutscene;
 	
 	int[][] tiles = new int[H][W];
 	Sprite[][] sprites = new Sprite[H][W];
@@ -110,15 +116,6 @@ public class Village implements Serializable{
 			addArea(r);
 		}
 		
-		citizenList = new Citizen[numVillagers + 1];
-		
-		
-		for(int i = 0; i< numVillagers - 2; i++){
-			villagers[i]= new Villager(townGrid[i/townGridSide][i%townGridSide].getX() + houseSide/2, townGrid[i/townGridSide][i%townGridSide].getY() + houseSide/2, this, townGrid[i/townGridSide][i%townGridSide], i);
-			addSprite(villagers[i]);
-		}
-		
-		
 		for(int i = 0; i< H; i++){
 			for(int j = 0; j < W ; j++){
 				if(nonBlocks[i][j] instanceof Door){
@@ -134,20 +131,61 @@ public class Village implements Serializable{
 			}
 		}
 		
-		player = new Player(townGridStartX + houseSpread - 1, townGridStartY + houseSpread - 1, this, numVillagers);
+		citizenList = new Citizen[numVillagers + 1];
+		
+		createStartSet();
+		int i;
+		for(i = 0; i< numVillagers - 3; i++){
+			villagers[i]= new Villager(townGrid[i/townGridSide][i%townGridSide].getX() + houseSide/2, townGrid[i/townGridSide][i%townGridSide].getY() + houseSide/2, this, townGrid[i/townGridSide][i%townGridSide], i);
+			addSprite(villagers[i]);
+		}
+
+		i++;
+		
+		villagers[i] = new Gardener(townGrid[i/townGridSide][i%townGridSide].getX() + houseSide/2, townGrid[i/townGridSide][i%townGridSide].getY() + houseSide/2, this, townGrid[i/townGridSide][i%townGridSide], i);
+		addSprite(villagers[i]);
+		
+		i++;
+		
+		villagers[i] = new Mayor(townGrid[i/townGridSide][i%townGridSide].getX() + houseSide/2, townGrid[i/townGridSide][i%townGridSide].getY() + houseSide/2, this, townGrid[i/townGridSide][i%townGridSide], i);
+		addSprite(villagers[i]);
+		
+		villagers[0].debug = true;
+		
+		for(i = 0;i < numVillagers; i++){
+			citizenList[i] = villagers[i];
+		}
+	}
+	
+	public void createStartSet(){
+		int sy = townGridMiddleY + 100;
+		int sx = townGridMiddleX - 20;
+		
+		int w = 8;
+		int h = 18;
+		
+		for(int i = sy; i < sy + h; i++){
+			for( int j = sx ; j < sx + w; j++){
+				sprites[i][j] = null;
+				if(Sprite.RAND.nextInt(4) == 0){
+					addTileCover(new Flowers(j, i, this));
+				}
+			}
+		}
+		player = new Player(sx + w/2, sy + h/2, this, numVillagers);
 		citizenList[numVillagers] = player;
 		addSprite(player); 
 		
-		villagers[numVillagers - 2] = new Gardener(player.getX() - 2, player.getY(), this, townGrid[6][6], numVillagers - 2);
-		addSprite(villagers[numVillagers - 2]);
+		int i = numVillagers - 3;
+		Prophet p = new Prophet(sx + w/2, sy, this, townGrid[i/townGridSide][i%townGridSide], i);
+		villagers[i] = p;
+		addSprite(villagers[i]);
 		
-		villagers[numVillagers - 1] = new Mayor(player.getX() - 2, player.getY() - 2, this, townGrid[6][5], numVillagers - 1);
-		addSprite(villagers[numVillagers - 1]);
-		villagers[0].debug = true;
-		
-		for(int i = 0;i < numVillagers; i++){
-			citizenList[i] = villagers[i];
-		}
+		currScene = new OpeningScene(player, p, core);
+	}
+	
+	public void initOpeningScene(){
+		inCutscene = true;
 	}
 	
 	public int[][] getScreenData(int w, int h){
@@ -258,6 +296,14 @@ public class Village implements Serializable{
 	
 	public void tick(){
 		handleSaveLoadInput();
+		
+		if(inCutscene){
+			currScene.tick();
+			if(currScene.isFinished()){
+				inCutscene = false;
+				currScene = null;
+			}
+		}
 		for(int i = 0; i < H; i++){
 			for(int j = 0; j <W; j++){
 				if(sprites[i][j] != null)
@@ -330,7 +376,7 @@ public class Village implements Serializable{
 		else if(Controller.input[KeyEvent.VK_RIGHT]){
 			dir = Movable.RIGHT;
 		}
-		if(dir != -1){
+		if(dir != -1 && !player.isPartOfCutscene){
 			player.tryStartMoving(dir);
 		}
 		

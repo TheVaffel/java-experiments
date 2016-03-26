@@ -19,6 +19,8 @@ public abstract class TalkativeSprite extends Sprite{
 	protected Conversation conversation;
 	protected Sentence currSentence;
 	
+	public boolean isPartOfCutscene = false;
+	
 	LinkedList<String> sentence = new LinkedList<String>();
 	LinkedList<Notification> receivedNotifications = new LinkedList<Notification>();
 
@@ -37,6 +39,11 @@ public abstract class TalkativeSprite extends Sprite{
 		timeSinceDialogReset = 0;
 		dialogDuration = dur;
 		
+	}
+	
+	public void showDialog(String str, int dur){
+		setDialogString(str);
+		showDialog(dur);
 	}
 	
 	public void hideDialog(){
@@ -67,6 +74,9 @@ public abstract class TalkativeSprite extends Sprite{
 					hideDialog();
 				}
 			}
+		}
+		if(isPartOfCutscene){
+			return true;
 		}
 		return false;
 	}
@@ -102,6 +112,8 @@ public abstract class TalkativeSprite extends Sprite{
 	}
 	
 	
-	
+	public void setIsPartOfCutscene(boolean b){
+		isPartOfCutscene = b;
+	}
 
 }

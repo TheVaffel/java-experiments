@@ -1,0 +1,9 @@
+package priv.hkon.theseq.cutscenes;
+
+import priv.hkon.theseq.filters.Filter;
+
+public abstract class Cutscene {
+	int tickCount;
+	Filter currFilter;
+	ArrayList<Happening> happenings;
+}

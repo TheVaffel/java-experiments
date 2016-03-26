@@ -1,0 +1,5 @@
+package priv.hkon.theseq.cutscenes;
+
+public abstract class Cutscene {
+
+}

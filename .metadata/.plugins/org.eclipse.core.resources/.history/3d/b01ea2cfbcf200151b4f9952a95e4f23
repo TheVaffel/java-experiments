@@ -1,0 +1,21 @@
+package priv.hkon.theseq.cutscenes;
+
+import priv.hkon.theseq.main.Core;
+
+public class OpeningScene extends Cutscene {
+
+	public OpeningScene(Core core) {
+		super(core);
+	}
+
+	@Override
+	public void tick() {
+
+	}
+
+	@Override
+	public boolean isFinished() {
+		return false;
+	}
+
+}

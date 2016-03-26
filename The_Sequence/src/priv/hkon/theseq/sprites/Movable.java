@@ -123,7 +123,8 @@ public abstract class Movable extends TalkativeSprite implements Runnable{
 	
 	
 	public boolean tick(){ //return whether the turn should be ended or not
-		super.tick();
+		
+		boolean b = super.tick();
 		if(isPlanningPath){
 			return true;
 		}
@@ -140,7 +141,8 @@ public abstract class Movable extends TalkativeSprite implements Runnable{
 			followPath();
 			return true;
 		}
-		return false;
+		
+		return b;
 	}
 	
 	public boolean followPath(){

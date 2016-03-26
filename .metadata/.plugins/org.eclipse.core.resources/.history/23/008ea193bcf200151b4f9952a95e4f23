@@ -1,0 +1,24 @@
+package priv.hkon.theseq.cutscenes;
+
+import priv.hkon.theseq.main.Core;
+
+public class OpeningScene extends Cutscene {
+
+	public OpeningScene(Core core) {
+		super(core);
+		// TODO Auto-generated constructor stub
+	}
+
+	@Override
+	public void tick() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public boolean isFinished() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+}

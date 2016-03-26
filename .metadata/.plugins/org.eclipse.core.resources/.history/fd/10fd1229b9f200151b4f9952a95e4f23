@@ -1,0 +1,29 @@
+package priv.hkon.theseq.cutscenes;
+
+import java.util.ArrayList;
+
+import priv.hkon.theseq.filters.Filter;
+import priv.hkon.theseq.main.Core;
+import priv.hkon.theseq.sprites.Sprite;
+
+public abstract class Cutscene {
+	int tickCount;
+	Filter currFilter;
+	ArrayList<Happening> happenings;
+	Core core;
+	
+	Cutscene(Core core){
+		this.core = core;
+		tickCount = 0;
+	}
+	
+	public abstract void tick();
+	public abstract boolean isFinished();
+	
+	
+	
+	public abstract class Happening{
+		Sprite sprite;
+		public abstract void happen();
+	}
+}
