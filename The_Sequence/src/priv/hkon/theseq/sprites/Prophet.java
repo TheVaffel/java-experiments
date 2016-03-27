@@ -7,6 +7,19 @@ public class Prophet extends Villager {
 
 	private static final long serialVersionUID = -4204665935086265739L;
 	
+	public static final String[] INTRODUCTION = {
+			"I wish you welcome to the Village!",
+			"We have lived here as long as our oldest,",
+			"-that would be me-",
+			"can remember.",
+			"",
+			"I hope you will have a pleasant stay!"
+	};
+	
+	public static final Integer[] INTRODUCTION_DURATIONS = {
+		120, 120, 90, 90, 60, 120
+	};
+	
 	public static final String[] MEANING_OF_LIFE = {
 		"The answer would surprise you.", "Be patient, it will probably be revealed soon enough.",
 		"You ask as if you know there is an answer.", "I like potatoes."
@@ -17,6 +30,7 @@ public class Prophet extends Villager {
 	}
 	
 	public boolean tick(){
+//		System.out.println("Mode: " + targetMode);
 		return super.tick();
 	}
 	

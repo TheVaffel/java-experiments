@@ -1,5 +1,7 @@
 package priv.hkon.theseq.sprites;
 
+import java.util.Arrays;
+
 import priv.hkon.theseq.misc.Conversation;
 import priv.hkon.theseq.misc.Notification;
 import priv.hkon.theseq.misc.Sentence;
@@ -63,6 +65,7 @@ public class Villager extends Citizen{
 	public static final int MODE_THINKING = 7;
 	public static final int MODE_RELAXING = 8;
 	public static final int MODE_SLEEPING = 9;
+	public static final int MODE_SPEAKING_TO_PLAYER = 10;
 	
 	public static final int IMPORTANT_NOT = 0;
 	public static final int IMPORTANT_LITTLE = 1;
@@ -78,7 +81,8 @@ public class Villager extends Citizen{
 			{},
 			{"Hmmmm....", "Maybe...", "Erm.. What about.."},
 			{"Life is good..."},
-			{"Zzz"}
+			{"Zzz"},
+			{}
 	};
 	
 	
@@ -214,6 +218,11 @@ public class Villager extends Citizen{
 				sleep();
 				break;
 			}
+			
+			case MODE_SPEAKING_TO_PLAYER: {
+				speakToPlayer();
+				break;
+			}
 		}
 		
 		return false;
@@ -240,6 +249,33 @@ public class Villager extends Citizen{
 			return true;
 		}
 		return false;
+	}
+	
+	boolean hasPausedPath = false;
+	
+	public void speakToPlayer(){
+		if(distTo(village.getPlayer())> 8){
+			hasPath = false;
+			if(hasPausedMode){
+				revertPausedMode();
+			}else{
+				targetMode = MODE_RELAXING;
+			}
+			showDialog("Oh.. We'll talk later, then", 120);
+		}else if(distTo(village.getPlayer())> 4){
+			if(hasPath){
+				hasPausedPath = true;
+				hasPath = false;
+			}
+			
+			turnTowards(getDirectionTo(village.getPlayer()));
+		
+		}else{
+			if(hasPausedPath){
+				hasPath = true;
+				hasPausedPath = false;
+			}
+		}
 	}
 	
 	boolean isBedTime(){
@@ -742,6 +778,20 @@ public class Villager extends Citizen{
 	
 	public String getName(){
 		return "Number " + getCitizenNumber();
+	}
+	
+	public boolean hasImportantMode(){
+		return modeImportance < IMPORTANT_MEDIUM || (targetMode == MODE_RELAXING || targetMode == MODE_RELAX_AT_HOME);
+	}
+	
+	public void setToSpeakMode(String[] str, Integer[] dur){
+		if(hasImportantMode()){
+			pauseMode();
+		}
+		sentence.addAll(Arrays.asList(str));
+		dialogLengths.addAll(Arrays.asList(dur));
+		targetMode = MODE_SPEAKING_TO_PLAYER;
+		showDialog = true;
 	}
 
 }

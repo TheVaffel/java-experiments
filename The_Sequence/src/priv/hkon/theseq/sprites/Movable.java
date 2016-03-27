@@ -116,9 +116,6 @@ public abstract class Movable extends TalkativeSprite implements Runnable{
 		}
 		
 		isPlanningPath = false;
-		try{
-		Thread.currentThread().join();
-		}catch(Exception e){}
 	}
 	
 	
@@ -139,7 +136,7 @@ public abstract class Movable extends TalkativeSprite implements Runnable{
 		}
 		else if (hasPath){
 			followPath();
-			return true;
+			return b;
 		}
 		
 		return b;
@@ -364,7 +361,7 @@ public abstract class Movable extends TalkativeSprite implements Runnable{
 			n = (n + 1)%4;
 			i++;
 			if(i == 4){
-				//System.out.println("Couldn't stroll");
+				System.out.println("Couldn't stroll");
 				return;
 			}
 			

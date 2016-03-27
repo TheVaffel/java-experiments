@@ -2,6 +2,7 @@ package priv.hkon.theseq.cutscenes;
 
 import java.util.LinkedList;
 
+import priv.hkon.theseq.filters.Filter;
 import priv.hkon.theseq.main.Core;
 import priv.hkon.theseq.sprites.Sprite;
 
@@ -24,6 +25,10 @@ public abstract class Cutscene {
 	}
 	public abstract boolean isFinished();
 	
+	public void close(){
+		core.setCutsceneFilter(Filter.NO_FILTER);
+	}
+	
 	public abstract class Happening{
 		Sprite sprite;
 		int timeStamp;
@@ -33,4 +38,5 @@ public abstract class Cutscene {
 		}
 		public abstract void happen();
 	}
+
 }

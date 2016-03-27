@@ -5,6 +5,7 @@ import priv.hkon.theseq.filters.Filter;
 import priv.hkon.theseq.main.Core;
 import priv.hkon.theseq.sprites.Movable;
 import priv.hkon.theseq.sprites.Player;
+import priv.hkon.theseq.sprites.Prophet;
 import priv.hkon.theseq.sprites.TalkativeSprite;
 import priv.hkon.theseq.sprites.Villager;
 
@@ -14,6 +15,8 @@ public class OpeningScene extends Cutscene {
 	Villager prophet;
 	
 	DarkenFilter darkenFilter;
+	
+	int startTime = 240;
 	
 	boolean finished = false;
 
@@ -29,62 +32,80 @@ public class OpeningScene extends Cutscene {
 		int px = player.getX();
 		int py = player.getY();
 		
-		happenings.add(new Happening(prophet, 0){
+		happenings.add(new Happening(player, 120){
+			public void happen(){
+				((Movable)sprite).turnTowards(Movable.RIGHT);
+			}
+		});
+		
+		happenings.add(new Happening(player, 180){
+			public void happen(){
+				((Movable)sprite).turnTowards(Movable.LEFT);
+			}
+		});
+		
+		happenings.add(new Happening(player, 280){
+			public void happen(){
+				((Movable)sprite).turnTowards(Movable.RIGHT);
+			}
+		});
+		
+		happenings.add(new Happening(prophet, startTime){
 			public void happen(){
 				((Movable)(sprite)).startPathTo(px, py - 2);
 			}
 		});
 		
 		
-		happenings.add(new Happening(prophet, 120){
+		happenings.add(new Happening(prophet, startTime + 120){
 			public void happen(){
 				((TalkativeSprite)sprite).showDialog("Well, hello there!", 90);
 			}
 		});
 		
-		happenings.add(new Happening(player, 120){
+		happenings.add(new Happening(player, startTime + 120){
 			public void happen(){
 				((Movable)(sprite)).turnTowards(Movable.UP);
 			}
 		});
 		
-		happenings.add(new Happening(prophet, 240){
+		happenings.add(new Happening(prophet,startTime +  240){
 			public void happen(){
 				((TalkativeSprite)sprite).showDialog("Can't say I've seen your face here before!", 150);
 			}
 		});
 		
-		happenings.add(new Happening(prophet, 420){
+		happenings.add(new Happening(prophet, startTime + 420){
 			public void happen(){
 				((TalkativeSprite)sprite).showDialog("Who are you?", 120);
 			}
 		});
 		
-		happenings.add(new Happening(prophet, 600){
+		happenings.add(new Happening(prophet,startTime +  600){
 			public void happen(){
 				((TalkativeSprite)sprite).showDialog("...", 60);
 			}
 		});
 		
-		happenings.add(new Happening(prophet, 720){
+		happenings.add(new Happening(prophet, startTime + 720){
 			public void happen(){
 				((TalkativeSprite)sprite).showDialog("By the look on your face," ,120);
 			}
 		});
 		
-		happenings.add(new Happening(prophet, 840){
+		happenings.add(new Happening(prophet, startTime + 840){
 			public void happen(){
 				((TalkativeSprite)sprite).showDialog("I guess you are just as confused as I am", 120);
 			}
 		});
 		
-		happenings.add(new Happening(prophet, 1020){
+		happenings.add(new Happening(prophet, startTime + 1020){
 			public void happen(){
-				((TalkativeSprite)sprite).showDialog("Don't worry, we'll find out soon enough", 180);
+				((TalkativeSprite)sprite).showDialog("Don't worry, there will be time", 180);
 			}
 		});
 		
-		happenings.add(new Happening(prophet, 1260){
+		happenings.add(new Happening(prophet, startTime + 1260){
 			public void happen(){
 				((TalkativeSprite)sprite).showDialog("Come with me!", 180);
 			}
@@ -95,17 +116,14 @@ public class OpeningScene extends Cutscene {
 
 	@Override
 	public void tick() {
-		if(tickCount < 120){
-			darkenFilter.darkness = 255 - 2*tickCount;
+		if(tickCount < 240){
+			darkenFilter.darkness = 255 - tickCount;
 			core.setCutsceneFilter(darkenFilter);
 		}else if(tickCount == 120){
 			core.setCutsceneFilter(Filter.NO_FILTER);
 			
-		}else if(tickCount == 1320){
+		}else if(tickCount >= 1320 + startTime){
 			finished = true;
-			
-			player.isPartOfCutscene = false;
-			prophet.isPartOfCutscene = false;
 		}
 		super.tick();
 		tickCount++;
@@ -117,6 +135,10 @@ public class OpeningScene extends Cutscene {
 	}
 
 	public void close(){
-		core.setCutsceneFilter(Filter.NO_FILTER);
+		super.close();
+		player.isPartOfCutscene = false;
+		prophet.isPartOfCutscene = false;
+		prophet.startPathTo(core.village.getTownMiddleX(), core.village.getTownStartY() + core.village.getTownHeight() );
+		prophet.setToSpeakMode(Prophet.INTRODUCTION, Prophet.INTRODUCTION_DURATIONS);
 	}
 }

@@ -16,7 +16,7 @@ public class Core implements Runnable{
 	Screen screen;
 	public static final String TITLE = "The Sequence";
 	
-	Village village;
+	public Village village;
 	
 	boolean worldInitiated = false;
 	

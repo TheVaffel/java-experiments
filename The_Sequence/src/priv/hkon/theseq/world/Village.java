@@ -172,7 +172,9 @@ public class Village implements Serializable{
 				}
 			}
 		}
-		player = new Player(sx + w/2, sy + h/2, this, numVillagers);
+		player = new Player(/*townGrid[(numVillagers-1)/7][(numVillagers-1)%7].getX()+ 2,
+				townGrid[(numVillagers-1)/7][(numVillagers-1)%7].getY()+ 2,*/
+				sx + w/2, sy + h/2, this, numVillagers);
 		citizenList[numVillagers] = player;
 		addSprite(player); 
 		
@@ -294,14 +296,24 @@ public class Village implements Serializable{
 		return data;
 	}
 	
+	public void breakPoint(){
+		System.out.println("Break");
+	}
+	
 	public void tick(){
 		handleSaveLoadInput();
+		if(Controller.input[KeyEvent.VK_B]){
+			breakPoint();
+		}
 		
 		if(inCutscene){
+			
 			currScene.tick();
-			if(currScene.isFinished()){
+			if(currScene.isFinished() || Controller.input[KeyEvent.VK_U]){
+				currScene.close();
 				inCutscene = false;
 				currScene = null;
+				
 			}
 		}
 		for(int i = 0; i < H; i++){
@@ -517,6 +529,10 @@ public class Village implements Serializable{
 	
 	public int getTileAt(int x, int y){
 		return tiles[y][x];
+	}
+	
+	public Player getPlayer(){
+		return player;
 	}
 	
 	public boolean contains(int x, int y){

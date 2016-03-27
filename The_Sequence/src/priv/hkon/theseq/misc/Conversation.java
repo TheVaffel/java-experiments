@@ -70,13 +70,13 @@ public class Conversation  implements Serializable{
 				currTalker.talk();
 			}else
 			
-			if(owner.distTo(partner) >Villager.RANGE_OF_VIEW*1.5){
+			if(owner.distTo(partner) >Villager.RANGE_OF_VIEW*1.2){
 				owner.deniedConversation();
 			}
 		}else
 		if(!currTalker.showDialog){
 			if(isOn){
-				if(owner.distTo(partner) >Villager.RANGE_OF_VIEW*1.5){
+				if(owner.distTo(partner) >Villager.RANGE_OF_VIEW*1.2){
 					owner.deniedConversation();
 					return;
 				}

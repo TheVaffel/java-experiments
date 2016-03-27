@@ -17,4 +17,8 @@
 <fullyQualifiedTypeName name="priv.hkon.theseq.world.Tile"/>
 <fullyQualifiedTypeName name="priv.hkon.theseq.structures.Bed"/>
 <fullyQualifiedTypeName name="java.io.Serializable"/>
+<fullyQualifiedTypeName name="javax.imageio.ImageIO"/>
+<fullyQualifiedTypeName name="java.io.File"/>
+<fullyQualifiedTypeName name="java.util.Arrays"/>
+<fullyQualifiedTypeName name="priv.hkon.theseq.sprites.Prophet"/>
 </qualifiedTypeNameHistroy>

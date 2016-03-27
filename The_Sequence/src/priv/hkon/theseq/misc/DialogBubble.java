@@ -12,11 +12,13 @@ public class DialogBubble implements Serializable{
 	 * 
 	 */
 	private static final long serialVersionUID = 1658731957901153906L;
-	String[] str;
+	//String[] str;
 	Sprite sprite;
 	int[][] data;
 	int width;
 	int numLines;
+	
+	boolean empty = false;
 	
 	public static final int DEFAULT_WIDTH = 80;
 	
@@ -31,6 +33,11 @@ public class DialogBubble implements Serializable{
 	}
 
 	public void setString(String s){
+		if(s.equals("")){
+			empty = true;
+		}else{
+			empty = false;
+		}
 		String st[] = s.split(" ");
 		StringBuilder sb = new StringBuilder();
 		int currrow = 0, numrows = 1;
@@ -104,5 +111,9 @@ public class DialogBubble implements Serializable{
 	
 	public int[][] getData(){
 		return data;
+	}
+	
+	public boolean isEmpty(){
+		return empty;
 	}
 }
