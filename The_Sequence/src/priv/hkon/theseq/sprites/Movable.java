@@ -120,13 +120,16 @@ public abstract class Movable extends TalkativeSprite implements Runnable{
 	
 	
 	public boolean tick(){ //return whether the turn should be ended or not
-		
 		boolean b = super.tick();
 		if(isPlanningPath){
 			return true;
 		}
 		if(moving){
-			movedFraction += moveSpeed;
+			if(village.nightBoost){
+				movedFraction += 1;
+			}else{
+				movedFraction += moveSpeed;
+			}
 			if(movedFraction >= 1){
 				movedFraction = 1;
 				moving = false;

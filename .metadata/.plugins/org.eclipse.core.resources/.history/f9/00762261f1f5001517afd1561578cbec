@@ -1,0 +1,11 @@
+package priv.hkon.theseq.filters;
+
+public class NightFilter extends Filter {
+	
+	float nightFactor;
+
+	public NightFilter() {
+		// TODO Auto-generated constructor stub
+	}
+
+}

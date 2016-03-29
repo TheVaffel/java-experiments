@@ -34,7 +34,7 @@ public class Nobody extends Villager {
 				"It is said that one day, someone will give us proper jobs",
 				"The Prophet says so, anyways...",
 				"I still wish they would call us something else, though",
-				"Nobodies? That's kindof insulting, don't you think?",
+				"Nobodies? That's kind of insulting, don't you think?",
 				"Our names are even numbered..",
 				"But.. I should return to my nobodyness"
 		};

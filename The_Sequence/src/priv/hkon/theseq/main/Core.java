@@ -9,6 +9,7 @@ import java.io.ObjectOutputStream;
 
 import priv.hkon.theseq.filters.CombinedFilter;
 import priv.hkon.theseq.filters.Filter;
+import priv.hkon.theseq.filters.NightFilter;
 import priv.hkon.theseq.world.Tile;
 import priv.hkon.theseq.world.Village;
 
@@ -23,7 +24,9 @@ public class Core implements Runnable{
 	Filter cutsceneFilter = Filter.NO_FILTER;
 	Filter villageFilter = Filter.NO_FILTER;
 	
-	boolean changedFilter = false;
+	NightFilter nightFilter = new NightFilter(0);
+	
+	boolean changedFilter = true;
 
 	boolean playing = false;
 	static final double TICKS_PER_SECOND = 60;
@@ -120,9 +123,10 @@ public class Core implements Runnable{
 	
 	void draw(){
 		screen.setData(village.getScreenData(Screen.W, Screen.H));
-		
+		float f = village.getNightFactor();
+		nightFilter.factor = f;
 		if(changedFilter){
-			screen.setFilter(new CombinedFilter(villageFilter, cutsceneFilter));
+			screen.setFilter(new CombinedFilter(nightFilter, villageFilter, cutsceneFilter));
 		}
 		screen.update();
 		changedFilter = false;
@@ -196,7 +200,7 @@ public class Core implements Runnable{
 		}
 	}
 	
-	public void resyncornizeTime(){
+	public void resyncronizeTime(){
 		currentTime = System.nanoTime();
 		lastTime = currentTime;
 	}

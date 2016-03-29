@@ -1,6 +1,11 @@
 package priv.hkon.theseq.sprites;
 
+import java.awt.event.KeyEvent;
+
+import priv.hkon.theseq.main.Controller;
 import priv.hkon.theseq.misc.Conversation;
+import priv.hkon.theseq.nonblocks.NonBlock;
+import priv.hkon.theseq.structures.Bed;
 import priv.hkon.theseq.world.Village;
 
 public class Player extends Citizen {
@@ -62,6 +67,17 @@ public class Player extends Citizen {
 	}
 	
 	public boolean tick(){
+		if(village.isInSleepMode()){
+			return true;
+		}
+		NonBlock d;
+		if(village.getTime()% Village.DAYCYCLE_DURATION > 30 &&(d =village.getNonBlockAt(x, y))!= null && d.getStructure() != null && d.getStructure() instanceof Bed){
+			showDialog("Press S to sleep til daylight", 2);
+			if(Controller.input[KeyEvent.VK_S]){
+				village.turnOnSleepMode();
+				return true;
+			}
+		}
 		if(conversation != null){
 			if(conversation.isFinished()){
 				conversation = null;

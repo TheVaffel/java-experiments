@@ -5,8 +5,8 @@ import java.io.Serializable;
 import java.util.Random;
 
 import priv.hkon.theseq.blocks.Tree;
+import priv.hkon.theseq.blocks.Wall;
 import priv.hkon.theseq.cutscenes.Cutscene;
-import priv.hkon.theseq.cutscenes.OpeningScene;
 import priv.hkon.theseq.main.Controller;
 import priv.hkon.theseq.main.Core;
 import priv.hkon.theseq.main.Screen;
@@ -40,6 +40,8 @@ public class Village implements Serializable{
 	public static final int H = 1000;
 	
 	Random random;
+	
+	public boolean nightBoost = false;
 	
 	public Cutscene currScene;
 	public boolean inCutscene = false;
@@ -80,9 +82,9 @@ public class Village implements Serializable{
 	
 	transient Core core;
 	
-	public static final int DAYCYCLE_DURATION = 60*60*20;
+	public static final int DAYCYCLE_DURATION = 60*60*10;
 	
-	long time = DAYCYCLE_DURATION + 60*60;
+	long time = DAYCYCLE_DURATION - 60*60;
 	
 	public long lastSave;
 	
@@ -123,6 +125,9 @@ public class Village implements Serializable{
 		
 		for(int i = 0; i< H; i++){
 			for(int j = 0; j < W ; j++){
+				if(i == 0 || j == 0 || i == H-1|| j == W-1){
+					addSprite(new Wall(j, i, this));
+				}
 				if(nonBlocks[i][j] instanceof Door){
 					setTileAt(Tile.TYPE_REFINED_ROCK, j, i +1);
 				}
@@ -136,24 +141,31 @@ public class Village implements Serializable{
 			}
 		}
 		
+		
 		citizenList = new Citizen[numVillagers + 1];
 		villagerPermutation = getPermutation(numVillagers + 1);
 		
 		createStartSet();
 		int i;
 		for(i = 0; i< numVillagers - 3; i++){
-			villagers[villagerPermutation[i]]= new Nobody(townGrid[i/townGridSide][i%townGridSide].getX() + houseSide/2, townGrid[i/townGridSide][i%townGridSide].getY() + houseSide/2, this, townGrid[i/townGridSide][i%townGridSide], i);
+			villagers[villagerPermutation[i]]= new Nobody(townGrid[villagerPermutation[i]/townGridSide][villagerPermutation[i]%townGridSide].getX() + houseSide/2, 
+					townGrid[villagerPermutation[i]/townGridSide][villagerPermutation[i]%townGridSide].getY() + houseSide/2, 
+					this, townGrid[villagerPermutation[i]/townGridSide][villagerPermutation[i]%townGridSide], i);
 			addSprite(villagers[villagerPermutation[i]]);
 		}
 
 		i++;
 		
-		villagers[villagerPermutation[i]] = new Gardener(townGrid[i/townGridSide][i%townGridSide].getX() + houseSide/2, townGrid[i/townGridSide][i%townGridSide].getY() + houseSide/2, this, townGrid[i/townGridSide][i%townGridSide], i);
+		villagers[villagerPermutation[i]] = new Gardener(townGrid[villagerPermutation[i]/townGridSide][villagerPermutation[i]%townGridSide].getX() + houseSide/2, 
+				townGrid[villagerPermutation[i]/townGridSide][villagerPermutation[i]%townGridSide].getY() + houseSide/2, 
+				this, townGrid[villagerPermutation[i]/townGridSide][villagerPermutation[i]%townGridSide], i);
 		addSprite(villagers[villagerPermutation[i]]);
 		
 		i++;
 		
-		villagers[villagerPermutation[i]] = new Mayor(townGrid[i/townGridSide][i%townGridSide].getX() + houseSide/2, townGrid[i/townGridSide][i%townGridSide].getY() + houseSide/2, this, townGrid[i/townGridSide][i%townGridSide], i);
+		villagers[villagerPermutation[i]] = new Mayor(townGrid[villagerPermutation[i]/townGridSide][villagerPermutation[i]%townGridSide].getX() + houseSide/2, 
+				townGrid[villagerPermutation[i]/townGridSide][villagerPermutation[i]%townGridSide].getY() + houseSide/2, 
+				this, townGrid[villagerPermutation[i]/townGridSide][villagerPermutation[i]%townGridSide], i);
 		addSprite(villagers[villagerPermutation[i]]);
 		
 		villagers[0].debug = true;
@@ -193,23 +205,31 @@ public class Village implements Serializable{
 				}
 			}
 		}
-		player = new Player(/*townGrid[(numVillagers-1)/7][(numVillagers-1)%7].getX()+ 2,
-				townGrid[(numVillagers-1)/7][(numVillagers-1)%7].getY()+ 2,*/
-				sx + w/2, sy + h/2, this, numVillagers);
+		player = new Player(townGrid[(numVillagers-1)/7][(numVillagers-1)%7].getX()+ 2,
+				townGrid[(numVillagers-1)/7][(numVillagers-1)%7].getY()+ 2,
+				/*sx + w/2, sy + h/2,*/ this, numVillagers);
 		citizenList[numVillagers] = player;
 		addSprite(player); 
 		
 		int i = numVillagers - 3;
-		Prophet p = new Prophet(sx + w/2, sy, this, townGrid[i/townGridSide][i%townGridSide], i);
+		Prophet p = new Prophet(sx + w/2, sy, this, townGrid[villagerPermutation[i]/townGridSide][villagerPermutation[i]%townGridSide], i);
 		villagers[villagerPermutation[i]] = p;
 		addSprite(villagers[villagerPermutation[i]]);
 		
-		currScene = new OpeningScene(player, p, core);
-		inCutscene = true;
+		//currScene = new OpeningScene(player, p, core);
+		//inCutscene = true;
 	}
 	
 	public int[][] getScreenData(int w, int h){
 		int[][] data = new int[h][w];
+		if(nightBoost){
+			for(int i = 0;i < h; i++){
+				for(int j = 0; j < w; j++){
+					data[i][j] = 255 << 24;
+				}
+			}
+			return data;
+		}
 		
 		int beginTileX = (int)(Math.floor(camX));
 		int beginTileY = (int)(Math.floor(camY));
@@ -303,12 +323,12 @@ public class Village implements Serializable{
 		}
 		
 		if(!shouldDrawInside){
-			float f = getNightFactor();
+			/*float f = getNightFactor();
 			for(int i = 0; i < h; i++){
 				for(int j = 0; j < w; j++){
 					data[i][j] = Screen.nightFilter(data[i][j],f);
 				}
-			}
+			}*/
 		}
 		
 		return data;
@@ -320,6 +340,10 @@ public class Village implements Serializable{
 	
 	public void tick(){
 		handleSaveLoadInput();
+		
+		if(nightBoost && time % Village.DAYCYCLE_DURATION <30){
+			nightBoost = false;
+		}
 		if(Controller.input[KeyEvent.VK_B]){
 			breakPoint();
 		}
@@ -494,7 +518,11 @@ public class Village implements Serializable{
 	}
 	
 	public float getNightFactor(){
-		return Math.max( Math.min((float)(0.65+ 1*Math.sin((time%DAYCYCLE_DURATION)*2*Math.PI/DAYCYCLE_DURATION)), 1), 0);
+		if(!shouldDrawInside){
+			return Math.max( Math.min((float)(0.65+ 1*Math.sin((time%DAYCYCLE_DURATION)*2*Math.PI/DAYCYCLE_DURATION)), 1), 0);
+		}else{
+			return 1;
+		}
 	}
 	
 	public boolean isOwnedBy(int x, int y, Building b){
@@ -554,7 +582,10 @@ public class Village implements Serializable{
 	}
 	
 	public boolean contains(int x, int y){
-		return x >= getTownStartX() && y >= getTownStartY() && x < getTownStartX() + getTownWidth() - houseSpread + houseSide && y < getTownStartY() + getTownHeight();
+		return x >= getTownStartX() 
+				&& y >= getTownStartY() 
+				&& x < getTownStartX() + getTownWidth() - houseSpread + houseSide 
+				&& y < getTownStartY() + getTownHeight();
 	}
 	
 	public void setCore(Core core){
@@ -576,5 +607,14 @@ public class Village implements Serializable{
 		}
 		
 		return perm;
+	}
+	
+	public boolean isInSleepMode(){
+		return nightBoost;
+	}
+	
+	public void turnOnSleepMode(){
+		nightBoost = true;
+		time = (time + Village.DAYCYCLE_DURATION)/Village.DAYCYCLE_DURATION*Village.DAYCYCLE_DURATION - 5*60;
 	}
 }

@@ -297,10 +297,10 @@ public abstract class Villager extends Citizen{
 			speechFinished();
 			return;
 		}
-		if(distTo(village.getPlayer())> 8){
+		if(distTo(village.getPlayer())> 14){
 			speechInterrupted();
 			return;
-		}else if(distTo(village.getPlayer())> 4){
+		}else if(distTo(village.getPlayer())> 6){
 			if(hasPath){
 				if(distBetween(getX() + dx[movingDirection], getY() + dy[movingDirection], 
 						village.getPlayer().getX(), village.getPlayer().getY())

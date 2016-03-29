@@ -1,6 +1,7 @@
 package priv.hkon.theseq.structures;
 
 import priv.hkon.theseq.blocks.Tree;
+import priv.hkon.theseq.world.Tile;
 import priv.hkon.theseq.world.Village;
 
 public class GardenerHouse extends House {
@@ -24,6 +25,16 @@ public class GardenerHouse extends House {
 		
 		bed = new Bed(0, 0, village);
 		addStructure(bed, 1, 1);
+	}
+	
+	
+	@Override
+	public void makeTiles() {
+		for (int i = 0; i< h; i++){
+			for(int j = 0; j < w; j++){
+				tiles[i][j] = Tile.TYPE_GRASS;
+			}
+		}
 	}
 
 }

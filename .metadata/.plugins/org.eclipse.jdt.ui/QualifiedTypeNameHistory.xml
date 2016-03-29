@@ -22,4 +22,12 @@
 <fullyQualifiedTypeName name="priv.hkon.theseq.sprites.Nobody"/>
 <fullyQualifiedTypeName name="priv.hkon.theseq.misc.Sentence"/>
 <fullyQualifiedTypeName name="priv.hkon.theseq.sprites.Sprite"/>
+<fullyQualifiedTypeName name="priv.hkon.theseq.sprites.Player"/>
+<fullyQualifiedTypeName name="priv.hkon.theseq.structures.MayorHouse"/>
+<fullyQualifiedTypeName name="priv.hkon.theseq.blocks.Marble"/>
+<fullyQualifiedTypeName name="priv.hkon.theseq.misc.Conversation"/>
+<fullyQualifiedTypeName name="priv.hkon.theseq.filters.NightFilter"/>
+<fullyQualifiedTypeName name="priv.hkon.theseq.main.Controller"/>
+<fullyQualifiedTypeName name="java.awt.event.KeyEvent"/>
+<fullyQualifiedTypeName name="priv.hkon.theseq.blocks.Wall"/>
 </qualifiedTypeNameHistroy>
