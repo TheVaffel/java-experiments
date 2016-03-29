@@ -8,6 +8,8 @@ import priv.hkon.theseq.world.Village;
 public class House extends Building{
 	
 	//TODO: Furniture, please!
+	
+	//TODO: Make different kinds of Houses (different walls, different furniture... According to the owner
 	private static final long serialVersionUID = 4881967309687458228L;
 	Bed bed;
 	

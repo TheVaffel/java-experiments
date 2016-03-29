@@ -1,0 +1,5 @@
+package priv.hkon.theseq.sprites;
+
+public class Nobody extends Villager {
+
+}

@@ -2,6 +2,7 @@ package priv.hkon.theseq.misc;
 
 import java.io.Serializable;
 
+import priv.hkon.theseq.sprites.Player;
 import priv.hkon.theseq.sprites.Sprite;
 import priv.hkon.theseq.sprites.TalkativeSprite;
 import priv.hkon.theseq.sprites.Villager;
@@ -19,7 +20,7 @@ public class Conversation  implements Serializable{
 	TalkativeSprite currTalker;
 	int importance;
 	
-	boolean finished = false;
+	public boolean finished = false;
 	
 	int sentenceCount = 0;
 
@@ -51,8 +52,11 @@ public class Conversation  implements Serializable{
 			partner = null;
 		}else{
 			owner = null;
+			
 		}
-		
+		if(partner instanceof Player){
+			((Player)partner).setConversation(null);
+		}
 		finished = true;
 	}
 	
@@ -67,6 +71,9 @@ public class Conversation  implements Serializable{
 				isOn = true;
 				owner.hideDialog();
 				partner.hideDialog();
+				if(partner instanceof Player){
+					((Player) partner).setConversation(this);
+				}
 				currTalker.talk();
 			}else
 			
@@ -81,6 +88,9 @@ public class Conversation  implements Serializable{
 					return;
 				}
 				sentenceCount++;
+				if(currTalker instanceof Player){
+					currTalker = getOther(currTalker);
+				}
 				currTalker.talk();
 				lastSentence = currTalker.getCurrSentence();
 				

@@ -1,0 +1,542 @@
+package priv.hkon.theseq.world;
+
+import java.awt.event.KeyEvent;
+import java.io.Serializable;
+import java.util.Random;
+
+import priv.hkon.theseq.blocks.Tree;
+import priv.hkon.theseq.cutscenes.Cutscene;
+import priv.hkon.theseq.main.Controller;
+import priv.hkon.theseq.main.Core;
+import priv.hkon.theseq.main.Screen;
+import priv.hkon.theseq.misc.DialogBubble;
+import priv.hkon.theseq.misc.Sentence;
+import priv.hkon.theseq.nonblocks.Door;
+import priv.hkon.theseq.nonblocks.Flowers;
+import priv.hkon.theseq.nonblocks.NonBlock;
+import priv.hkon.theseq.nonblocks.TileCover;
+import priv.hkon.theseq.sprites.Citizen;
+import priv.hkon.theseq.sprites.Gardener;
+import priv.hkon.theseq.sprites.Mayor;
+import priv.hkon.theseq.sprites.Movable;
+import priv.hkon.theseq.sprites.Nobody;
+import priv.hkon.theseq.sprites.Player;
+import priv.hkon.theseq.sprites.Prophet;
+import priv.hkon.theseq.sprites.Sprite;
+import priv.hkon.theseq.sprites.TalkativeSprite;
+import priv.hkon.theseq.sprites.Villager;
+import priv.hkon.theseq.structures.Building;
+import priv.hkon.theseq.structures.House;
+import priv.hkon.theseq.structures.Structure;
+
+public class Village implements Serializable{
+
+	private static final long serialVersionUID = 21014336336090563L;
+	public Player player;
+	public static final int W = 1000;
+	public static final int H = 1000;
+	
+	Random random;
+	
+	public Cutscene currScene;
+	public boolean inCutscene = false;
+	
+	int[][] tiles = new int[H][W];
+	Sprite[][] sprites = new Sprite[H][W];
+	NonBlock[][] nonBlocks = new NonBlock[H][W];
+	TileCover[][] tileCovers = new TileCover[H][W];
+	Building[][] ownedBy = new Building[H][W];
+	
+	Citizen[] citizenList;
+	
+	boolean[][] closed = new boolean[H][W];
+	boolean shouldDrawInside = false;
+	Building currBuilding = null; 
+	
+	int numVillagers = 40;
+	Villager[] villagers = new Villager[numVillagers];
+	
+	
+	int houseSide = 10;
+	int houseSpread = 15;
+	int townGridMiddleX = W/2;
+	int townGridMiddleY = H/2;
+	
+	int numHouses = (int)(Math.pow(Math.ceil(Math.sqrt(numVillagers)), 2));
+	int townGridSide = (int)(Math.ceil(Math.sqrt(numHouses)));
+	
+	House[][] townGrid = new House[townGridSide][townGridSide];
+	
+	public double camX= -100, camY = -100;
+	
+	public double camSpeed = 0.1;
+	double tilesPerPixelX = 1.0/Tile.WIDTH;
+	double tilesPerPixelY = 1.0/Tile.HEIGHT;
+	
+	transient Core core;
+	
+	public static final int DAYCYCLE_DURATION = 60*60*20;
+	
+	long time = 3*DAYCYCLE_DURATION/3 - 60*20;
+	
+	public long lastSave;
+	
+	public Village(Core core){
+		random = new Random();
+		Villager.init();
+		Sentence.village = this;
+		this.core = core;
+		buildVillage();
+		
+	}
+	
+	public void buildVillage(){
+		for(int i = 0 ; i < H ; i++){
+			for(int j = 0 ; j < W; j++){
+				tiles[i][j] = Tile.TYPE_GRASS;
+			}
+		}
+		
+		int townGridStartX = townGridMiddleX - houseSpread*townGridSide/2;
+		int townGridStartY = townGridMiddleY - houseSpread*townGridSide/2;
+		
+		townGrid = new House[townGridSide][townGridSide];
+		for(int i = 0; i < townGridSide; i++){
+			for(int j = 0; j < townGridSide; j++){
+				townGrid[i][j] = new House(townGridStartX + houseSpread*j, townGridStartY + houseSpread*i, houseSide, houseSide, this);
+				addBuilding(townGrid[i][j]);
+			}
+		}
+		
+		
+		for(int i = 0; i < townGridSide; i++){
+			Road r = new Road(townGridStartX - houseSpread + houseSide + 1, townGridStartY+ houseSpread*i +houseSide + 1, (townGridSide-1)*houseSpread + houseSpread - 1, 3, this);
+			addArea(r);
+			r = new Road(townGridStartX + houseSpread*(i - 1) + houseSide + 1, townGridStartY, 3, (townGridSide - 1)*houseSpread + houseSpread - 1, this);
+			addArea(r);
+		}
+		
+		for(int i = 0; i< H; i++){
+			for(int j = 0; j < W ; j++){
+				if(nonBlocks[i][j] instanceof Door){
+					setTileAt(Tile.TYPE_REFINED_ROCK, j, i +1);
+				}
+				if(tiles[i][j] == Tile.TYPE_GRASS &&sprites[i][j] == null){
+					if(NonBlock.RAND.nextInt(10) == 0){
+						addTileCover(new Flowers(j, i, this));
+					}else if(NonBlock.RAND.nextInt(8) == 0){
+						addSprite(new Tree(j, i, this));
+					}
+				}
+			}
+		}
+		
+		citizenList = new Citizen[numVillagers + 1];
+		
+		createStartSet();
+		int i;
+		for(i = 0; i< numVillagers - 3; i++){
+			villagers[i]= new Nobody(townGrid[i/townGridSide][i%townGridSide].getX() + houseSide/2, townGrid[i/townGridSide][i%townGridSide].getY() + houseSide/2, this, townGrid[i/townGridSide][i%townGridSide], i);
+			addSprite(villagers[i]);
+		}
+
+		i++;
+		
+		villagers[i] = new Gardener(townGrid[i/townGridSide][i%townGridSide].getX() + houseSide/2, townGrid[i/townGridSide][i%townGridSide].getY() + houseSide/2, this, townGrid[i/townGridSide][i%townGridSide], i);
+		addSprite(villagers[i]);
+		
+		i++;
+		
+		villagers[i] = new Mayor(townGrid[i/townGridSide][i%townGridSide].getX() + houseSide/2, townGrid[i/townGridSide][i%townGridSide].getY() + houseSide/2, this, townGrid[i/townGridSide][i%townGridSide], i);
+		addSprite(villagers[i]);
+		
+		villagers[0].debug = true;
+		
+		for(i = 0;i < numVillagers; i++){
+			citizenList[i] = villagers[i];
+		}
+	}
+	
+	public void createStartSet(){
+		int sy = townGridMiddleY + 100;
+		int sx = townGridMiddleX - 20;
+		
+		int w = 8;
+		int h = 18;
+		
+		for(int i = sy; i < sy + h; i++){
+			for( int j = sx ; j < sx + w; j++){
+				sprites[i][j] = null;
+				if(Sprite.RAND.nextInt(4) == 0){
+					addTileCover(new Flowers(j, i, this));
+				}
+			}
+		}
+		player = new Player(townGrid[(numVillagers-1)/7][(numVillagers-1)%7].getX()+ 2,
+				townGrid[(numVillagers-1)/7][(numVillagers-1)%7].getY()+ 2,
+				/*sx + w/2, sy + h/2,*/ this, numVillagers);
+		citizenList[numVillagers] = player;
+		addSprite(player); 
+		
+		int i = numVillagers - 3;
+		Prophet p = new Prophet(sx + w/2, sy, this, townGrid[i/townGridSide][i%townGridSide], i);
+		villagers[i] = p;
+		addSprite(villagers[i]);
+		
+		//currScene = new OpeningScene(player, p, core);
+		//inCutscene = true;
+	}
+	
+	public int[][] getScreenData(int w, int h){
+		int[][] data = new int[h][w];
+		
+		int beginTileX = (int)(Math.floor(camX));
+		int beginTileY = (int)(Math.floor(camY));
+		
+		int initY = Math.max(-beginTileY, 0);
+		int initX = Math.max(-beginTileX, 0);
+		
+		int tilesInWidth = Math.min((int)Math.ceil(tilesPerPixelX*w) + 1, W - beginTileX);
+		int tilesInHeight = Math.min((int) Math.ceil(tilesPerPixelY*h) + 1, H-beginTileY);
+		
+		int[][] rawdata = new int[tilesInHeight*Tile.HEIGHT][tilesInWidth*Tile.WIDTH];
+
+		for(int i = initY; i < tilesInHeight ; i++){
+			for(int j = initX; j < tilesInWidth; j++){
+				if((!closed[beginTileY + i][beginTileX + j] && !shouldDrawInside) || isOwnedBy(beginTileX + j, beginTileY + i, currBuilding)){
+					Screen.draw(rawdata, tilesInWidth*Tile.WIDTH, tilesInHeight*Tile.HEIGHT, Tile.getData(tiles[beginTileY + i][beginTileX+ j]), Tile.WIDTH, Tile.HEIGHT, j*Tile.WIDTH, i*Tile.HEIGHT);
+					if(tileCovers[beginTileY + i][beginTileX + j] != null){
+						Screen.draw(rawdata, tilesInWidth*Tile.WIDTH, tilesInHeight*Tile.HEIGHT, tileCovers[beginTileY + i][beginTileX + j].getData(), Tile.WIDTH, Tile.HEIGHT, j*Tile.WIDTH, i*Tile.HEIGHT);
+					}
+				}else{
+					Screen.draw(rawdata, tilesInWidth*Tile.WIDTH, tilesInHeight*Tile.HEIGHT, Tile.getData(Tile.TYPE_EMPTY), Tile.WIDTH, Tile.HEIGHT, j*Tile.WIDTH, i*Tile.HEIGHT);
+				}
+			}
+		}
+		int boundY = Math.min(tilesInHeight  + 1, H - beginTileY);
+		
+		for(int i = initY; i < boundY; i++){
+			for(int j = initX; j < tilesInWidth; j++){
+				int dx = 0;
+				int dy = 0;
+				if(((!closed[beginTileY + i][beginTileX + j] && !shouldDrawInside) || (isOwnedBy(beginTileX + j, beginTileY + i, currBuilding)))){
+					
+					if(sprites[beginTileY + i][beginTileX + j] != null){
+						if(sprites[beginTileY + i][beginTileX + j] instanceof Movable){
+							dx = (int)((((Movable)(sprites[beginTileY + i][beginTileX + j])).getExactX()-sprites[beginTileY + i][beginTileX + j].getX())*(Tile.WIDTH));
+							dy = (int)(((Movable)(sprites[beginTileY + i][beginTileX + j])).getMovedY()*Tile.HEIGHT);
+						}
+						Screen.draw(rawdata, tilesInWidth*Tile.WIDTH, tilesInHeight*Tile.HEIGHT, sprites[beginTileY + i][beginTileX+ j].getData(), Sprite.W, Sprite.H, j*Tile.WIDTH + dx , (i + 1)*Tile.HEIGHT - Sprite.H - Sprite.DRAW_OFFSET_Y + dy);
+						if(sprites[beginTileY + i][beginTileX + j] instanceof TalkativeSprite){
+							if(((TalkativeSprite)(sprites[beginTileY + i][beginTileX + j])).shouldDrawDialog()){
+								DialogBubble d = ((TalkativeSprite)(sprites[beginTileY + i][beginTileX + j])).getDialog();
+								Screen.draw(rawdata, tilesInWidth*Tile.WIDTH, tilesInHeight*Tile.HEIGHT, d.getData(), d.getWidth(), d.getHeight(), j*Tile.WIDTH + dx + d.getOffsetX(), i*Tile.HEIGHT + dy + d.getOffsetY());
+							}
+						}
+					}
+					if(nonBlocks[beginTileY + i][beginTileX + j] != null){
+						Screen.draw(rawdata, tilesInWidth*Tile.WIDTH, tilesInHeight*Tile.HEIGHT, nonBlocks[beginTileY + i][beginTileX+ j].getData(), Sprite.W, Sprite.H, j*Tile.WIDTH, (i + 1)*Tile.HEIGHT - Sprite.H - Sprite.DRAW_OFFSET_Y);
+					}
+					
+					
+				
+				}
+			}
+		}
+		
+		for(int i = initY; i < boundY; i++){
+			for(int j = initX; j < tilesInWidth; j++){
+				int dx = 0;
+				int dy = 0;
+				if(((!closed[beginTileY + i][beginTileX + j] && !shouldDrawInside) || (isOwnedBy(beginTileX + j, beginTileY + i, currBuilding)))){
+					
+					if(sprites[beginTileY + i][beginTileX + j] != null&& sprites[beginTileY + i][beginTileX + j] instanceof TalkativeSprite){
+						if(sprites[beginTileY + i][beginTileX + j] instanceof Movable){
+							dx = (int)((((Movable)(sprites[beginTileY + i][beginTileX + j])).getExactX()-sprites[beginTileY + i][beginTileX + j].getX())*(Tile.WIDTH));
+							dy = (int)(((Movable)(sprites[beginTileY + i][beginTileX + j])).getMovedY()*Tile.HEIGHT);
+						}
+						if(((TalkativeSprite)(sprites[beginTileY + i][beginTileX + j])).shouldDrawDialog()){
+							DialogBubble d = ((TalkativeSprite)(sprites[beginTileY + i][beginTileX + j])).getDialog();
+							Screen.draw(rawdata, tilesInWidth*Tile.WIDTH, tilesInHeight*Tile.HEIGHT, d.getData(), d.getWidth(), d.getHeight(), j*Tile.WIDTH + dx + d.getOffsetX(), i*Tile.HEIGHT + dy + d.getOffsetY());
+						}
+					}
+				}
+			}
+		}
+		int camTileBeginX = (int)((camX - Math.floor(camX))*Tile.WIDTH);
+		
+		int camTileBeginY = (int)((camY - Math.floor(camY))*Tile.HEIGHT);
+		
+		double stepY = 1.0/(tilesPerPixelY*Tile.HEIGHT);
+		double stepX = 1.0/(tilesPerPixelX*Tile.WIDTH);
+		double sumy = 0;
+		double sumx = 0;
+		for(int i = 0; i<h ; i++ ){
+			for(int j = 0; j<w; j++){
+				
+				data[i][j] = rawdata[(int)(camTileBeginY + sumy)][(int)(camTileBeginX + sumx)];
+				sumx+= stepX;
+			}
+			sumx = 0;
+			sumy += stepY;
+		}
+		
+		if(!shouldDrawInside){
+			float f = getNightFactor();
+			for(int i = 0; i < h; i++){
+				for(int j = 0; j < w; j++){
+					data[i][j] = Screen.nightFilter(data[i][j],f);
+				}
+			}
+		}
+		
+		return data;
+	}
+	
+	public void breakPoint(){
+		System.out.println("Break");
+	}
+	
+	public void tick(){
+		handleSaveLoadInput();
+		if(Controller.input[KeyEvent.VK_B]){
+			breakPoint();
+		}
+		
+		if(inCutscene){
+			
+			currScene.tick();
+			if(currScene.isFinished() || Controller.input[KeyEvent.VK_U]){
+				currScene.close();
+				inCutscene = false;
+				currScene = null;
+				
+			}
+		}
+		for(int i = 0; i < H; i++){
+			for(int j = 0; j <W; j++){
+				if(sprites[i][j] != null)
+					sprites[i][j].tick();
+				if(nonBlocks[i][j] != null){
+					nonBlocks[i][j].tick();
+				}
+			}
+		}
+		//player.tick();
+		
+		handlePlayerInput();
+		centerCameraOnPlayer();
+		setDrawMode();
+		time++;
+	}
+	
+	public void handleSaveLoadInput(){
+		if(Controller.input[KeyEvent.VK_S] && time - lastSave > 1*60){
+			if(Controller.input[KeyEvent.VK_1]){
+				core.saveVillage(1);
+			}else if(Controller.input[KeyEvent.VK_2]){
+				core.saveVillage(2);
+			}else if(Controller.input[KeyEvent.VK_3]){
+				core.saveVillage(3);
+			}
+		}else if(Controller.input[KeyEvent.VK_L]){
+			if(Controller.input[KeyEvent.VK_1]){
+				core.loadImage(1);
+			}else if(Controller.input[KeyEvent.VK_2]){
+				core.loadImage(2);
+			}else if(Controller.input[KeyEvent.VK_3]){
+				core.loadImage(3);
+			}
+		}
+	}
+	
+	public void setDrawMode(){
+		if(ownedBy[player.getY()][player.getX()] == null){
+			shouldDrawInside = false;
+			currBuilding = null;
+		}else{
+			shouldDrawInside = true;
+			currBuilding = ownedBy[player.getY()][player.getX()];
+		}
+	}
+	
+	public long getTime(){
+		return time;
+	}
+	
+	public void centerCameraOnPlayer(){
+		camX = player.getExactX() - Screen.W/2/Tile.WIDTH ;
+		camY = player.getExactY() - Screen.H/2/Tile.HEIGHT;
+		
+		//System.out.println(player.getExactX() + ", " + player.getExactY());
+	}
+	
+	public void handlePlayerInput(){
+		int dir = -1;
+		if(Controller.input[KeyEvent.VK_UP]){
+			dir = Movable.UP;
+		}
+		else if(Controller.input[KeyEvent.VK_LEFT]){
+			dir = Movable.LEFT;
+		}
+		else if(Controller.input[KeyEvent.VK_DOWN]){
+			dir = Movable.DOWN;
+		}
+		else if(Controller.input[KeyEvent.VK_RIGHT]){
+			dir = Movable.RIGHT;
+		}
+		if(dir != -1 && !player.isPartOfCutscene){
+			player.tryStartMoving(dir);
+		}
+		
+		/*if(getTime()% 60 == 0){
+			System.out.println(player.getX() + ", " + player.getY());
+		}*/
+	}
+	
+	
+	
+	public void addStructure(Structure s){
+		for(int i = 0; i < s.getH(); i++){
+			for(int j = 0; j < s.getW(); j++){
+				if(s.getBlockAt(j, i) != null)
+					addSprite(s.getBlockAt(j, i));
+				if(s.getNonBlockAt(j, i) != null)
+					addNonBlock(s.getNonBlockAt(j, i));
+			}
+		}
+	}
+	
+	public void addArea(Area area){
+		for(int i = 0; i < area.getH(); i++){
+			for(int j = 0; j < area.getW(); j++){
+				setTileAt(area.getTileAt(j, i), area.getX() + j, area.getY() + i);
+			}
+		}
+	}
+	
+	public void addBuilding(Building b){
+		addStructure(b);
+		for(int i = 0; i < b.getH(); i++){
+			for(int j = 0; j < b.getW(); j++){
+				setTileAt(b.getTileAt(j, i), b.getX() + j, b.getY() + i);
+				setNonBlockAt(b.getNonBlockAt(j, i), b.getX() + j, b.getY() + i);
+				closed[b.getY() + i][b.getX() + j] = b.isClosedAt(j,i);
+				ownedBy[b.getY() + i][b.getX() + j] = b;
+			}
+		}
+	}
+	
+	public void setTileAt(int t, int x, int y){
+		tiles[y][x] = t;
+	}
+	
+	public void setNonBlockAt(NonBlock nb, int x, int y){
+		nonBlocks[y][x] = nb;
+	}
+	
+	public void addSprite(Sprite sprite){
+		sprites[sprite.getY()][sprite.getX()] = sprite;
+	}
+	
+	public void addNonBlock(NonBlock nb){
+		nonBlocks[nb.getY()][nb.getX()] = nb;
+	}
+	
+	public void addTileCover(TileCover tc){
+		tileCovers[tc.getY()][tc.getX()] = tc;
+	}
+	
+	public boolean isEmpty(int x, int y){
+		return sprites[y][x] == null;
+	}
+	
+	public void notifyMove(Movable m){
+		sprites[m.getY()][m.getX()] = m;
+		sprites[m.getY() - m.getMoveDY()][m.getX() - m.getMoveDX()] = null;
+	}
+	
+	public Sprite getSpriteAt(int x, int y){
+		return sprites[y][x];
+	}
+	
+	public NonBlock getNonBlockAt(int x, int y){
+		return nonBlocks[y][x];
+	}
+	
+	public void switchPlaces(Movable s, Movable t){
+		sprites[s.getY()][s.getX()] = null;
+		t.tryStartMoving(t.getMovingDirection());
+		sprites[t.getY()][t.getX()] = s;
+		s.tryStartMoving(s.getMovingDirection());
+		sprites[t.getY()][t.getX()] = t;
+	}
+	
+	public float getNightFactor(){
+		return Math.max( Math.min((float)(0.65+ 1*Math.sin((time%DAYCYCLE_DURATION)*2*Math.PI/DAYCYCLE_DURATION)), 1), 0);
+	}
+	
+	public boolean isOwnedBy(int x, int y, Building b){
+		return ownedBy[y][x] == b;
+	}
+	
+	public Building ownedBy(int x, int y){
+		return ownedBy[y][x];
+	}
+	
+	public Citizen getCitizen(int i){
+		return citizenList[i];
+	}
+	
+	public int getNumCitizens(){
+		return numVillagers + 1;
+	}
+	
+	public int getHouseSpread(){
+		return houseSpread;
+	}
+	
+	public int getTownStartX(){
+		return townGridMiddleX - houseSpread*townGridSide/2; 
+	}
+	
+	public int getTownStartY(){
+		return townGridMiddleY - houseSpread*townGridSide/2;
+	}
+	
+	public int getTownWidth(){
+		return houseSpread*townGridSide;
+	}
+	
+	public int getTownMiddleX(){
+		return townGridMiddleX;
+	}
+	
+	public int getTownMiddleY(){
+		return townGridMiddleY;
+	}
+	
+	public int getTownHeight(){
+		return houseSpread*townGridSide;
+	}
+	
+	public int getHouseSide(){
+		return houseSide;
+	}
+	
+	public int getTileAt(int x, int y){
+		return tiles[y][x];
+	}
+	
+	public Player getPlayer(){
+		return player;
+	}
+	
+	public boolean contains(int x, int y){
+		return x >= getTownStartX() && y >= getTownStartY() && x < getTownStartX() + getTownWidth() && y < getTownStartY() + getTownWidth();
+	}
+	
+	public void setCore(Core core){
+		this.core = core;
+	}
+}

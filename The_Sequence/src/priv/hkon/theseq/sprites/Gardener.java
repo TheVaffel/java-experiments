@@ -14,10 +14,22 @@ public class Gardener extends Villager {
 	public static final String[] TREE_ECSTASY_QUOTES = {"Yay! More trees!",
 			"I sure love trees!", "Trees for life!" , "Trees!! <3", "A tree a day keeps the doctor away!"
 	};
+	
+	static boolean presented = false;
 
 	public Gardener(int x, int y, Village v, House h, int i) {
 		super(x, y, v, h, i);
 		targetMode  = MODE_WORKING;
+	}
+	
+	@Override
+	public void makeAnimationFrames(){
+		super.makeAnimationFrames();
+		for(int k = 0; k < numAnimations; k++){
+			for(int u = 0; u < animationFrames[k].length; u++){
+				
+			}
+		}
 	}
 	
 	public boolean tick(){
@@ -35,7 +47,7 @@ public class Gardener extends Villager {
 			return;
 		}
 		
-		if(RAND.nextInt(50000) == 0){//Be careful, or we might get a lot of vegetation!
+		if(RAND.nextInt(5000) == 0){//Be careful, or we might get a lot of vegetation!
 			for(int i = 0; i < fovDeltaCoordinates[movingDirection].length; i++){
 				int nx = x + fovDeltaCoordinates[movingDirection][i][0];
 				int ny = y + fovDeltaCoordinates[movingDirection][i][1];
@@ -54,9 +66,7 @@ public class Gardener extends Villager {
 				}
 			}
 		}
-		if(!hasPath){
-			strollTownGrid();
-		}
+		super.work();
 	}
 	
 	public void plantPlant(){
@@ -97,7 +107,65 @@ public class Gardener extends Villager {
 	}
 	
 	public String getName(){
-		return "the gardener";
+		return "The Gardener";
+	}
+
+	@Override
+	public String[] getMeaningOfLife() {
+		return new String[] {"Well, isn't that obvious?",
+			"Trees, my friend!",
+			"Trees and trees and trees!!"
+		};
+	}
+
+	@Override
+	public String[] getPresentation() {
+		return new String[] {"Hello!",
+				"I am a Gardener",
+				"I.. I like trees",
+				"I.. I mean",
+				"REALLY like trees",
+				"How can one not?",
+				"Their fluffy greenness",
+				"And green fluffyness!",
+				"If we could all be more like trees...",
+				"",
+				"That would be AWESOME!!"
+		};
+	}
+
+	@Override
+	public Integer[] getPresentationDurations() {
+		return new Integer[]{
+				120,
+				120,
+				120,
+				120,
+				120,
+				120,
+				120,
+				120,
+				120,
+				120
+		};
+	}
+
+	@Override
+	public boolean classHasPresented() {
+		return presented;
+	}
+
+	@Override
+	public boolean subclassSpeechInterrupted() {
+		return false;
+	}
+
+	@Override
+	public boolean subclassSpeechFinished() {
+		if(modeParameter == SPEECH_PRESENTING){
+			presented = true;
+		}
+		return false;
 	}
 
 }

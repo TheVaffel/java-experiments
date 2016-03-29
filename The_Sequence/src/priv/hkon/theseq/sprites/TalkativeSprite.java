@@ -119,5 +119,9 @@ public abstract class TalkativeSprite extends Sprite{
 	public void setIsPartOfCutscene(boolean b){
 		isPartOfCutscene = b;
 	}
+	
+	public Conversation getConversation(){
+		return conversation;
+	}
 
 }

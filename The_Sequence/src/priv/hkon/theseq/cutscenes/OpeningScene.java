@@ -44,17 +44,19 @@ public class OpeningScene extends Cutscene {
 			}
 		});
 		
+		happenings.add(new Happening(prophet, startTime){
+			public void happen(){
+				((Movable)(sprite)).startPathTo(px, py - 2);
+			}
+		});
+		
 		happenings.add(new Happening(player, 280){
 			public void happen(){
 				((Movable)sprite).turnTowards(Movable.RIGHT);
 			}
 		});
 		
-		happenings.add(new Happening(prophet, startTime){
-			public void happen(){
-				((Movable)(sprite)).startPathTo(px, py - 2);
-			}
-		});
+		
 		
 		
 		happenings.add(new Happening(prophet, startTime + 120){
@@ -138,7 +140,7 @@ public class OpeningScene extends Cutscene {
 		super.close();
 		player.isPartOfCutscene = false;
 		prophet.isPartOfCutscene = false;
-		prophet.startPathTo(core.village.getTownMiddleX(), core.village.getTownStartY() + core.village.getTownHeight() );
-		prophet.setToSpeakMode(Prophet.INTRODUCTION, Prophet.INTRODUCTION_DURATIONS);
+		prophet.startPathTo(core.village.getTownMiddleX(), core.village.getTownStartY() + core.village.getTownHeight()  - 1);
+		prophet.setToSpeakMode(Prophet.INTRODUCTION, Prophet.INTRODUCTION_DURATIONS, Villager.SPEECH_PRESENTING);
 	}
 }

@@ -1,0 +1,18 @@
+package priv.hkon.theseq.sprites;
+
+import priv.hkon.theseq.structures.House;
+import priv.hkon.theseq.world.Village;
+
+public class Nobody extends Villager {
+
+	private static final long serialVersionUID = -5133115310564670168L;
+
+	public Nobody(int x, int y, Village v, House h, int i) {
+		super(x, y, v, h, i);
+	}
+	
+	public String[] getMeaningOfLife(){
+		return new String[] {"I dunno."};
+	}
+
+}

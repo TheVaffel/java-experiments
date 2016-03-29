@@ -14,6 +14,10 @@ public class Sentence  implements Serializable{
 	public static final int TYPE_GREETING = 3;
 	public static final int TYPE_GOODBYE = 4;
 	public static final int TYPE_CUSTOM_ANSWER = 5;
+	public static final int TYPE_EMPTY = 6;
+	public static final int TYPE_PLAYER_NOT_TALKATIVE = 7;
+	public static final int TYPE_RUMOR_INTRODUCTION = 8;
+	public static final int TYPE_RUMORS = 9;
 	
 	public static final int STATEMENT_NEGATIVE = 0;
 	public static final int STATEMENT_NEUTRAL = 1;
@@ -58,13 +62,13 @@ public class Sentence  implements Serializable{
 	
 	public static final String[][] QUESTIONS = {
 			{"How are you?", "How is your life by now?", "Are you having a good time?"},
-			{"Honestly, what do you think of **o?", "How is **o in your eyes?" , "**o or Hitler?"},
-			{"What is the meaning of our existence anyway?", "Is there more out there, or is this village all the world has got?", "WHY ARE WE HERE?"}
+			{"Honestly, what do you think of **o?", "How is **o in your eyes?" , "**o compared to Hitler?"},
+			{"What is the meaning of our existence anyway?", "Is life more than just this village?", "Why are we here?"}
 	};
 	
 	public static final String[][] RESPONSES = {
 			{"How can you say that?", "That's not true", "I totally disagree"},
-			{"Mhm", "Ok","Right.."},
+			{"Mhm", "Ok..","Right.."},
 			{"Yes, I totally agree!", "Mhm, I agree", "That is absolutely right!"},
 			{"How nice!", "Good!", "Neat"},
 			{"Oh, no!", "I hope things work out", "That is not a good thing"},
@@ -98,6 +102,35 @@ public class Sentence  implements Serializable{
 			{"lion", "dragon", "rose", "flower", "wizard", "tiger", "freedom fighter", "artist"}
 	};
 	
+	public static final String[][] PLAYER_NOT_TALKATIVE = {
+			{"What are you staring at?"},
+			{"You're not very talkative, are you?"},
+			{"Heh, the handsome, silent type, aren't you?"}
+	};
+	
+	public static final String[][] RUMOR_INTRODUCTION = {
+			{
+				"Hey, did you know..",
+				"Listen here",
+				"I should tell you something"
+			}
+	};
+	
+	public static final String[][] GENERAL_RUMORS ={
+			{
+				"The Mayor's house is the one in marble",
+				"The house of trees belongs to a real tree-lover",
+				"There are some mysterious things happening here at night",
+				"There are sometimes howling at night. Scary",
+				"The wall surrounding us has allways been there",
+				"A sequence is the true meaning of life",
+				"You have a purpose.. Fulfill it",
+				"Nothing is wrong. Don't worry"
+			}
+	};
+	
+	public static final String NONE[][] = {{""}};
+	
 	public static final String[][] CUSTOM_ANSWERS = {{}};
 	
 	public static final String[][][] SENTENCES = {
@@ -106,7 +139,11 @@ public class Sentence  implements Serializable{
 		RESPONSES,
 		GREETINGS,
 		GOODBYE,
-		CUSTOM_ANSWERS
+		CUSTOM_ANSWERS,
+		NONE,
+		PLAYER_NOT_TALKATIVE,
+		RUMOR_INTRODUCTION,
+		GENERAL_RUMORS
 	};
 	
 	String[] strings;
@@ -218,6 +255,10 @@ public class Sentence  implements Serializable{
 	
 	public String[] getStrings(){
 		return strings;
+	}
+	
+	public static String getRandomString(int type, int mood){
+		return SENTENCES[type][mood][Sprite.RAND.nextInt(SENTENCES[type][mood].length)];
 	}
 	
 

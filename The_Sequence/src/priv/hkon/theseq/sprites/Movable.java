@@ -66,7 +66,7 @@ public abstract class Movable extends TalkativeSprite implements Runnable{
 	}
 	
 	public void startPathTo(int x, int y){
-		if(isPlanningPath || (x == this.x && y == this.y)){
+		if(isPlanningPath || (x == this.x && y == this.y) || village.getSpriteAt(x, y) != null){
 			return;
 		}
 		pathTargetX = x;
@@ -310,7 +310,7 @@ public abstract class Movable extends TalkativeSprite implements Runnable{
 		
 	}
 	
-	void strollTownGrid(){
+	void strollTownGrid(){//TODO: Fix bug related to people getting stuck to the east of the Village
 		if(moving || hasPath|| isPlanningPath){
 			return;
 		}
@@ -319,8 +319,8 @@ public abstract class Movable extends TalkativeSprite implements Runnable{
 			return;
 		}
 		if(!village.contains(x,y)){
-			startPathTo(village.getTownMiddleX() - dx[getDirectionTo(village.getTownMiddleX(), village.getTownMiddleY())]*village.getTownWidth()/2, 
-					village.getTownMiddleY() - dy[getDirectionTo(village.getTownMiddleX(), village.getTownMiddleY())]*village.getTownHeight()/2);
+			startPathTo(village.getTownMiddleX() - dx[getDirectionTo(village.getTownMiddleX(), village.getTownMiddleY())]*village.getTownWidth()/2 -3, 
+					village.getTownMiddleY() - dy[getDirectionTo(village.getTownMiddleX(), village.getTownMiddleY())]*village.getTownHeight()/2 - 3);
 			return;
 		}
 		if(village.getTileAt(x, y) != Tile.TYPE_REFINED_ROCK){

@@ -1,5 +1,6 @@
 package priv.hkon.theseq.sprites;
 
+import priv.hkon.theseq.misc.Conversation;
 import priv.hkon.theseq.world.Village;
 
 public class Player extends Citizen {
@@ -8,7 +9,7 @@ public class Player extends Citizen {
 
 	public Player(int x, int y, Village v, int i){
 		super(x, y, v, i);
-		moveSpeed = 0.125f;
+		moveSpeed = 0.125f/2;
 	}
 	
 	@Override
@@ -61,6 +62,11 @@ public class Player extends Citizen {
 	}
 	
 	public boolean tick(){
+		if(conversation != null){
+			if(conversation.isFinished()){
+				conversation = null;
+			}
+		}
 		boolean b = super.tick();
 		
 		data = animationFrames[movingDirection][Math.min((int)(getMovedFraction()*numFrames), numFrames - 1)];
@@ -71,4 +77,7 @@ public class Player extends Citizen {
 		return "Newcomer";
 	}
 
+	public void setConversation(Conversation c){
+		conversation = c;
+	}
 }

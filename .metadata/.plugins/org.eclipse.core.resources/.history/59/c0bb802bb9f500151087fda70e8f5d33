@@ -1,0 +1,57 @@
+package priv.hkon.theseq.sprites;
+
+import priv.hkon.theseq.structures.House;
+import priv.hkon.theseq.world.Village;
+
+public class Woodcutter extends Villager {
+
+	private static final long serialVersionUID = 8408691764399000623L;
+
+	public Woodcutter(int x, int y, Village v, House h, int i) {
+		super(x, y, v, h, i);
+	}
+
+	@Override
+	public String[] getMeaningOfLife() {
+		return new String[]{
+				"Uhm.. ",
+				"I am a woodcutter, so..",
+				"Woodcutting?"
+		};
+	}
+
+	@Override
+	public String[] getPresentation() {
+		return new String[]{
+				"I am a Woodcutter!",
+				"My purpose in this harsh, unfair life",
+				"Is to murder green vegetation!",
+				"To keep us humens warm, that is..."
+		};
+	}
+
+	@Override
+	public Integer[] getPresentationDurations() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean classHasPresented() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean subclassSpeechInterrupted() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean subclassSpeechFinished() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+}

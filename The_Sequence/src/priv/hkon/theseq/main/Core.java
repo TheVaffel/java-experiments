@@ -60,7 +60,6 @@ public class Core implements Runnable{
 				Thread.sleep(40);
 			}catch(Exception e){}
 		}
-		village.initOpeningScene();
 		
 		//screen.setData(village.getScreenData(Screen.W, Screen.H));
 		currentTime = System.nanoTime();

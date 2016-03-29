@@ -7,6 +7,8 @@ public class Prophet extends Villager {
 
 	private static final long serialVersionUID = -4204665935086265739L;
 	
+	static boolean presented = false;
+	
 	public static final String[] INTRODUCTION = {
 			"I wish you welcome to the Village!",
 			"We have lived here as long as our oldest,",
@@ -22,26 +24,98 @@ public class Prophet extends Villager {
 	
 	public static final String[] MEANING_OF_LIFE = {
 		"The answer would surprise you.", "Be patient, it will probably be revealed soon enough.",
-		"You ask as if you know there is an answer.", "I like potatoes."
+		"You ask as if there is an answer.", "I like potatoes."
 	};
 
 	public Prophet(int x, int y, Village v, House h, int i) {
 		super(x, y, v, h, i);
+		moveSpeed/= 1.5;
 	}
 	
 	public boolean tick(){
-//		System.out.println("Mode: " + targetMode);
-		return super.tick();
+		if(super.tick()){
+			return true;
+		}
+		
+		return false;
 	}
 	
-	public void work(){
-		if(!hasPath){
-			strollTownGrid();
+	@Override
+	public void makeAnimationFrames(){
+		super.makeAnimationFrames();
+		for(int u = 0; u < animationFrames[0].length; u++){
+			for(int i = 9; i < 12; i++){
+				for(int j = 0; j < W ; j++){
+					if(Math.abs(j - W/2) + i <12){
+						animationFrames[DOWN][u][i][j] = Sprite.getColor(20, 20, 20);
+					}
+					
+					if(j == 2*W/3 + 1){
+						animationFrames[RIGHT][u][i][j] = Sprite.getColor(20, 20, 20);
+						if(i < 9){
+							animationFrames[RIGHT][u][i][j - 1] = Sprite.getColor(20, 20, 20);
+						}
+					}
+					
+					if(j == W/3){
+						animationFrames[LEFT][u][i][j] = Sprite.getColor(20, 20, 20);
+						if(i < 9){
+							animationFrames[LEFT][u][i][j + 1] = Sprite.getColor(20, 20, 20);
+						}
+					}
+				}
+			}
 		}
 	}
 	
-	public String getMeaningOfLife(){
-		return MEANING_OF_LIFE[RAND.nextInt(MEANING_OF_LIFE.length)];
+	public void work(){
+		super.work();
+	}
+	
+	public String[] getMeaningOfLife(){
+		return new String[] {MEANING_OF_LIFE[RAND.nextInt(MEANING_OF_LIFE.length)]};
 	}
 
+	@Override
+	public String[] getPresentation() {//TODO: Expand Prophet's presentation
+		return new String[] {"Ah, I really should present myself",
+				"I am the Prophet",
+				"I do the thinking",
+				"Not to be harsh on the other villagers...",
+				"But it really doesn't seem that anyone cares about their lives here.."
+		};
+	}
+
+	@Override
+	public Integer[] getPresentationDurations() {
+		return new Integer[] {
+			120,
+			120,
+			120,
+			120,
+			180
+		};
+	}
+
+	@Override
+	public boolean classHasPresented() {
+		return presented;
+	}
+
+	@Override
+	public boolean subclassSpeechInterrupted() {
+		return false;
+	}
+
+	@Override
+	public boolean subclassSpeechFinished() {
+		if(modeParameter == SPEECH_PRESENTING){
+			presented = true;
+		}
+		return false;
+	}
+
+	public String getName(){
+		return "The Prophet";
+	}
 }

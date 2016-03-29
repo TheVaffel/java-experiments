@@ -9,7 +9,7 @@ import priv.hkon.theseq.structures.Bed;
 import priv.hkon.theseq.structures.House;
 import priv.hkon.theseq.world.Village;
 
-public class Villager extends Citizen{
+public abstract class Villager extends Citizen{
 	
 	private static final long serialVersionUID = 6040911560799224747L;
 	House home;
@@ -31,6 +31,8 @@ public class Villager extends Citizen{
 	int modeTargetX;
 	int modeTargetY;
 	
+	Sprite lastVictim;
+	
 	int dayCycleShift;
 	
 	boolean hasPausedMode = false;
@@ -42,6 +44,9 @@ public class Villager extends Citizen{
 	Sprite pausedSprite;
 	
 	boolean hasCalled = false;
+	
+	public boolean presenting = false;
+	public boolean didPresent = false;
 	
 	static int[][][] fovDeltaCoordinates;
 	
@@ -72,6 +77,8 @@ public class Villager extends Citizen{
 	public static final int IMPORTANT_MEDIUM  = 2;
 	public static final int IMPORTANT_VERY = 3;
 	
+	public static final int SPEECH_PRESENTING = 10000;
+	
 	public static final String[][] DIALOG_STRINGS = {{"Dum di dum di dum", "La la-laaah lah!"}, 
 			{"Hey, get out!", "You're not welcome here!", "Eyh, you should leave now"},
 			{"Hey...", "What the...","Uhm..","!!"},
@@ -85,7 +92,11 @@ public class Villager extends Citizen{
 			{}
 	};
 	
+	int modeParameter; //For various use, depending on mode
 	
+	//TODO: Make woodcutter, with his own woodcutter-cabin
+	
+	//TODO: Add characteristic head/bodywear for each class
 	
 	public int expectingVisit = -1;
 	public boolean expectingSeveralVisits = false;
@@ -157,7 +168,7 @@ public class Villager extends Citizen{
 			}
 		}
 		
-		if(conversation != null&& targetMode != MODE_TALKING){
+		if(conversation != null&& targetMode != MODE_TALKING && targetMode != MODE_SPEAKING_TO_PLAYER){
 			pauseMode();
 			targetMode = MODE_TALKING;
 			if(conversation.getOwner() != this){
@@ -180,6 +191,9 @@ public class Villager extends Citizen{
 				if(isBedTime()){
 					goToBed();
 				}
+				if(isWorkTime()){
+					setMode(MODE_WORKING, IMPORTANT_MEDIUM, null);
+				}
 				break;
 			case MODE_CHASE_OUT_OF_HOUSE: 
 				chaseOut();
@@ -191,8 +205,11 @@ public class Villager extends Citizen{
 				break;
 			case MODE_WORKING:
 				work();
+				if(!isWorkTime()){
+					setMode(MODE_RELAXING, IMPORTANT_NOT, null);
+				}
 				if(isBedTime()){
-					//goToBed();
+					goToBed();
 				}
 				break;
 			case MODE_FLEEING:
@@ -204,13 +221,9 @@ public class Villager extends Citizen{
 					}
 				}break;
 			case MODE_RELAXING: {
-				if(!hasPath){
-					strollTownGrid();
-				}//TODO: Make Villager working partially on daytime
-				//TODO: Make Villager more talkative in Relax mode
-				if(isBedTime()){
-					goToBed();
-				}
+				
+				relax();
+				
 				break;
 			}
 			
@@ -228,6 +241,31 @@ public class Villager extends Citizen{
 		return false;
 	}
 	
+	public void relax(){
+		
+		if(isBedTime()){
+			goToBed();
+			return;
+		}
+		if(isWorkTime()){
+			setMode(MODE_WORKING, IMPORTANT_MEDIUM, null);
+		}
+
+		Citizen c;
+		if((c = findCitizen()) != null && c != lastVictim && c.getConversation() == null
+				&& !((c instanceof Villager &&((Villager)c).getMode() == MODE_TALKING)
+						|| (! (c instanceof Player) && RAND.nextInt(20)> 0))){
+			
+			hasPath = false;
+			targetSprite = c;
+			lastVictim = c;
+			
+			engageConversation(c, IMPORTANT_VERY);
+		}else if(!hasPath){
+			strollTownGrid();
+		}
+	}
+	
 	boolean reactToNotification(Notification n){
 		if(n.getType() == Notification.TYPE_INVITATION_TO_CONVERSATION){
 			if(n.getCreator() instanceof Citizen && affections[((Citizen)(n.getCreator())).getCitizenNumber()] * n.getImportance() > modeImportance){
@@ -236,6 +274,7 @@ public class Villager extends Citizen{
 				}
 				targetMode = MODE_TALKING;
 				targetSprite = conversation.getOwner();
+				lastVictim = conversation.getOwner();
 				hasPath = false;
 				return true;
 			}else{
@@ -254,32 +293,83 @@ public class Villager extends Citizen{
 	boolean hasPausedPath = false;
 	
 	public void speakToPlayer(){
+		if(sentence.isEmpty() && !showDialog && !hasPath){
+			speechFinished();
+			return;
+		}
 		if(distTo(village.getPlayer())> 8){
-			hasPath = false;
-			if(hasPausedMode){
-				revertPausedMode();
-			}else{
-				targetMode = MODE_RELAXING;
-			}
-			showDialog("Oh.. We'll talk later, then", 120);
+			speechInterrupted();
+			return;
 		}else if(distTo(village.getPlayer())> 4){
 			if(hasPath){
-				hasPausedPath = true;
-				hasPath = false;
+				if(distBetween(getX() + dx[movingDirection], getY() + dy[movingDirection], 
+						village.getPlayer().getX(), village.getPlayer().getY())
+						< distTo(village.getPlayer())){
+					//...
+				}else{
+					hasPausedPath = true;
+					hasPath = false;
+					turnTowards(getDirectionTo(village.getPlayer()));
+				}
+			}else{
+				turnTowards(getDirectionTo(village.getPlayer()));
 			}
-			
-			turnTowards(getDirectionTo(village.getPlayer()));
 		
 		}else{
 			if(hasPausedPath){
 				hasPath = true;
 				hasPausedPath = false;
 			}
+			if(!hasPath){
+				turnTowards(getDirectionTo(village.getPlayer()));
+			}
 		}
+	}
+	
+	public void speechInterrupted(){
+		sentence.clear();
+		if(subclassSpeechInterrupted()){
+			return;
+		}
+		
+		hasPath = false;
+		if(hasPausedMode){
+			revertPausedMode();
+		}else{
+			setMode(MODE_RELAXING, IMPORTANT_NOT, null);
+		}
+		showDialog("Oh.. We'll talk later, then", 120);
+	}
+	
+	public void speechFinished(){
+		if(conversation != null){
+			conversation.disconnect(this);
+		}
+		if(subclassSpeechFinished()){
+			return;
+		}
+		if(hasPausedMode && pausedMode == MODE_TALKING){
+			hasPausedMode = false;
+		}
+		
+		conversation = null;
+		
+		if(hasPausedMode){
+			revertPausedMode();
+			
+		}else{
+			setMode(MODE_RELAXING, IMPORTANT_NOT, null);
+		}
+		lastVictim = village.getPlayer();
+		showDialog(Sentence.getRandomString(Sentence.TYPE_GOODBYE, Sentence.GOODBYE_NEUTRAL) , 120);
 	}
 	
 	boolean isBedTime(){
 		return (village.getTime() - dayCycleShift)%Village.DAYCYCLE_DURATION > 2*Village.DAYCYCLE_DURATION/3;
+	}
+	
+	boolean isWorkTime(){
+		return (village.getTime() - dayCycleShift)%Village.DAYCYCLE_DURATION <Village.DAYCYCLE_DURATION/3;
 	}
 	
 	void runAway(){
@@ -481,6 +571,18 @@ public class Villager extends Citizen{
 		startPathTo(home.getX()+ home.getW()/2, home.getY() + home.getH()/2);
 	}
 	
+	public void setMode(int m, int i, Sprite s){
+		targetMode = m;
+		modeImportance = i;
+		targetSprite = s;
+	}
+	
+	public void setMode(int m, int i, Sprite s, int x, int y){
+		setMode(m, i , s);
+		modeTargetX = x;
+		modeTargetY = y;
+	}
+	
 	public void makeAnimationFrames(){
 		numAnimations = 4;
 		numFrames = 1;
@@ -601,7 +703,10 @@ public class Villager extends Citizen{
 	
 	
 	protected void work(){
-		
+		relax();
+		/*if(!hasPath){
+			strollTownGrid();
+		}*/
 	}
 	
 	protected boolean importantEnough(Conversation c){
@@ -621,9 +726,17 @@ public class Villager extends Citizen{
 			disconnectFromTalk();
 		}*/
 		
+		if(conversation == null){
+			return;
+		}
 		int id = RAND.nextInt(village.getNumCitizens());
 		while(id == this.citizenNumber || (conversation.getOther(this) instanceof Citizen && id == ((Citizen)(conversation.getOther(this))).getCitizenNumber())){
 			id = (id + 1)% village.getNumCitizens();
+		}
+		
+		if(conversation.getOther(this) instanceof Player && !classHasPresented()){
+			setToSpeakMode(getPresentation(), getPresentationDurations(), SPEECH_PRESENTING);
+			return;
 		}
 		
 		if(conversation.getLastSentence() == null){
@@ -644,16 +757,23 @@ public class Villager extends Citizen{
 				return;
 			}
 			if(conversation.getOther(this) instanceof Player){
+				if(type == Sentence.TYPE_EMPTY){
+					saySentence(new Sentence(conversation.getOther(this), Sentence.TYPE_PLAYER_NOT_TALKATIVE, Math.min(Math.max((int)(aff + 1), 0), 2), this));
+				}else if(type == Sentence.TYPE_PLAYER_NOT_TALKATIVE){
+					saySentence(new Sentence(conversation.getOther(this), Sentence.TYPE_GOODBYE, Math.min(Math.max((int)(aff + 1), 0), 2), this));
+					disconnectFromTalk();
+				}else{
+					saySentence(new Sentence(conversation.getOther(this), Sentence.TYPE_EMPTY, this));
+				}
 				return;
 			}
 			if(type == Sentence.TYPE_QUESTION){
 				saySentence(getAnswer(conversation.getLastSentence().getArg2()));
 				return;
 			}else if(type == Sentence.TYPE_CUSTOM_ANSWER){
-				
 				saySentence(new Sentence(conversation.getOther(this), Sentence.TYPE_RESPONSE, Math.min(Math.max((int)(2*Sentence.meaningWeight[conversation.getLastSentence().getArg2()]*aff) + 1, 0), 2), this));
 				return;
-			}else if(type == Sentence.TYPE_GOODBYE){
+			}else if(type == Sentence.TYPE_GOODBYE ){
 				saySentence(new Sentence(conversation.getOther(this), Sentence.TYPE_GOODBYE, Math.min(Math.max((int)(aff + 1), 0), 2), this));
 				disconnectFromTalk();
 				return;
@@ -668,7 +788,7 @@ public class Villager extends Citizen{
 	Sentence getAnswer(int type){
 		switch(type){
 		case Sentence.QUESTION_MEANING_OF_LIFE: 
-			return new Sentence(conversation.getOther(this), Sentence.TYPE_CUSTOM_ANSWER, Sentence.CUSTOM_ANSWER_NEUTRAL, new String[] {getMeaningOfLife()}, this);
+			return new Sentence(conversation.getOther(this), Sentence.TYPE_CUSTOM_ANSWER, Sentence.CUSTOM_ANSWER_NEUTRAL, getMeaningOfLife(), this);
 		case Sentence.QUESTION_RELATION_TO:
 			return new Sentence(conversation.getOther(this), Sentence.TYPE_CUSTOM_ANSWER, getRelationToInt(conversation.getLastSentence().getTopic()), new String[] {getRelationToString(conversation.getLastSentence().getTopic())}, this);
 		case Sentence.QUESTION_SELF_CONDITION:
@@ -736,11 +856,10 @@ public class Villager extends Citizen{
 		
 	}
 	
-	public String getMeaningOfLife(){
-		return "I dunno.";
-	};
+	public abstract String[] getMeaningOfLife();
 	
 	public void deniedConversation(){
+		conversation.finished = true;
 		conversation = null;
 		setDialogString("Oh... Ok, then...");
 		showDialog(60*2);
@@ -784,14 +903,25 @@ public class Villager extends Citizen{
 		return modeImportance < IMPORTANT_MEDIUM || (targetMode == MODE_RELAXING || targetMode == MODE_RELAX_AT_HOME);
 	}
 	
-	public void setToSpeakMode(String[] str, Integer[] dur){
+	public void setToSpeakMode(String[] str, Integer[] dur, int param){
 		if(hasImportantMode()){
 			pauseMode();
 		}
+		modeParameter = param;
 		sentence.addAll(Arrays.asList(str));
 		dialogLengths.addAll(Arrays.asList(dur));
 		targetMode = MODE_SPEAKING_TO_PLAYER;
 		showDialog = true;
 	}
+	
+	public int getMode(){
+		return targetMode;
+	}
 
+	public abstract String[] getPresentation();
+	public abstract Integer[] getPresentationDurations();
+	public abstract boolean classHasPresented();
+	
+	public abstract boolean subclassSpeechInterrupted();
+	public abstract boolean subclassSpeechFinished();
 }

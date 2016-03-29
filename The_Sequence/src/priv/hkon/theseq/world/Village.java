@@ -20,13 +20,16 @@ import priv.hkon.theseq.sprites.Citizen;
 import priv.hkon.theseq.sprites.Gardener;
 import priv.hkon.theseq.sprites.Mayor;
 import priv.hkon.theseq.sprites.Movable;
+import priv.hkon.theseq.sprites.Nobody;
 import priv.hkon.theseq.sprites.Player;
 import priv.hkon.theseq.sprites.Prophet;
 import priv.hkon.theseq.sprites.Sprite;
 import priv.hkon.theseq.sprites.TalkativeSprite;
 import priv.hkon.theseq.sprites.Villager;
 import priv.hkon.theseq.structures.Building;
+import priv.hkon.theseq.structures.GardenerHouse;
 import priv.hkon.theseq.structures.House;
+import priv.hkon.theseq.structures.MayorHouse;
 import priv.hkon.theseq.structures.Structure;
 
 public class Village implements Serializable{
@@ -39,7 +42,7 @@ public class Village implements Serializable{
 	Random random;
 	
 	public Cutscene currScene;
-	public boolean inCutscene;
+	public boolean inCutscene = false;
 	
 	int[][] tiles = new int[H][W];
 	Sprite[][] sprites = new Sprite[H][W];
@@ -48,6 +51,8 @@ public class Village implements Serializable{
 	Building[][] ownedBy = new Building[H][W];
 	
 	Citizen[] citizenList;
+	
+	int[] villagerPermutation;
 	
 	boolean[][] closed = new boolean[H][W];
 	boolean shouldDrawInside = false;
@@ -77,7 +82,7 @@ public class Village implements Serializable{
 	
 	public static final int DAYCYCLE_DURATION = 60*60*20;
 	
-	long time = 3*DAYCYCLE_DURATION/3 - 60*20;
+	long time = DAYCYCLE_DURATION + 60*60;
 	
 	public long lastSave;
 	
@@ -132,29 +137,45 @@ public class Village implements Serializable{
 		}
 		
 		citizenList = new Citizen[numVillagers + 1];
+		villagerPermutation = getPermutation(numVillagers + 1);
 		
 		createStartSet();
 		int i;
 		for(i = 0; i< numVillagers - 3; i++){
-			villagers[i]= new Villager(townGrid[i/townGridSide][i%townGridSide].getX() + houseSide/2, townGrid[i/townGridSide][i%townGridSide].getY() + houseSide/2, this, townGrid[i/townGridSide][i%townGridSide], i);
-			addSprite(villagers[i]);
+			villagers[villagerPermutation[i]]= new Nobody(townGrid[i/townGridSide][i%townGridSide].getX() + houseSide/2, townGrid[i/townGridSide][i%townGridSide].getY() + houseSide/2, this, townGrid[i/townGridSide][i%townGridSide], i);
+			addSprite(villagers[villagerPermutation[i]]);
 		}
 
 		i++;
 		
-		villagers[i] = new Gardener(townGrid[i/townGridSide][i%townGridSide].getX() + houseSide/2, townGrid[i/townGridSide][i%townGridSide].getY() + houseSide/2, this, townGrid[i/townGridSide][i%townGridSide], i);
-		addSprite(villagers[i]);
+		villagers[villagerPermutation[i]] = new Gardener(townGrid[i/townGridSide][i%townGridSide].getX() + houseSide/2, townGrid[i/townGridSide][i%townGridSide].getY() + houseSide/2, this, townGrid[i/townGridSide][i%townGridSide], i);
+		addSprite(villagers[villagerPermutation[i]]);
 		
 		i++;
 		
-		villagers[i] = new Mayor(townGrid[i/townGridSide][i%townGridSide].getX() + houseSide/2, townGrid[i/townGridSide][i%townGridSide].getY() + houseSide/2, this, townGrid[i/townGridSide][i%townGridSide], i);
-		addSprite(villagers[i]);
+		villagers[villagerPermutation[i]] = new Mayor(townGrid[i/townGridSide][i%townGridSide].getX() + houseSide/2, townGrid[i/townGridSide][i%townGridSide].getY() + houseSide/2, this, townGrid[i/townGridSide][i%townGridSide], i);
+		addSprite(villagers[villagerPermutation[i]]);
 		
 		villagers[0].debug = true;
 		
 		for(i = 0;i < numVillagers; i++){
-			citizenList[i] = villagers[i];
+			citizenList[i] = villagers[villagerPermutation[i]];
 		}
+		
+		for(i = 0; i < numVillagers; i++){
+			makeSuitableHouse(citizenList[i], villagerPermutation[i]/townGridSide, villagerPermutation[i]%townGridSide);
+		}
+	}
+	
+	public void makeSuitableHouse(Sprite s, int i, int j){
+		if(s instanceof Mayor){
+			townGrid[i][j] = new MayorHouse(getTownStartX() + houseSpread*j, getTownStartY() + houseSpread*i, houseSide, houseSide, this);
+		}else if(s instanceof Gardener){
+			townGrid[i][j] = new GardenerHouse(getTownStartX() + houseSpread*j, getTownStartY() + houseSpread*i, houseSide, houseSide, this);
+		}else{
+			townGrid[i][j] = new House(getTownStartX() + houseSpread*j, getTownStartY() + houseSpread*i, houseSide, houseSide, this);
+		}
+		addBuilding(townGrid[i][j]);
 	}
 	
 	public void createStartSet(){
@@ -180,13 +201,10 @@ public class Village implements Serializable{
 		
 		int i = numVillagers - 3;
 		Prophet p = new Prophet(sx + w/2, sy, this, townGrid[i/townGridSide][i%townGridSide], i);
-		villagers[i] = p;
-		addSprite(villagers[i]);
+		villagers[villagerPermutation[i]] = p;
+		addSprite(villagers[villagerPermutation[i]]);
 		
 		currScene = new OpeningScene(player, p, core);
-	}
-	
-	public void initOpeningScene(){
 		inCutscene = true;
 	}
 	
@@ -536,10 +554,27 @@ public class Village implements Serializable{
 	}
 	
 	public boolean contains(int x, int y){
-		return x >= getTownStartX() && y >= getTownStartY() && x < getTownStartX() + getTownWidth() && y < getTownStartY() + getTownWidth();
+		return x >= getTownStartX() && y >= getTownStartY() && x < getTownStartX() + getTownWidth() - houseSpread + houseSide && y < getTownStartY() + getTownHeight();
 	}
 	
 	public void setCore(Core core){
 		this.core = core;
+	}
+	
+	public int[] getPermutation(int n){
+		int[] perm = new int[n];
+		
+		for(int i = 0; i< n; i++){
+			perm[i] = i;
+		}
+		
+		for(int i = 0; i < n-1; i++){
+			int u = Sprite.RAND.nextInt(n - i);
+			int t = perm[u];
+			perm[u] = perm[i];
+			perm[i] = t;
+		}
+		
+		return perm;
 	}
 }
