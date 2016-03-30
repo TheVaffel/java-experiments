@@ -7,7 +7,7 @@ public class Controller implements KeyListener {
 	
 	public static boolean[] input = new boolean[65536];
 	
-	public static int numin = 0;
+	int numin;
 
 	@Override
 	public void keyPressed(KeyEvent arg0) {

@@ -71,7 +71,7 @@ public class Player extends Citizen {
 			return true;
 		}
 		NonBlock d;
-		if(village.getTime()% Village.DAYCYCLE_DURATION > 30*60 &&(d =village.getNonBlockAt(x, y))!= null && d.getStructure() != null && d.getStructure() instanceof Bed){
+		if(village.getTime()% Village.DAYCYCLE_DURATION > 30 &&(d =village.getNonBlockAt(x, y))!= null && d.getStructure() != null && d.getStructure() instanceof Bed){
 			showDialog("Press S to sleep til daylight", 2);
 			if(Controller.input[KeyEvent.VK_S]){
 				village.turnOnSleepMode();

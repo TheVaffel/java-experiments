@@ -55,8 +55,6 @@ public class Core implements Runnable{
 			}catch(Exception e){}
 		}
 		
-		loadingInitiated = true;
-		
 		new Thread(this).start();
 		//System.out.println("At first");
 		while(!worldInitiated){

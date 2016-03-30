@@ -177,7 +177,6 @@ public class Screen extends JFrame{
 	int titleScreenCount = 0;
 	
 	String[] altTitles = {"The Sequence", "The_Sequence"};
-	String pressKeyString = "Press any key to start";
 	int titleNum = 0;
 	
 	public void runTitleScreen(){
@@ -227,14 +226,8 @@ public class Screen extends JFrame{
 		
 		String str = altTitles[titleNum];
 		
-		g.drawString(str, 30, 2*H/5);
 		
-		if(!core.isInitiated() && titleScreenCount % 28 < 21){
-			str = pressKeyString;
-			g.setFont(new Font("Courier", Font.PLAIN, 12));
-			g.setColor(Color.gray);
-			g.drawString(str, 25, 3*H/5);
-		}
+		g.drawString(str, 30, 2*H/5);
 		for(int i = 0; i< H; i++){
 			float p = Sprite.RAND.nextFloat()/10;
 			if(core.isInitiated()){

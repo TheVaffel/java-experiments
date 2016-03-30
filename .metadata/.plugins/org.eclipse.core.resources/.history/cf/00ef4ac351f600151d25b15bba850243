@@ -47,15 +47,7 @@ public class Core implements Runnable{
 	
 	public void start(){
 		
-		while(Controller.numin == 0){
-			screen.runTitleScreen();
-			screen.update();
-			try{
-				Thread.sleep(40);
-			}catch(Exception e){}
-		}
-		
-		loadingInitiated = true;
+		while(Controller.input[])
 		
 		new Thread(this).start();
 		//System.out.println("At first");

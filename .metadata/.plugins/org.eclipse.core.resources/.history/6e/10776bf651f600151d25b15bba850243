@@ -49,13 +49,10 @@ public class Core implements Runnable{
 		
 		while(Controller.numin == 0){
 			screen.runTitleScreen();
-			screen.update();
 			try{
 				Thread.sleep(40);
 			}catch(Exception e){}
 		}
-		
-		loadingInitiated = true;
 		
 		new Thread(this).start();
 		//System.out.println("At first");

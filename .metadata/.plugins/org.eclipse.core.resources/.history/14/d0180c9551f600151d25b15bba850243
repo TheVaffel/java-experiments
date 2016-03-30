@@ -20,7 +20,6 @@ public class Core implements Runnable{
 	public Village village;
 	
 	boolean worldInitiated = false;
-	boolean loadingInitiated = false;
 	
 	Filter cutsceneFilter = Filter.NO_FILTER;
 	Filter villageFilter = Filter.NO_FILTER;
@@ -46,16 +45,6 @@ public class Core implements Runnable{
 	long lastTime = currentTime;
 	
 	public void start(){
-		
-		while(Controller.numin == 0){
-			screen.runTitleScreen();
-			screen.update();
-			try{
-				Thread.sleep(40);
-			}catch(Exception e){}
-		}
-		
-		loadingInitiated = true;
 		
 		new Thread(this).start();
 		//System.out.println("At first");
@@ -214,9 +203,5 @@ public class Core implements Runnable{
 	public void resyncronizeTime(){
 		currentTime = System.nanoTime();
 		lastTime = currentTime;
-	}
-	
-	public boolean isInitiated(){
-		return loadingInitiated;
 	}
 }

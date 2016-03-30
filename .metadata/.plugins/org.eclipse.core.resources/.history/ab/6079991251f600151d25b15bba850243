@@ -229,11 +229,8 @@ public class Screen extends JFrame{
 		
 		g.drawString(str, 30, 2*H/5);
 		
-		if(!core.isInitiated() && titleScreenCount % 28 < 21){
-			str = pressKeyString;
-			g.setFont(new Font("Courier", Font.PLAIN, 12));
-			g.setColor(Color.gray);
-			g.drawString(str, 25, 3*H/5);
+		if(!core.isInitiated()){
+			str = 
 		}
 		for(int i = 0; i< H; i++){
 			float p = Sprite.RAND.nextFloat()/10;

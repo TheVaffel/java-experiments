@@ -177,7 +177,6 @@ public class Screen extends JFrame{
 	int titleScreenCount = 0;
 	
 	String[] altTitles = {"The Sequence", "The_Sequence"};
-	String pressKeyString = "Press any key to start";
 	int titleNum = 0;
 	
 	public void runTitleScreen(){
@@ -227,29 +226,19 @@ public class Screen extends JFrame{
 		
 		String str = altTitles[titleNum];
 		
-		g.drawString(str, 30, 2*H/5);
-		
-		if(!core.isInitiated() && titleScreenCount % 28 < 21){
-			str = pressKeyString;
-			g.setFont(new Font("Courier", Font.PLAIN, 12));
-			g.setColor(Color.gray);
-			g.drawString(str, 25, 3*H/5);
-		}
-		for(int i = 0; i< H; i++){
+		g.drawString(str, 30, 2*H/5);for(int i = 0; i< H; i++){
 			float p = Sprite.RAND.nextFloat()/10;
-			if(core.isInitiated()){
-				for(int j = 0; j < W ;j++){
-					int re = titleData[i*W + j]>>16 & 255;
-					int gr = titleData[i*W + j] >> 8 & 255;
-					int bl = titleData[i*W + j] & 255;
-					float r = Sprite.RAND.nextFloat();
-					
-					re += 3*p*re + 5*r;
-					gr += 3*p*gr + 5*r;
-					bl += 3*p*bl + 5*r;
-					
-					titleData[i*W + j] = (255 << 24) | re << 16 | gr << 8 | bl;
-				}
+			for(int j = 0; j < W ;j++){
+				int re = titleData[i*W + j]>>16 & 255;
+				int gr = titleData[i*W + j] >> 8 & 255;
+				int bl = titleData[i*W + j] & 255;
+				float r = Sprite.RAND.nextFloat();
+				
+				re += 3*p*re + 5*r;
+				gr += 3*p*gr + 5*r;
+				bl += 3*p*bl + 5*r;
+				
+				titleData[i*W + j] = (255 << 24) | re << 16 | gr << 8 | bl;
 			}
 		}
 		

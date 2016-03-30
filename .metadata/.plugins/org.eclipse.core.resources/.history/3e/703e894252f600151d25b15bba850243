@@ -229,7 +229,7 @@ public class Screen extends JFrame{
 		
 		g.drawString(str, 30, 2*H/5);
 		
-		if(!core.isInitiated() && titleScreenCount % 28 < 21){
+		if(!core.isInitiated() && titleScreenCount % 28 < 14){
 			str = pressKeyString;
 			g.setFont(new Font("Courier", Font.PLAIN, 12));
 			g.setColor(Color.gray);
