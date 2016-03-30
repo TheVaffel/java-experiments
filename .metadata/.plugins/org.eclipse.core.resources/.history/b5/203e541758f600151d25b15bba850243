@@ -1,0 +1,9 @@
+package priv.hkon.theseq.cutscenes;
+
+public class FadeInCutscene {
+
+	public FadeInCutscene() {
+		// TODO Auto-generated constructor stub
+	}
+
+}

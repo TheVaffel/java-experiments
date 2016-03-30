@@ -1,0 +1,28 @@
+package priv.hkon.theseq.cutscenes;
+
+import priv.hkon.theseq.main.Core;
+import priv.hkon.theseq.sprites.Player;
+
+public class WakeUpCutscene extends Cutscene{
+	
+	Player player;
+	
+	DarkenFilter darkenFilter;
+	
+	WakeUpCutscene(Core core, Player player) {
+		super(core);
+		this.player = player;
+	}
+
+	public void tick(){
+		if(tickCount < 240){
+			darken
+		}
+	}
+
+	@Override
+	public boolean isFinished() {
+		
+	}
+
+}

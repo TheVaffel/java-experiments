@@ -121,14 +121,14 @@ public class OpeningScene extends Cutscene {
 		if(tickCount < 240){
 			darkenFilter.darkness = 255 - tickCount;
 			core.setCutsceneFilter(darkenFilter);
-		}else if(tickCount == 120){
+		}else if(tickCount == 240){
 			core.setCutsceneFilter(Filter.NO_FILTER);
 			
 		}else if(tickCount >= 1320 + startTime){
 			finished = true;
 		}
 		super.tick();
-		tickCount++;
+		
 	}
 
 	@Override

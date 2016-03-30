@@ -1,0 +1,27 @@
+package priv.hkon.theseq.cutscenes;
+
+import priv.hkon.theseq.main.Core;
+import priv.hkon.theseq.sprites.Player;
+
+public class WakeUpCutscene extends Cutscene{
+	
+	WakeUpCutscene(Core core) {
+		super(core);
+		this.player = player;
+	}
+
+	Player player;
+
+	public FadeInCutscene(Core core, Player player) {
+		super(core);
+		
+		
+	}
+
+	@Override
+	public boolean isFinished() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+}

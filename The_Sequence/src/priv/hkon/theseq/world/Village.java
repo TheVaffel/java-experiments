@@ -7,6 +7,7 @@ import java.util.Random;
 import priv.hkon.theseq.blocks.Tree;
 import priv.hkon.theseq.blocks.Wall;
 import priv.hkon.theseq.cutscenes.Cutscene;
+import priv.hkon.theseq.cutscenes.WakeUpCutscene;
 import priv.hkon.theseq.main.Controller;
 import priv.hkon.theseq.main.Core;
 import priv.hkon.theseq.main.Screen;
@@ -143,7 +144,7 @@ public class Village implements Serializable{
 		
 		
 		citizenList = new Citizen[numVillagers + 1];
-		villagerPermutation = getPermutation(numVillagers + 1);
+		villagerPermutation = getPermutation(numVillagers);
 		
 		createStartSet();
 		int i;
@@ -343,6 +344,7 @@ public class Village implements Serializable{
 		
 		if(nightBoost && time % Village.DAYCYCLE_DURATION <30){
 			nightBoost = false;
+			setCutscene(new WakeUpCutscene(core, player));
 		}
 		if(Controller.input[KeyEvent.VK_B]){
 			breakPoint();
@@ -615,6 +617,12 @@ public class Village implements Serializable{
 	
 	public void turnOnSleepMode(){
 		nightBoost = true;
+		core.playMidiSound(Core.MIDI_SLEEP);
 		time = (time + Village.DAYCYCLE_DURATION)/Village.DAYCYCLE_DURATION*Village.DAYCYCLE_DURATION - 5*60;
+	}
+	
+	public void setCutscene(Cutscene cutscene){
+		this.currScene = cutscene;
+		inCutscene = true;
 	}
 }

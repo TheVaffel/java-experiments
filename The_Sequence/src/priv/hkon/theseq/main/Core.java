@@ -1,17 +1,25 @@
 package priv.hkon.theseq.main;
 
+import java.io.BufferedInputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+
+import javax.sound.midi.MidiSystem;
+import javax.sound.midi.Sequencer;
 
 import priv.hkon.theseq.filters.CombinedFilter;
 import priv.hkon.theseq.filters.Filter;
 import priv.hkon.theseq.filters.NightFilter;
 import priv.hkon.theseq.world.Tile;
 import priv.hkon.theseq.world.Village;
+import sun.audio.AudioPlayer;
+import sun.audio.AudioStream;
 
 public class Core implements Runnable{ 
 	Screen screen;
@@ -25,12 +33,17 @@ public class Core implements Runnable{
 	Filter cutsceneFilter = Filter.NO_FILTER;
 	Filter villageFilter = Filter.NO_FILTER;
 	
+	Sequencer seq = null;
+	
 	NightFilter nightFilter = new NightFilter(0);
 	
 	boolean changedFilter = true;
 
 	boolean playing = false;
 	static final double TICKS_PER_SECOND = 60;
+	
+	public static final String MIDI_TITLE = "sound/TitleScreen.MID";
+	public static final String MIDI_SLEEP = "sound/Sleep.MID";
 	
 	public static void main(String[] args) {
 		Core c = new Core();
@@ -46,6 +59,7 @@ public class Core implements Runnable{
 	long lastTime = currentTime;
 	
 	public void start(){
+		playMidiSound(MIDI_TITLE);
 		
 		while(Controller.numin == 0){
 			screen.runTitleScreen();
@@ -56,9 +70,24 @@ public class Core implements Runnable{
 		}
 		
 		loadingInitiated = true;
+		if(seq != null){
+			seq.stop();
+		}
 		
 		new Thread(this).start();
 		//System.out.println("At first");
+		
+		AudioStream audioStream = null;
+		
+		try{
+		    String noiseFile = "sound/noise.wav";
+		    InputStream in = new FileInputStream(noiseFile);
+		 
+		    audioStream = new AudioStream(in);
+		 
+		    AudioPlayer.player.start(audioStream);
+		}catch(Exception e){}
+
 		while(!worldInitiated){
 			screen.runTitleScreen();
 			screen.update();
@@ -73,6 +102,9 @@ public class Core implements Runnable{
 			try{
 				Thread.sleep(40);
 			}catch(Exception e){}
+		}
+		if(AudioPlayer.player != null){
+			AudioPlayer.player.stop(audioStream);
 		}
 		
 		//screen.setData(village.getScreenData(Screen.W, Screen.H));
@@ -218,5 +250,28 @@ public class Core implements Runnable{
 	
 	public boolean isInitiated(){
 		return loadingInitiated;
+	}
+	
+	public void playMidiSound(String str){
+		stopMidiSound();
+		try {
+			seq = MidiSystem.getSequencer();
+			
+			seq.open();
+			
+			InputStream is = new BufferedInputStream(new FileInputStream(new File(str)));
+			
+			seq.setSequence(is);
+			
+			seq.start();
+		} catch (Exception e1) {
+			e1.printStackTrace();
+		}
+	}
+	
+	public void stopMidiSound(){
+		if(seq != null){
+			seq.stop();
+		}
 	}
 }

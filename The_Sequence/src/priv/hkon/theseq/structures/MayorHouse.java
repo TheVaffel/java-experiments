@@ -23,7 +23,7 @@ public class MayorHouse extends House {
 		}
 		
 		bed = new Bed(0, 0, village);
-		addStructure(bed, 1, 1);
+		addStructure(bed, w-2, 1);
 	}
 	
 
