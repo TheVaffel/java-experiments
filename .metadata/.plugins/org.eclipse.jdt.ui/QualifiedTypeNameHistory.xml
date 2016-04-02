@@ -16,7 +16,6 @@
 <fullyQualifiedTypeName name="priv.hkon.theseq.structures.Bed"/>
 <fullyQualifiedTypeName name="java.io.Serializable"/>
 <fullyQualifiedTypeName name="javax.imageio.ImageIO"/>
-<fullyQualifiedTypeName name="java.io.File"/>
 <fullyQualifiedTypeName name="java.util.Arrays"/>
 <fullyQualifiedTypeName name="priv.hkon.theseq.sprites.Prophet"/>
 <fullyQualifiedTypeName name="priv.hkon.theseq.sprites.Nobody"/>
@@ -30,4 +29,8 @@
 <fullyQualifiedTypeName name="priv.hkon.theseq.main.Controller"/>
 <fullyQualifiedTypeName name="java.awt.event.KeyEvent"/>
 <fullyQualifiedTypeName name="priv.hkon.theseq.blocks.Wall"/>
+<fullyQualifiedTypeName name="java.io.InputStream"/>
+<fullyQualifiedTypeName name="java.io.File"/>
+<fullyQualifiedTypeName name="priv.hkon.theseq.filters.DarkenFilter"/>
+<fullyQualifiedTypeName name="priv.hkon.theseq.sprites.Movable"/>
 </qualifiedTypeNameHistroy>

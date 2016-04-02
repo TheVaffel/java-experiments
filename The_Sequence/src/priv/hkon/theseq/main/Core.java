@@ -12,14 +12,15 @@ import java.io.ObjectOutputStream;
 
 import javax.sound.midi.MidiSystem;
 import javax.sound.midi.Sequencer;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
 
 import priv.hkon.theseq.filters.CombinedFilter;
 import priv.hkon.theseq.filters.Filter;
 import priv.hkon.theseq.filters.NightFilter;
 import priv.hkon.theseq.world.Tile;
 import priv.hkon.theseq.world.Village;
-import sun.audio.AudioPlayer;
-import sun.audio.AudioStream;
 
 public class Core implements Runnable{ 
 	Screen screen;
@@ -33,8 +34,6 @@ public class Core implements Runnable{
 	Filter cutsceneFilter = Filter.NO_FILTER;
 	Filter villageFilter = Filter.NO_FILTER;
 	
-	Sequencer seq = null;
-	
 	NightFilter nightFilter = new NightFilter(0);
 	
 	boolean changedFilter = true;
@@ -44,6 +43,17 @@ public class Core implements Runnable{
 	
 	public static final String MIDI_TITLE = "sound/TitleScreen.MID";
 	public static final String MIDI_SLEEP = "sound/Sleep.MID";
+	public static final String MIDI_MAIN_THEME_DAY = "sound/MainThemeDay.MID";
+	public static final String MIDI_MAIN_THEME_NIGHT = "sound/MainThemeNight.MID";
+	
+	public static final String WAV_NOISE = "sound/noise.wav";
+	public static final String WAV_TITLE = "sound/TitleScreen.WAV";
+	public static final String WAV_SLEEP = "sound/Sleep.WAV";
+	public static final String WAV_MAIN_THEME_DAY = "sound/MainThemeDay.WAV";
+	public static final String WAV_MAIN_THEME_NIGHT = "sound/MainThemeNight.WAV";
+	
+	Clip currClip = null;
+	Sequencer seq = null;
 	
 	public static void main(String[] args) {
 		Core c = new Core();
@@ -59,7 +69,10 @@ public class Core implements Runnable{
 	long lastTime = currentTime;
 	
 	public void start(){
-		playMidiSound(MIDI_TITLE);
+		screen.runTitleScreen();
+		screen.update();
+		playWavSound(WAV_TITLE);
+		
 		
 		while(Controller.numin == 0){
 			screen.runTitleScreen();
@@ -77,16 +90,7 @@ public class Core implements Runnable{
 		new Thread(this).start();
 		//System.out.println("At first");
 		
-		AudioStream audioStream = null;
-		
-		try{
-		    String noiseFile = "sound/noise.wav";
-		    InputStream in = new FileInputStream(noiseFile);
-		 
-		    audioStream = new AudioStream(in);
-		 
-		    AudioPlayer.player.start(audioStream);
-		}catch(Exception e){}
+		playWavSound(WAV_NOISE);
 
 		while(!worldInitiated){
 			screen.runTitleScreen();
@@ -103,9 +107,7 @@ public class Core implements Runnable{
 				Thread.sleep(40);
 			}catch(Exception e){}
 		}
-		if(AudioPlayer.player != null){
-			AudioPlayer.player.stop(audioStream);
-		}
+		stopWavSound();
 		
 		//screen.setData(village.getScreenData(Screen.W, Screen.H));
 		currentTime = System.nanoTime();
@@ -255,7 +257,9 @@ public class Core implements Runnable{
 	public void playMidiSound(String str){
 		stopMidiSound();
 		try {
-			seq = MidiSystem.getSequencer();
+			if(seq == null){
+				seq = MidiSystem.getSequencer();
+			}
 			
 			seq.open();
 			
@@ -267,11 +271,48 @@ public class Core implements Runnable{
 		} catch (Exception e1) {
 			e1.printStackTrace();
 		}
+		
+		//System.out.println("Midi length: " + seq.getMicrosecondLength()/1000000.0);
 	}
 	
 	public void stopMidiSound(){
 		if(seq != null){
 			seq.stop();
 		}
+	}
+	
+	public boolean midiIsPlaying(){
+		return seq.isRunning();
+	}
+	
+	public void playWavSound(String str){
+		if(currClip != null){
+			currClip.stop();
+		}
+		try{
+			AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(
+				    new File(str));
+		    
+		    currClip = AudioSystem.getClip();
+		    currClip.open(audioInputStream);
+		    //FloatControl gainControl = 
+		        //(FloatControl) currClip.getControl(FloatControl.Type.MASTER_GAIN);
+		    //gainControl.setValue(-20.0f); 
+		    currClip.start();
+		 
+		}catch(Exception e){
+			e.printStackTrace();
+			System.exit(0);
+		}
+	}
+	
+	public void stopWavSound(){
+		if(currClip != null){
+			currClip.stop();
+		}
+	}
+	
+	public boolean wavIsPlaying(){
+		return currClip.isActive();
 	}
 }

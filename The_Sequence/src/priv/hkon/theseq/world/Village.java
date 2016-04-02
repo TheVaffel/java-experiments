@@ -350,6 +350,14 @@ public class Village implements Serializable{
 			breakPoint();
 		}
 		
+		if(!core.wavIsPlaying()&& Sprite.RAND.nextInt(Village.DAYCYCLE_DURATION*2) == 0){
+			if(time%Village.DAYCYCLE_DURATION < 2*Village.DAYCYCLE_DURATION/3){
+				core.playWavSound(Core.WAV_MAIN_THEME_DAY);
+			}else{
+				core.playWavSound(Core.WAV_MAIN_THEME_NIGHT);
+			}
+		}
+		
 		if(inCutscene){
 			
 			currScene.tick();
@@ -617,7 +625,7 @@ public class Village implements Serializable{
 	
 	public void turnOnSleepMode(){
 		nightBoost = true;
-		core.playMidiSound(Core.MIDI_SLEEP);
+		core.playWavSound(Core.WAV_SLEEP);
 		time = (time + Village.DAYCYCLE_DURATION)/Village.DAYCYCLE_DURATION*Village.DAYCYCLE_DURATION - 5*60;
 	}
 	
