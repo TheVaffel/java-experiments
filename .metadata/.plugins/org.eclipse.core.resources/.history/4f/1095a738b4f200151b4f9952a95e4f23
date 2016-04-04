@@ -1,5 +1,0 @@
-package priv.hkon.theseq.filters;
-
-public abstract class Filter {
-	public abstract void apply(int[][] data);
-}

@@ -15,6 +15,7 @@ import javax.sound.midi.Sequencer;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
+import javax.sound.sampled.FloatControl;
 
 import priv.hkon.theseq.filters.CombinedFilter;
 import priv.hkon.theseq.filters.Filter;
@@ -90,7 +91,7 @@ public class Core implements Runnable{
 		new Thread(this).start();
 		//System.out.println("At first");
 		
-		playWavSound(WAV_NOISE);
+		playWavSoundDampened(WAV_NOISE);
 
 		while(!worldInitiated){
 			screen.runTitleScreen();
@@ -298,6 +299,27 @@ public class Core implements Runnable{
 		    //FloatControl gainControl = 
 		        //(FloatControl) currClip.getControl(FloatControl.Type.MASTER_GAIN);
 		    //gainControl.setValue(-20.0f); 
+		    currClip.start();
+		 
+		}catch(Exception e){
+			e.printStackTrace();
+			System.exit(0);
+		}
+	}
+	
+	public void playWavSoundDampened(String str){
+		if(currClip != null){
+			currClip.stop();
+		}
+		try{
+			AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(
+				    new File(str));
+		    
+		    currClip = AudioSystem.getClip();
+		    currClip.open(audioInputStream);
+		    FloatControl gainControl = 
+		        (FloatControl) currClip.getControl(FloatControl.Type.MASTER_GAIN);
+		    gainControl.setValue(-20.0f); 
 		    currClip.start();
 		 
 		}catch(Exception e){

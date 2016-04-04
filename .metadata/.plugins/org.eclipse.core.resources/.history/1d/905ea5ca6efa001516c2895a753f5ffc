@@ -1,0 +1,38 @@
+package priv.hkon.theseq.blocks;
+
+import priv.hkon.theseq.sprites.Sprite;
+import priv.hkon.theseq.structures.Structure;
+import priv.hkon.theseq.world.Village;
+
+public class WoodenWall extends Block {
+
+
+	private static final long serialVersionUID = 5116005960323060971L;
+
+	public WoodenWall(int nx, int ny, Village v) {
+		super(nx, ny, v);
+		// TODO Auto-generated constructor stub
+	}
+
+	public WoodenWall(int nx, int ny, Structure s, Village v) {
+		super(nx, ny, s, v);
+		// TODO Auto-generated constructor stub
+	}
+
+	@Override
+	public void makeData() {
+		for(int i = 0; i< H; i++){
+			for(int j = 0; j < W; j++){
+				int d = (int)(Math.abs(50*Math.sin(0.8*i)) + 50);
+				data[i][j] = Sprite.getColor(d, d-30, 20);
+			}
+		}
+
+	}
+
+	@Override
+	public String getName() {
+		return "Wooden Wall";
+	}
+
+}

@@ -1,0 +1,13 @@
+package priv.hkon.theseq.structures;
+
+import priv.hkon.theseq.world.Village;
+
+public class WoodcutterHouse extends House {
+
+	private static final long serialVersionUID = 8126670548184200698L;
+
+	public WoodcutterHouse(int nx, int ny, int nw, int nh, Village v) {
+		super(nx, ny, nw, nh, v);
+	}
+
+}

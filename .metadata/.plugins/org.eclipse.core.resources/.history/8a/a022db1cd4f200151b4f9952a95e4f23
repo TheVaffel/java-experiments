@@ -1,8 +1,0 @@
-package priv.hkon.theseq.filters;
-
-public class Filter {
-	
-	public Filter(){}
-	
-	public void apply(int[] data){}
-}

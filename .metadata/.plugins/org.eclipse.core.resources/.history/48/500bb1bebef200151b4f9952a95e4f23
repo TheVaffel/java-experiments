@@ -1,9 +1,0 @@
-package priv.hkon.theseq.filters;
-
-public class CombinedFilter extends Filter {
-
-	public CombinedFilter() {
-		// TODO Auto-generated constructor stub
-	}
-
-}

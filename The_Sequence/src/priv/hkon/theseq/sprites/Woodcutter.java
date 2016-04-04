@@ -39,12 +39,12 @@ public class Woodcutter extends Villager {
 	public Integer[] getPresentationDurations() {
 		return new Integer[] {
 				120,
-				120,
-				120,
-				120,
 				180,
-				120,
-				120
+				180,
+				180,
+				180,
+				180,
+				180
 		};
 	}
 
@@ -64,6 +64,28 @@ public class Woodcutter extends Villager {
 	@Override
 	public boolean classHasPresented() {
 		return presented;
+	}
+	
+	@Override
+	public void makeAnimationFrames(){
+		super.makeAnimationFrames();
+		int mustart = (int)Math.sqrt(HEAD_SQ_RADIUS) + 2;
+		
+		for(int u = 0; u < animationFrames[0].length; u++){
+			for(int i = mustart; i < mustart + 2; i++){
+				for(int j = 0; j < W ; j++){
+					if(Math.abs(W/2 - j) < (i - mustart + 1)*1.5){
+						animationFrames[DOWN][u][i][j] = Sprite.getColor(200, 50, 0);
+					}
+					if(j < (i - mustart)+ 1){
+						animationFrames[LEFT][u][i][j + 4] = Sprite.getColor(200, 50, 0);
+					}
+					if(j > W - 1 -(i - mustart) - 1){
+						animationFrames[RIGHT][u][i][j - 3] = Sprite.getColor(200, 50, 0);
+					}
+				}
+			}
+		}
 	}
 
 }

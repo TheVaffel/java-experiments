@@ -2,20 +2,20 @@
 <section name="Workbench">
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog">
 		<item value="false" key="isRegEx"/>
-		<item value="tick" key="selection"/>
+		<item value="" key="selection"/>
 		<item value="false" key="casesensitive"/>
 		<item value="false" key="incremental"/>
 		<item value="true" key="wrap"/>
 		<item value="false" key="wholeword"/>
 		<list key="findhistory">
+			<item value="Midi"/>
+			<item value="MIDI_"/>
 			<item value="tick"/>
 			<item value="ticx"/>
 			<item value="Cutscene"/>
 			<item value="setCur"/>
 			<item value="setCut"/>
 			<item value="time"/>
-			<item value="night"/>
-			<item value="Player"/>
 		</list>
 		<list key="replacehistory">
 			<item value="RESPONSE"/>

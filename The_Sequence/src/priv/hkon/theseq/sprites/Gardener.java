@@ -25,9 +25,14 @@ public class Gardener extends Villager {
 	@Override
 	public void makeAnimationFrames(){
 		super.makeAnimationFrames();
+		int si = (int)(2*Math.sqrt(HEAD_SQ_RADIUS));
 		for(int k = 0; k < numAnimations; k++){
 			for(int u = 0; u < animationFrames[k].length; u++){
-				
+				for(int i = si + 1; i <si + 6; i++){
+					for(int j = W/2 - (i - si); j< W/2 + (i - si) + 1; j++){
+						animationFrames[k][u][i][j] = Sprite.getColor(0, 128, 0);
+					}
+				}
 			}
 		}
 	}
