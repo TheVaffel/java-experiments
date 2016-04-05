@@ -2,19 +2,25 @@ package priv.hkon.theseq.sprites;
 
 import java.awt.event.KeyEvent;
 
+import priv.hkon.theseq.blocks.Crate;
+import priv.hkon.theseq.items.Item;
 import priv.hkon.theseq.main.Controller;
 import priv.hkon.theseq.misc.Conversation;
 import priv.hkon.theseq.nonblocks.NonBlock;
+import priv.hkon.theseq.nonblocks.Pickable;
 import priv.hkon.theseq.structures.Bed;
 import priv.hkon.theseq.world.Village;
 
 public class Player extends Citizen {
 	
 	private static final long serialVersionUID = -3488395255346822868L;
+	
+	Item carryItem;
 
 	public Player(int x, int y, Village v, int i){
 		super(x, y, v, i);
-		moveSpeed = 0.125f/2;
+		//moveSpeed = 0.125f/2;
+		moveSpeed = 0.25f;
 	}
 	
 	@Override
@@ -81,6 +87,32 @@ public class Player extends Citizen {
 		if(conversation != null){
 			if(conversation.isFinished()){
 				conversation = null;
+			}
+		}
+		if(village.getTileCoverAt(x, y) instanceof Pickable&& conversation== null){
+			if(carryItem == null){
+				Pickable p = (Pickable)(village.getTileCoverAt(x, y));
+			
+				showDialog(p.getInteractMessage(), 2);
+				if(Controller.input[KeyEvent.VK_P]){
+					carryItem = p.getItem();
+				}
+			}else  if(Controller.input[KeyEvent.VK_P]){
+				showDialog("Already carrying " + carryItem.getName(), 30);
+			}
+		}
+		
+		if(village.getSpriteAt(x + dx[movingDirection], y + dy[movingDirection]) instanceof Crate
+				&& carryItem != null&& conversation == null){
+			Crate c = ((Crate)(village.getSpriteAt(x + dx[movingDirection], y + dy[movingDirection])));
+			showDialog("Press P to put " + carryItem.getName() + " in " + c.getName(), 2);
+			if(Controller.input[KeyEvent.VK_P ]){
+				if(c.addItem(carryItem)){
+					carryItem = null;
+				}else{
+					showDialog(c.getName() + " is full", 30);
+				}
+				
 			}
 		}
 		boolean b = super.tick();

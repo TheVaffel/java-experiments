@@ -1,21 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <section name="Workbench">
+	<section name="org.eclipse.ui.texteditor.GotoLineAction$GotoLineDialog_dialogBounds">
+		<item value="376" key="DIALOG_X_ORIGIN"/>
+		<item value="243" key="DIALOG_Y_ORIGIN"/>
+	</section>
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog">
 		<item value="false" key="isRegEx"/>
-		<item value="" key="selection"/>
+		<item value="speech" key="selection"/>
 		<item value="false" key="casesensitive"/>
 		<item value="false" key="incremental"/>
 		<item value="true" key="wrap"/>
 		<item value="false" key="wholeword"/>
 		<list key="findhistory">
-			<item value="Midi"/>
-			<item value="MIDI_"/>
-			<item value="tick"/>
-			<item value="ticx"/>
-			<item value="Cutscene"/>
-			<item value="setCur"/>
-			<item value="setCut"/>
-			<item value="time"/>
+			<item value="speech"/>
+			<item value="speechFinished"/>
+			<item value="speakTo"/>
+			<item value="setMode"/>
+			<item value="process"/>
+			<item value="processEvent"/>
+			<item value="currSceneFinished"/>
+			<item value="moveSprite"/>
 		</list>
 		<list key="replacehistory">
 			<item value="RESPONSE"/>
@@ -26,7 +30,7 @@
 		<item value="559" key="DIALOG_WIDTH"/>
 		<item value="1|Ubuntu|11.0|0|GTK|1|" key="DIALOG_FONT_NAME"/>
 		<item value="349" key="DIALOG_HEIGHT"/>
-		<item value="742" key="DIALOG_X_ORIGIN"/>
-		<item value="232" key="DIALOG_Y_ORIGIN"/>
+		<item value="694" key="DIALOG_X_ORIGIN"/>
+		<item value="249" key="DIALOG_Y_ORIGIN"/>
 	</section>
 </section>

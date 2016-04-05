@@ -1,0 +1,14 @@
+package priv.hkon.theseq.nonblocks;
+
+public class WoodTileCover extends TileCover{
+
+	public WoodTileCover() {
+		// TODO Auto-generated constructor stub
+	}
+
+	@Override
+	public String getName() {
+		return "Wood";
+	}
+
+}

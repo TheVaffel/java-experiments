@@ -1,7 +1,10 @@
 package priv.hkon.theseq.sprites;
 
+import java.awt.event.KeyEvent;
+import java.util.Arrays;
 import java.util.LinkedList;
 
+import priv.hkon.theseq.main.Controller;
 import priv.hkon.theseq.misc.Conversation;
 import priv.hkon.theseq.misc.DialogBubble;
 import priv.hkon.theseq.misc.Notification;
@@ -64,11 +67,19 @@ public abstract class TalkativeSprite extends Sprite{
 		super.tick();
 		if(showDialog){
 			timeSinceDialogReset++;
+			/*if(debug){
+				System.out.println("Time since dialog reset " + timeSinceDialogReset);
+			}*/
+			if(timeSinceDialogReset >10&& Controller.input[KeyEvent.VK_S]){
+				timeSinceDialogReset = 10000;
+			}
 			if(timeSinceDialogReset >= dialogDuration){
 				if(!sentence.isEmpty()){
 					setDialogString(sentence.poll());
 					if(!dialogLengths.isEmpty()){
 						dialogDuration = dialogLengths.poll();
+					}else{
+						dialogDuration = 150;
 					}
 					timeSinceDialogReset = 0;
 				}else{
@@ -122,6 +133,15 @@ public abstract class TalkativeSprite extends Sprite{
 	
 	public Conversation getConversation(){
 		return conversation;
+	}
+	
+	public void addSentence(String[] str){
+		sentence.addAll(Arrays.asList(str));
+	}
+	
+	public void addAndShowSentence(String[] str){
+		addSentence(str);
+		showDialog = true;
 	}
 
 }

@@ -1,0 +1,42 @@
+package priv.hkon.theseq.sprites;
+
+import priv.hkon.theseq.world.Village;
+
+public class Shadow extends Movable {
+
+	public Shadow(int x, int y, Village v) {
+		super(x, y, v);
+		// TODO Auto-generated constructor stub
+	}
+
+	@Override
+	public String getName() {
+		return "Shadow";
+	}
+
+	@Override
+	public void makeData() {
+		byte[] b = new byte[3];
+		RAND.nextBytes(b);
+		for(int i = 0; i < 3; i++){
+			b[i] = (byte) (Math.abs(b[i]));
+		}
+		//coatColor = Sprite.getColor(b[0], b[1], b[2]);
+		for(int i = 0; i < H; i++){
+			for(int j = 0; j < W; j++){
+				int d = (j-W/2)*(j-W/2) + (i - Villager.HEAD_OFFSET_Y)*(i - Villager.HEAD_OFFSET_Y);
+				int c = 255;
+				if(Math.abs(j - W/2) < ((float)i - Villager.HEAD_OFFSET_Y)/3){
+					int p = (int) (30*Math.exp(-0.5*(int)Math.abs((j - W/2 - (float)(i-Villager.HEAD_OFFSET_Y)/5))));
+					data[i][j] = Sprite.getColor( b[0] + p, b[1] + p, b[2] + p);
+				}
+				if(d < Villager.HEAD_SQ_RADIUS){
+					c -= Math.sqrt(d)*15;
+					data[i][j] = Sprite.getColor(c, c, c);
+				}
+			}
+		}
+
+	}
+
+}

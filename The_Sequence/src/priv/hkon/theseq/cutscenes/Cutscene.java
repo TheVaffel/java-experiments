@@ -4,6 +4,7 @@ import java.util.LinkedList;
 
 import priv.hkon.theseq.filters.Filter;
 import priv.hkon.theseq.main.Core;
+import priv.hkon.theseq.misc.VillageEvent;
 import priv.hkon.theseq.sprites.Sprite;
 
 public abstract class Cutscene {
@@ -19,11 +20,25 @@ public abstract class Cutscene {
 	}
 	
 	public void tick(){
-		while(!happenings.isEmpty() && happenings.peek().timeStamp <= tickCount){
-			happenings.poll().happen();
+		while(!happenings.isEmpty()){
+			//System.out.println("Huum");
+			if(happenings.peek().ve != null){
+				if(happenings.peek().ve.isHappening()){
+					
+					happenings.poll().happen();
+				}else{
+					break;
+				}
+			}else if(happenings.peek().timeStamp <= tickCount){
+				happenings.poll().happen();
+			}else{
+				break;
+			}
 		}
+		
 		tickCount++;
 	}
+	
 	public abstract boolean isFinished();
 	
 	public void close(){
@@ -33,8 +48,15 @@ public abstract class Cutscene {
 	public abstract class Happening{
 		Sprite sprite;
 		int timeStamp;
+		VillageEvent ve = null;
+		
 		public Happening(Sprite s, int t){
 			timeStamp = t;
+			sprite = s;
+		}
+		
+		public Happening(Sprite s, VillageEvent v){
+			ve = v;
 			sprite = s;
 		}
 		public abstract void happen();

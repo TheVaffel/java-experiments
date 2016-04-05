@@ -1,0 +1,36 @@
+package priv.hkon.theseq.blocks;
+
+import priv.hkon.theseq.structures.Structure;
+import priv.hkon.theseq.world.Tile;
+import priv.hkon.theseq.world.Village;
+
+public class Crate extends Block {
+
+	public Crate(int nx, int ny, Village v) {
+		super(nx, ny, v);
+		// TODO Auto-generated constructor stub
+	}
+
+	public Crate(int nx, int ny, Structure s, Village v) {
+		super(nx, ny, s, v);
+		// TODO Auto-generated constructor stub
+	}
+
+	@Override
+	public void makeData() {
+		int offy = H/3;
+		for(int i = offy; i < H; i++){
+			if( i < offy + Tile.HEIGHT){
+				
+			}
+		}
+
+	}
+
+	@Override
+	public String getName() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+}

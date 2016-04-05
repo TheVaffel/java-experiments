@@ -1,0 +1,13 @@
+package priv.hkon.theseq.misc;
+
+public abstract class VillageEvent {
+	
+	public VillageEvent(Village village) {
+		// TODO Auto-generated constructor stub
+	}
+	
+	public boolean hasHappened(){
+		
+	}
+
+}

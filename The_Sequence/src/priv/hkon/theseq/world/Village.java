@@ -7,6 +7,7 @@ import java.util.Random;
 import priv.hkon.theseq.blocks.Tree;
 import priv.hkon.theseq.blocks.Wall;
 import priv.hkon.theseq.cutscenes.Cutscene;
+import priv.hkon.theseq.cutscenes.OpeningScene;
 import priv.hkon.theseq.cutscenes.WakeUpCutscene;
 import priv.hkon.theseq.main.Controller;
 import priv.hkon.theseq.main.Core;
@@ -17,6 +18,7 @@ import priv.hkon.theseq.nonblocks.Door;
 import priv.hkon.theseq.nonblocks.Flowers;
 import priv.hkon.theseq.nonblocks.NonBlock;
 import priv.hkon.theseq.nonblocks.TileCover;
+import priv.hkon.theseq.nonblocks.WoodTileCover;
 import priv.hkon.theseq.sprites.Citizen;
 import priv.hkon.theseq.sprites.Gardener;
 import priv.hkon.theseq.sprites.Mayor;
@@ -24,6 +26,7 @@ import priv.hkon.theseq.sprites.Movable;
 import priv.hkon.theseq.sprites.Nobody;
 import priv.hkon.theseq.sprites.Player;
 import priv.hkon.theseq.sprites.Prophet;
+import priv.hkon.theseq.sprites.Shadow;
 import priv.hkon.theseq.sprites.Sprite;
 import priv.hkon.theseq.sprites.TalkativeSprite;
 import priv.hkon.theseq.sprites.Villager;
@@ -49,6 +52,8 @@ public class Village implements Serializable{
 	public Cutscene currScene;
 	public boolean inCutscene = false;
 	
+	public int timesSeenShadow = 0;
+	
 	int[][] tiles = new int[H][W];
 	Sprite[][] sprites = new Sprite[H][W];
 	NonBlock[][] nonBlocks = new NonBlock[H][W];
@@ -57,13 +62,15 @@ public class Village implements Serializable{
 	
 	Citizen[] citizenList;
 	
-	int[] villagerPermutation;
+	public int[] villagerPermutation;
+	
+	int timesSlept = 0;
 	
 	boolean[][] closed = new boolean[H][W];
 	boolean shouldDrawInside = false;
 	Building currBuilding = null; 
 	
-	int numVillagers = 40;
+	int numVillagers = 48;
 	Villager[] villagers = new Villager[numVillagers];
 	
 	
@@ -79,6 +86,8 @@ public class Village implements Serializable{
 	
 	public double camX= -100, camY = -100;
 	
+	Shadow shadow;
+	
 	public double camSpeed = 0.1;
 	double tilesPerPixelX = 1.0/Tile.WIDTH;
 	double tilesPerPixelY = 1.0/Tile.HEIGHT;
@@ -87,7 +96,7 @@ public class Village implements Serializable{
 	
 	public static final int DAYCYCLE_DURATION = 60*60*10;
 	
-	long time = DAYCYCLE_DURATION + 30*60;
+	long time = DAYCYCLE_DURATION - 30*60;
 	
 	public long lastSave;
 	
@@ -96,6 +105,8 @@ public class Village implements Serializable{
 		Villager.init();
 		Sentence.village = this;
 		this.core = core;
+		
+		shadow = new Shadow(0,0, this);
 		buildVillage();
 		
 	}
@@ -158,9 +169,18 @@ public class Village implements Serializable{
 		}
 		
 		int vi = villagerPermutation[i];
+		//System.out.println("Making woodcutter");
 		villagers[vi] = new Woodcutter(townGrid[vi/townGridSide][vi%townGridSide].getX() + houseSide/2,
-				townGrid[vi/townGridSide][vi%townGridSide].getY() + houseSide/2, this, townGrid[vi/townGridSide][vi%townGridSide], i);
+				townGrid[vi/townGridSide][vi%townGridSide].getY() + houseSide/2,
+				/*this.townGridMiddleX + 100, this.townGridMiddleY + 10,*/ this, townGrid[vi/townGridSide][vi%townGridSide], i);
 		addSprite(villagers[vi]);
+		//villagers[vi].setMode(Woodcutter.MODE_WAIT_FOR_PLAYER_FILLING_CRATE, 3, null);
+		/*villagers[vi].setToWaitMode(new VillageEvent(this, villagers[vi], Woodcutter.EVENT_WAIT_TO_GUIDE_PLAYER){
+			public boolean isHappening(){
+				return subject.distTo(getPlayer()) <= 3;
+			}
+		}, Villager.IMPORTANT_VERY);*/
+		villagers[vi].debug = true;
 		
 		i++;
 		i++;
@@ -177,7 +197,7 @@ public class Village implements Serializable{
 				this, townGrid[villagerPermutation[i]/townGridSide][villagerPermutation[i]%townGridSide], i);
 		addSprite(villagers[villagerPermutation[i]]);
 		
-		villagers[0].debug = true;
+		//villagers[0].debug = true;
 		
 		createStartSet();
 		
@@ -220,9 +240,11 @@ public class Village implements Serializable{
 		}
 		
 		int villageri = villagerPermutation[numVillagers-4];
-		player = new Player(villagers[villageri].getX() - 2,
-				villagers[villageri].getY() - 2,
-				/*sx + w/2, sy + h/2,*/ this, numVillagers);
+		player = new Player(/*townGrid[6][6].getX() + houseSide/2,
+				townGrid[6][6].getY() + houseSide/2,*/
+				/*villagers[villageri].getX() - 2,
+				villagers[villageri].getY() - 2,*/
+				sx + w/2, sy + h/2, this, numVillagers);
 		citizenList[numVillagers] = player;
 		addSprite(player); 
 		
@@ -231,8 +253,8 @@ public class Village implements Serializable{
 		villagers[villagerPermutation[i]] = p;
 		addSprite(villagers[villagerPermutation[i]]);
 		
-		//currScene = new OpeningScene(player, p, core);
-		//inCutscene = true;
+		currScene = new OpeningScene(player, p, core);
+		inCutscene = true;
 	}
 	
 	public int[][] getScreenData(int w, int h){
@@ -376,10 +398,10 @@ public class Village implements Serializable{
 			
 			currScene.tick();
 			if(currScene.isFinished() || Controller.input[KeyEvent.VK_U]){
+				//System.out.println("CurrSceneFinished: " + currScene.isFinished());
 				currScene.close();
 				inCutscene = false;
 				currScene = null;
-				
 			}
 		}
 		for(int i = 0; i < H; i++){
@@ -470,10 +492,17 @@ public class Village implements Serializable{
 	public void addStructure(Structure s){
 		for(int i = 0; i < s.getH(); i++){
 			for(int j = 0; j < s.getW(); j++){
-				if(s.getBlockAt(j, i) != null)
+				if(s.getBlockAt(j, i) != null){
 					addSprite(s.getBlockAt(j, i));
-				if(s.getNonBlockAt(j, i) != null)
+				}else if(!(getSpriteAt(s.getX() + j, s.getY() + i) instanceof TalkativeSprite)){
+					sprites[s.getY() + i][s.getX() + j] = null;
+				}
+				if(s.getNonBlockAt(j, i) != null){
 					addNonBlock(s.getNonBlockAt(j, i));
+				}else{
+					nonBlocks[s.getY() + i][s.getX() + j] = null;
+				}
+				tileCovers[s.getY() + i][s.getX() + j] = null;
 			}
 		}
 	}
@@ -506,6 +535,9 @@ public class Village implements Serializable{
 		nonBlocks[y][x] = nb;
 	}
 	
+	public void setSpriteAt(Sprite s, int x, int y){
+		sprites[y][x] = s;
+	}
 	public void addSprite(Sprite sprite){
 		sprites[sprite.getY()][sprite.getX()] = sprite;
 	}
@@ -543,6 +575,16 @@ public class Village implements Serializable{
 		sprites[t.getY()][t.getX()] = t;
 	}
 	
+	public void moveSpriteTo(Sprite s, int x, int y){
+		if(getSpriteAt(x, y) != null){
+			moveSpriteTo(getSpriteAt(x, y), x - 1, y);
+		}
+		sprites[s.getY()][s.getX()] = null;
+		s.setX(x);
+		s.setY(y);
+		sprites[y][x] = s;
+	}
+	
 	public float getNightFactor(){
 		if(!shouldDrawInside){
 			return Math.max( Math.min((float)(0.65+ 1*Math.sin((time%DAYCYCLE_DURATION)*2*Math.PI/DAYCYCLE_DURATION)), 1), 0);
@@ -571,6 +613,10 @@ public class Village implements Serializable{
 		return houseSpread;
 	}
 	
+	public House getHouseAt(int x, int y){
+		return townGrid[y][x];
+	}
+	
 	public int getTownStartX(){
 		return townGridMiddleX - houseSpread*townGridSide/2; 
 	}
@@ -597,6 +643,10 @@ public class Village implements Serializable{
 	
 	public int getHouseSide(){
 		return houseSide;
+	}
+	
+	public int getTownGridSide(){
+		return townGridSide;
 	}
 	
 	public int getTileAt(int x, int y){
@@ -640,13 +690,70 @@ public class Village implements Serializable{
 	}
 	
 	public void turnOnSleepMode(){
+		if(nightBoost == false){
+			timesSlept++;
+		}
 		nightBoost = true;
+		
 		core.playWavSound(Core.WAV_SLEEP);
 		time = (time + Village.DAYCYCLE_DURATION)/Village.DAYCYCLE_DURATION*Village.DAYCYCLE_DURATION - 5*60;
+	}
+	
+	public int getTimesSlept(){
+		return timesSlept;
 	}
 	
 	public void setCutscene(Cutscene cutscene){
 		this.currScene = cutscene;
 		inCutscene = true;
 	}
+	
+	public Core getCore(){
+		return core;
+	}
+	
+	public Shadow getShadow(){
+		return shadow;
+	}
+
+	public void setTileCoverAt(TileCover object, int x, int y) {
+		tileCovers[y][x] = object;
+		
+	}
+
+	public void createAreaAroundWoodcutterCabin(House cabin) {
+		int c = 0;
+		for(int i = cabin.getY() - 10; i< cabin.getY() + 15; i++){
+			for(int j = cabin.getX() - 10; j < cabin.getX() + 15; j++){
+				if(Sprite.RAND.nextInt(5) == 0&& getSpriteAt(j, i) == null && ownedBy[i][j] == null){
+					tileCovers[i][j] = new WoodTileCover(j, i, this);
+					c++;
+				}
+			}
+		}
+		int xb = 0, yb = 0;
+		
+		for(; yb < 25; yb++){
+			for(;xb < 25; xb++){
+				if(c>= 10){
+					break;
+				}
+				int j = cabin.getX() - 10 + xb;
+				int i = cabin.getY() - 10 + yb;
+				if(getSpriteAt(j, i) == null && ownedBy[i][j] == null){
+					tileCovers[i][j] = new WoodTileCover(j, i, this);
+					c++;
+				}
+			}
+			if(c >= 10){
+				break;
+			}
+		}
+		
+	}
+
+	public TileCover getTileCoverAt(int x, int y) {
+		return tileCovers[y][x];
+	}
+	
 }

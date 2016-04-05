@@ -286,7 +286,7 @@ public abstract class Movable extends TalkativeSprite implements Runnable{
 		}
 	}
 	
-	int getDirectionTo(Sprite s){
+	public int getDirectionTo(Sprite s){
 		return getDirectionTo(s.getX(), s.getY());
 	}
 	

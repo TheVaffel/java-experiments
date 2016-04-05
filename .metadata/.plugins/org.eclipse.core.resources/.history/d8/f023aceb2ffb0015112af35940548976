@@ -1,0 +1,46 @@
+package priv.hkon.theseq.blocks;
+
+import priv.hkon.theseq.sprites.Sprite;
+import priv.hkon.theseq.structures.Structure;
+import priv.hkon.theseq.world.Tile;
+import priv.hkon.theseq.world.Village;
+
+public class Crate extends Block {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -8445849179162489497L;
+
+	public Crate(int nx, int ny, Village v) {
+		super(nx, ny, v);
+		// TODO Auto-generated constructor stub
+	}
+
+	public Crate(int nx, int ny, Structure s, Village v) {
+		super(nx, ny, s, v);
+		// TODO Auto-generated constructor stub
+	}
+
+	@Override
+	public void makeData() {
+		int offy = H/3;
+		for(int i = offy; i < H; i++){
+			for(int j = 0; j < W ; j++){
+				if( i < offy + Tile.HEIGHT){
+					if( j == 0 || j == W-1){
+						data[i][j] = Sprite.getColor(200, 200, 150);
+					}
+				}
+			}
+		}
+
+
+	}
+
+	@Override
+	public String getName() {
+		return "Crate";
+	}
+
+}

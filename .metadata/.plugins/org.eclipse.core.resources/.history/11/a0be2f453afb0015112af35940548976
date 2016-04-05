@@ -1,0 +1,23 @@
+package priv.hkon.theseq.sprites;
+
+import priv.hkon.theseq.world.Village;
+
+public class Shadow extends Movable {
+
+	public Shadow(int x, int y, Village v) {
+		super(x, y, v);
+		// TODO Auto-generated constructor stub
+	}
+
+	@Override
+	public String getName() {
+		return "Shadow";
+	}
+
+	@Override
+	public void makeData() {
+		// TODO Auto-generated method stub
+
+	}
+
+}

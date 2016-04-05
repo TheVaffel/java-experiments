@@ -19,9 +19,9 @@ public class Screen extends JFrame{
 
 	private static final long serialVersionUID = 1L;
 	
-	public static final int W = 200;
-	public static final int H = 150;
-	public static final int SCALE = 4;
+	public static final int W = 300;
+	public static final int H = 200;
+	public static final int SCALE = 3;
 	Core core;
 	
 	BufferedImage mainImage;
@@ -227,13 +227,13 @@ public class Screen extends JFrame{
 		
 		String str = altTitles[titleNum];
 		
-		g.drawString(str, 30, 2*H/5);
+		g.drawString(str, 75, 2*H/5);
 		
 		if(!core.isInitiated() && titleScreenCount % 28 < 21){
 			str = pressKeyString;
 			g.setFont(new Font("Courier", Font.PLAIN, 12));
 			g.setColor(Color.gray);
-			g.drawString(str, 25, 3*H/5);
+			g.drawString(str, 70, 3*H/5);
 		}
 		for(int i = 0; i< H; i++){
 			float p = Sprite.RAND.nextFloat()/10;

@@ -1,0 +1,47 @@
+package priv.hkon.theseq.cutscenes;
+
+import priv.hkon.theseq.cutscenes.Cutscene.Happening;
+import priv.hkon.theseq.main.Core;
+import priv.hkon.theseq.sprites.Player;
+import priv.hkon.theseq.sprites.TalkativeSprite;
+import priv.hkon.theseq.sprites.Woodcutter;
+
+public class PlayerTriesCompleteWoodcutterRequest extends Cutscene {
+	
+	Player player;
+	Woodcutter woodcutter;
+	
+	boolean shadow = false;
+
+	public PlayerTriesCompleteWoodcutterRequest(Woodcutter wc, Player p, Core core) {
+		super(core);
+		
+		player = p;
+		woodcutter = wc;
+		player.isPartOfCutscene = true;
+		wc.isPartOfCutscene = true;
+		
+		if(woodcutter.storage.getCrate().numItems() > 10){
+			if(core.village.timesSeenShadow == 0){
+				shadow = true;
+				happenings.add(new Happening(player, 50){
+					public void happen(){
+						
+					}
+				});
+			}
+		}
+		
+		happenings.add(new Happening(woodcutter, 30){
+			public void happen(){
+				((TalkativeSprite)sprite).showDialog("Hey there!", 2*60);
+			}
+		});
+	}
+
+	@Override
+	public boolean isFinished() {
+		return false;
+	}
+
+}

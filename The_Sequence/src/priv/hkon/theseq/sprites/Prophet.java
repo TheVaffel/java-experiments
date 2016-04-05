@@ -9,12 +9,33 @@ public class Prophet extends Villager {
 	
 	static boolean presented = false;
 	
-	public static final String[] INTRODUCTION = {
+	public final String[] INTRODUCTION = {
 			"I wish you welcome to the Village!",
-			"We have lived here as long as our oldest,",
+			"We humens have lived here as long as our oldest,",
 			"-that would be me-",
 			"can remember.",
+			"We are a simple community",
+			"No need to hurry",
+			"No need to be afraid",
+			"We do our business day in, day out",
+			"It is a simple life",
+			"Now, where did you come from?",
 			"",
+			"",
+			"Huh. You really don't say much..",
+			"Lots of secrets, haven't you?",
+			"Doesn't matter",
+			"If you want a place to stay, I have good news!",
+			"House " + village.getTownGridSide() + "" + village.getTownGridSide() + " is free!",
+			"That is, the house most south-east in the village",
+			"It has been empty since...",
+			"",
+			".. Since the last owner moved out",
+			"I live in House " + (village.villagerPermutation[citizenNumber] + 1)%village.getTownGridSide() + "" + (village.villagerPermutation[citizenNumber] + 1)/village.getTownGridSide(),
+			"But you will probably find me somewhere in the town at daytime.",
+			"You should try to get to know the other villagers!",
+			"And go to house " + village.getTownGridSide() + "" + village.getTownGridSide() + " when you are tired",
+			"Remember - the south-east-most house",
 			"I hope you will have a pleasant stay!"
 	};
 	

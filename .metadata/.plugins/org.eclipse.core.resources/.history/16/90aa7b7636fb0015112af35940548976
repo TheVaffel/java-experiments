@@ -1,0 +1,9 @@
+package priv.hkon.theseq.filters;
+
+public class SnowFilter extends Filter {
+
+	public SnowFilter() {
+		// TODO Auto-generated constructor stub
+	}
+
+}

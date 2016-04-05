@@ -1,0 +1,12 @@
+package priv.hkon.theseq.nonblocks;
+
+public class WoodTileCover extends TileCover{
+
+	private static final long serialVersionUID = -5244033331245440440L;
+
+	@Override
+	public String getName() {
+		return "Wood";
+	}
+
+}

@@ -1,0 +1,26 @@
+package priv.hkon.theseq.nonblocks;
+
+import priv.hkon.theseq.world.Village;
+
+public class WoodTileCover extends TileCover{
+
+	public WoodTileCover(int nx, int ny, Village v) {
+		super(nx, ny, v);
+		// TODO Auto-generated constructor stub
+	}
+
+	private static final long serialVersionUID = -5244033331245440440L;
+
+	@Override
+	public String getName() {
+		return "Wood";
+	}
+	
+	public void makeData(){
+		for(int i = 0; i < 4; i++){
+			 float f = -RAND.nextFloat()*2 + 1;
+			 float t = RAND.nextInt(6)
+		}
+	}
+
+}

@@ -5,6 +5,7 @@ import java.util.Arrays;
 import priv.hkon.theseq.misc.Conversation;
 import priv.hkon.theseq.misc.Notification;
 import priv.hkon.theseq.misc.Sentence;
+import priv.hkon.theseq.misc.VillageEvent;
 import priv.hkon.theseq.structures.Bed;
 import priv.hkon.theseq.structures.House;
 import priv.hkon.theseq.world.Village;
@@ -17,6 +18,8 @@ public abstract class Villager extends Citizen{
 	int citizenNumber;
 
 	int timeToWait= 0;
+	
+	VillageEvent currEvent;
 	
 	public static final int HEAD_OFFSET_Y = 5;
 	public static final int HEAD_OFFSET_X = W/2;
@@ -60,6 +63,8 @@ public abstract class Villager extends Citizen{
 			"angry", "afraid"
 	};
 	
+	public int nextMode = -1;
+	
 	public static final int MODE_RELAX_AT_HOME = 0;
 	public static final int MODE_CHASE_OUT_OF_HOUSE = 1;
 	public static final int MODE_SURPRISED = 2;
@@ -71,6 +76,7 @@ public abstract class Villager extends Citizen{
 	public static final int MODE_RELAXING = 8;
 	public static final int MODE_SLEEPING = 9;
 	public static final int MODE_SPEAKING_TO_PLAYER = 10;
+	public static final int MODE_WAITING_FOR_EVENT = 11;
 	
 	public static final int IMPORTANT_NOT = 0;
 	public static final int IMPORTANT_LITTLE = 1;
@@ -89,14 +95,13 @@ public abstract class Villager extends Citizen{
 			{"Hmmmm....", "Maybe...", "Erm.. What about.."},
 			{"Life is good..."},
 			{"Zzz"},
+			{},
 			{}
 	};
 	
 	int modeParameter; //For various use, depending on mode
 	
 	//TODO: Make woodcutter, with his own woodcutter-cabin
-	
-	//TODO: Add characteristic head/bodywear for each class
 	
 	public int expectingVisit = -1;
 	public boolean expectingSeveralVisits = false;
@@ -114,6 +119,8 @@ public abstract class Villager extends Citizen{
 		}
 		targetMode = MODE_RELAXING;
 		dayCycleShift = RAND.nextInt(60*60);
+		
+		//System.out.println("Made Villager at " + x + " " + y);
 	}
 
 	@Override
@@ -236,6 +243,20 @@ public abstract class Villager extends Citizen{
 				speakToPlayer();
 				break;
 			}
+			
+			case MODE_WAITING_FOR_EVENT: {
+				if(currEvent == null){
+					if( hasPausedMode){
+						revertPausedMode();
+					}else{
+						setMode(MODE_RELAXING, IMPORTANT_NOT, null);
+					}
+				}
+				if(currEvent.isHappening()){
+					processEvent(currEvent);
+				}
+				break;
+			}
 		}
 		
 		return false;
@@ -333,7 +354,10 @@ public abstract class Villager extends Citizen{
 		}
 		
 		hasPath = false;
-		if(hasPausedMode){
+		if(nextMode != -1){
+			targetMode = nextMode;
+			nextMode = -1;
+		}else if(hasPausedMode){
 			revertPausedMode();
 		}else{
 			setMode(MODE_RELAXING, IMPORTANT_NOT, null);
@@ -348,13 +372,20 @@ public abstract class Villager extends Citizen{
 		if(subclassSpeechFinished()){
 			return;
 		}
+		
 		if(hasPausedMode && pausedMode == MODE_TALKING){
 			hasPausedMode = false;
 		}
 		
 		conversation = null;
+		//System.out.println("SpeechFinished");
 		
-		if(hasPausedMode){
+		if(nextMode != -1){
+			//System.out.println("Next mode sat");
+			targetMode = nextMode;
+			nextMode = -1;
+			return;
+		}else if(hasPausedMode){
 			revertPausedMode();
 			
 		}else{
@@ -914,8 +945,21 @@ public abstract class Villager extends Citizen{
 		showDialog = true;
 	}
 	
+	
+	
 	public int getMode(){
 		return targetMode;
+	}
+	
+
+	public void processEvent(VillageEvent ve){
+	}
+	
+	public void setToWaitMode(VillageEvent ev, int importance){
+		pauseMode();
+		currEvent = ev;
+		targetMode = MODE_WAITING_FOR_EVENT;
+		modeImportance = importance;
 	}
 
 	public abstract String[] getPresentation();

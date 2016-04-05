@@ -1,0 +1,15 @@
+package priv.hkon.theseq.items;
+
+public class WoodItem extends Item {
+
+	public WoodItem() {
+		// TODO Auto-generated constructor stub
+	}
+
+	@Override
+	public String getName() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+}

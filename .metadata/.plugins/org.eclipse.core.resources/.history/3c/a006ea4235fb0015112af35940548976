@@ -1,0 +1,26 @@
+package priv.hkon.theseq.cutscenes;
+
+import priv.hkon.theseq.main.Core;
+import priv.hkon.theseq.sprites.Player;
+import priv.hkon.theseq.sprites.Woodcutter;
+
+public class PlayerTriesCompleteWoodcutterRequest extends Cutscene {
+	
+	Player player;
+	Woodcutter woodcutter;
+
+	public PlayerTriesCompleteWoodcutterRequest(Woodcutter wc, Player p, Core core) {
+		super(core);
+		
+		player = p;
+		woodcutter = wc;
+		player.isPartOfCutscene = true;
+		wc.isPartOfCutscene = true;
+	}
+
+	@Override
+	public boolean isFinished() {
+		return false;
+	}
+
+}

@@ -1,0 +1,37 @@
+package priv.hkon.theseq.nonblocks;
+
+import priv.hkon.theseq.items.Item;
+import priv.hkon.theseq.sprites.Sprite;
+import priv.hkon.theseq.world.Tile;
+import priv.hkon.theseq.world.Village;
+
+public class WoodTileCover extends Pickable{
+
+	public WoodTileCover(int nx, int ny, Village v) {
+		super(nx, ny, v);
+	}
+
+	private static final long serialVersionUID = -5244033331245440440L;
+
+	@Override
+	public String getName() {
+		return "Wood";
+	}
+	
+	public void makeData(){
+		for(int i = 0; i < 5; i++){
+			 float f = -RAND.nextFloat()*2 + 1;
+			 float t = Tile.HEIGHT + RAND.nextInt(Tile.HEIGHT);
+			 for(int j = 2; j < 14; j++){
+				 data[(int)(Math.min(H - Tile.HEIGHT -1, Math.max(0, t + j*Math.sin(f))))][j] = Sprite.getColor(100, 100, 50);
+			 }
+		}
+	}
+
+	@Override
+	public Item getItem() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+}

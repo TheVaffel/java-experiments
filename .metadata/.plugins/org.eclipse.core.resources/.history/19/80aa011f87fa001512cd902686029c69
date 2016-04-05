@@ -1,0 +1,9 @@
+package priv.hkon.theseq.misc;
+
+public class VillageEvent {
+
+	public VillageEvent() {
+		// TODO Auto-generated constructor stub
+	}
+
+}

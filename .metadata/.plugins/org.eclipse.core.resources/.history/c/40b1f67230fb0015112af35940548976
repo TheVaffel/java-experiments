@@ -1,0 +1,12 @@
+package priv.hkon.theseq.structures;
+
+import priv.hkon.theseq.world.Village;
+
+public class WoodcutterStorage extends House {
+
+	public WoodcutterStorage(int nx, int ny, int nw, int nh, Village v) {
+		super(nx, ny, nw, nh, v);
+		// TODO Auto-generated constructor stub
+	}
+
+}

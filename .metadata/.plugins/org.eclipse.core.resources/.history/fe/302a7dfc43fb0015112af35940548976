@@ -1,0 +1,9 @@
+package priv.hkon.theseq.nonblocks;
+
+public class WoodTileCover {
+
+	public WoodTileCover() {
+		// TODO Auto-generated constructor stub
+	}
+
+}

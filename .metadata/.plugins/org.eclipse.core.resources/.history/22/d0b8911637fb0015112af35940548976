@@ -1,0 +1,19 @@
+package priv.hkon.theseq.filters;
+
+public class SnowFilter extends Filter {
+
+	public SnowFilter() {
+	}
+	
+	public void apply(int[] data){
+		for(int i = 0; i < data.length; i++){
+			int r = (data[i] >> 16) & 255;
+			Sprite
+			
+			r = Math.min(255, (int)(r *1.2));
+			
+			data[i] = (data[i]& ~(255<<16))| r<< 16;
+		}
+	}
+
+}

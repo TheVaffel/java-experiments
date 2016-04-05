@@ -1,0 +1,17 @@
+package priv.hkon.theseq.misc;
+
+import priv.hkon.theseq.world.Village;
+
+public abstract class VillageEvent {
+	
+	Village village;
+	Sprite subject;
+	
+	public VillageEvent(Village village, Sprite s) {
+		this.village = village;
+		this.subject = s;
+	}
+	
+	public abstract boolean isHappening();
+
+}

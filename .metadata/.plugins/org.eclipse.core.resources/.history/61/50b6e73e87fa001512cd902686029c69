@@ -1,0 +1,17 @@
+package priv.hkon.theseq.misc;
+
+import priv.hkon.theseq.world.Village;
+
+public abstract class VillageEvent {
+	
+	Village village;
+	
+	public VillageEvent(Village village) {
+		this.village = village;
+	}
+	
+	public abstract boolean hasHappened(){
+		return 
+	}
+
+}

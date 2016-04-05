@@ -1,0 +1,18 @@
+package priv.hkon.theseq.nonblocks;
+
+import priv.hkon.theseq.world.Village;
+
+public abstract class Pickable extends TileCover {
+
+	private static final long serialVersionUID = 4848655994832487586L;
+
+	public Pickable(int nx, int ny, Village v) {
+		super(nx, ny, v);
+		// TODO Auto-generated constructor stub
+	}
+	
+	public String interactMessage(){
+		return "Press P to pick up";
+	}
+
+}
