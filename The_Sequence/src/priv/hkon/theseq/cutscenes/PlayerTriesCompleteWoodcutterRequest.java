@@ -8,6 +8,7 @@ import priv.hkon.theseq.sprites.Movable;
 import priv.hkon.theseq.sprites.Player;
 import priv.hkon.theseq.sprites.Shadow;
 import priv.hkon.theseq.sprites.TalkativeSprite;
+import priv.hkon.theseq.sprites.Villager;
 import priv.hkon.theseq.sprites.Woodcutter;
 
 public class PlayerTriesCompleteWoodcutterRequest extends Cutscene {
@@ -84,6 +85,17 @@ public class PlayerTriesCompleteWoodcutterRequest extends Cutscene {
 				}){
 					public void happen(){
 						((Movable)sprite).startPathTo(sprite.getX(), woodcutter.cabin.getY() + woodcutter.cabin.getH() + 1);
+					}
+				});
+				
+				happenings.add(new Happening(woodcutter, new VillageEvent(core.village, woodcutter){
+					public boolean isHappening(){
+						return !((TalkativeSprite)subject).showDialog;
+					}
+				}){
+					public void happen(){
+						((Villager)sprite).setMode(Villager.MODE_RELAXING, Villager.IMPORTANT_NOT, null);
+						((Villager)sprite).lastVictim = player;
 					}
 				});
 				return;

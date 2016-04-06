@@ -118,15 +118,14 @@ public class Sentence  implements Serializable{
 	
 	public static final String[][] GENERAL_RUMORS ={
 			{
-				"The Mayor's house is the one in marble",
-				"The house of trees belongs to a real tree-lover",
-				"There are some mysterious things happening here at night",
-				"There are sometimes howling at night. Scary",
-				"The wall surrounding us has allways been there",
-				"A sequence is the true meaning of life",
-				"You have a purpose.. Fulfill it",
-				"Nothing is wrong. Don't worry"
-			}
+				"The Mayor's house is the one in marble"},{
+				"The house of trees belongs to a real tree-lover"},{
+				"There are some mysterious things happening here at night"},{
+				"There are sometimes howling at night. Scary"},{
+				"The wall surrounding us has allways been there"},{
+				"A sequence is the true meaning of life"},{
+				"You have a purpose.. Fulfill it"},{
+				"Nothing is wrong. Don't worry"}
 	};
 	
 	public static final String NONE[][] = {{""}};

@@ -75,6 +75,7 @@ public class Conversation  implements Serializable{
 					((Player) partner).setConversation(this);
 				}
 				currTalker.talk();
+				lastSentence = currTalker.getCurrSentence();
 			}else
 			
 			if(owner.distTo(partner) >Villager.RANGE_OF_VIEW*1.2){

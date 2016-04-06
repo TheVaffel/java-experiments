@@ -34,7 +34,7 @@ public abstract class Villager extends Citizen{
 	int modeTargetX;
 	int modeTargetY;
 	
-	Sprite lastVictim;
+	public Sprite lastVictim;
 	
 	int dayCycleShift;
 	
@@ -780,17 +780,21 @@ public abstract class Villager extends Citizen{
 				aff = 0;
 			}
 			int type = conversation.getLastSentence().getType();
-			if(conversation.getSentenceCount() == 1){
-				saySentence(new Sentence(conversation.getOther(this),Sentence.TYPE_GREETING, Sentence.GREETING_NEUTRAL, this));
-				return;
-			}else if(type == Sentence.TYPE_GREETING){
-				saySentence(new Sentence(conversation.getOther(this), Sentence.TYPE_QUESTION, this, village.getCitizen(id)));
-				return;
-			}
+			
 			if(conversation.getOther(this) instanceof Player){
+				//System.out.println("Talking to Player");
+				if(type == Sentence.TYPE_GREETING){
+					if(RAND.nextInt(5) == 0 || !(this instanceof Nobody)){
+						saySentence(new Sentence(conversation.getOther(this), Sentence.TYPE_QUESTION, this, village.getCitizen(id)));
+					}else{
+						saySentence(new Sentence(conversation.getOther(this), Sentence.TYPE_RUMOR_INTRODUCTION, this));
+					}
+				}else if(type == Sentence.TYPE_RUMOR_INTRODUCTION){
+					saySentence(new Sentence(conversation.getOther(this), Sentence.TYPE_RUMORS,0, Sentence.GENERAL_RUMORS[RAND.nextInt(Sentence.GENERAL_RUMORS.length)],this));
+				}else
 				if(type == Sentence.TYPE_EMPTY){
 					saySentence(new Sentence(conversation.getOther(this), Sentence.TYPE_PLAYER_NOT_TALKATIVE, Math.min(Math.max((int)(aff + 1), 0), 2), this));
-				}else if(type == Sentence.TYPE_PLAYER_NOT_TALKATIVE){
+				}else if(type == Sentence.TYPE_PLAYER_NOT_TALKATIVE || type == Sentence.TYPE_RUMORS){
 					saySentence(new Sentence(conversation.getOther(this), Sentence.TYPE_GOODBYE, Math.min(Math.max((int)(aff + 1), 0), 2), this));
 					disconnectFromTalk();
 				}else{
@@ -798,7 +802,14 @@ public abstract class Villager extends Citizen{
 				}
 				return;
 			}
-			if(type == Sentence.TYPE_QUESTION){
+			
+			if(conversation.getSentenceCount() == 1&& !(conversation.getOther(this) instanceof Player)){
+				saySentence(new Sentence(conversation.getOther(this),Sentence.TYPE_GREETING, Sentence.GREETING_NEUTRAL, this));
+				return;
+			}else if(type == Sentence.TYPE_GREETING){
+				saySentence(new Sentence(conversation.getOther(this), Sentence.TYPE_QUESTION, this, village.getCitizen(id)));
+				return;
+			}else if(type == Sentence.TYPE_QUESTION){
 				saySentence(getAnswer(conversation.getLastSentence().getArg2()));
 				return;
 			}else if(type == Sentence.TYPE_CUSTOM_ANSWER){

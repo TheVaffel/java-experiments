@@ -96,7 +96,7 @@ public class Village implements Serializable{
 	
 	public static final int DAYCYCLE_DURATION = 60*60*10;
 	
-	long time = DAYCYCLE_DURATION - 30*60;
+	long time = DAYCYCLE_DURATION +  30*60;
 	
 	public long lastSave;
 	
@@ -253,8 +253,8 @@ public class Village implements Serializable{
 		villagers[villagerPermutation[i]] = p;
 		addSprite(villagers[villagerPermutation[i]]);
 		
-		currScene = new OpeningScene(player, p, core);
-		inCutscene = true;
+		//currScene = new OpeningScene(player, p, core);
+		//inCutscene = true;
 	}
 	
 	public int[][] getScreenData(int w, int h){
@@ -725,7 +725,7 @@ public class Village implements Serializable{
 		int c = 0;
 		for(int i = cabin.getY() - 10; i< cabin.getY() + 15; i++){
 			for(int j = cabin.getX() - 10; j < cabin.getX() + 15; j++){
-				if(Sprite.RAND.nextInt(5) == 0&& getSpriteAt(j, i) == null && ownedBy[i][j] == null){
+				if(Sprite.RAND.nextInt(10) == 0&& getSpriteAt(j, i) == null && ownedBy[i][j] == null){
 					tileCovers[i][j] = new WoodTileCover(j, i, this);
 					c++;
 				}
