@@ -6,9 +6,11 @@ import priv.hkon.theseq.blocks.Crate;
 import priv.hkon.theseq.items.Item;
 import priv.hkon.theseq.main.Controller;
 import priv.hkon.theseq.misc.Conversation;
+import priv.hkon.theseq.nonblocks.BrushHolder;
 import priv.hkon.theseq.nonblocks.NonBlock;
 import priv.hkon.theseq.nonblocks.Pickable;
 import priv.hkon.theseq.structures.Bed;
+import priv.hkon.theseq.world.Tile;
 import priv.hkon.theseq.world.Village;
 
 public class Player extends Citizen {
@@ -16,6 +18,8 @@ public class Player extends Citizen {
 	private static final long serialVersionUID = -3488395255346822868L;
 	
 	Item carryItem;
+	
+	public int carryColor = 0;
 
 	public Player(int x, int y, Village v, int i){
 		super(x, y, v, i);
@@ -101,6 +105,9 @@ public class Player extends Citizen {
 				showDialog("Already carrying " + carryItem.getName(), 30);
 			}
 		}
+		if(Tile.isCanvasTile(village.getTileAt(x, y))&& carryColor != 0){
+			village.setTileAt(carryColor, x, y);
+		}
 		
 		if(village.getSpriteAt(x + dx[movingDirection], y + dy[movingDirection]) instanceof Crate
 				&& carryItem != null&& conversation == null){
@@ -113,6 +120,11 @@ public class Player extends Citizen {
 					showDialog(c.getName() + " is full", 30);
 				}
 				
+			}
+		}else if(village.getNonBlockAt(x + dx[movingDirection], y + dy[movingDirection]) instanceof BrushHolder){
+			showDialog("Press B to switch brush", 3);
+			if(Controller.input[KeyEvent.VK_B]){
+				carryColor = ((BrushHolder)(village.getNonBlockAt(x + dx[movingDirection], y + dy[movingDirection]))).getColor();
 			}
 		}
 		boolean b = super.tick();

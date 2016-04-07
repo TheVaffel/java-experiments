@@ -1,0 +1,9 @@
+package priv.hkon.theseq.filters;
+
+public class ColoredSquaresFilter extends Filter {
+
+	public ColoredSquaresFilter() {
+		// TODO Auto-generated constructor stub
+	}
+
+}

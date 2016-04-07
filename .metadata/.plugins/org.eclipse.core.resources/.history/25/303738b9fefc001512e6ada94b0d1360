@@ -1,0 +1,39 @@
+package priv.hkon.theseq.sprites;
+
+import priv.hkon.theseq.cutscenes.Cutscene;
+import priv.hkon.theseq.cutscenes.Cutscene.Happening;
+import priv.hkon.theseq.filters.ColoredSquaresFilter;
+import priv.hkon.theseq.main.Core;
+import priv.hkon.theseq.main.Screen;
+
+public class NextPainterPuzzleCutscene extends Cutscene {
+	
+	Player pl;
+	Painter pa;
+	
+	ColoredSquaresFilter csf = new ColoredSquaresFilter(0, Screen.W, Screen.H);
+
+	public NextPainterPuzzleCutscene(Painter p1, Player p2, Core c) {
+		super(c);
+		
+		pa = p1;
+		pl = p2;
+		
+		pl.isPartOfCutscene = true;
+		pa.isPartOfCutscene = true;
+		
+		happenings.add(new Happening(pl, 60){
+			public void happen(){
+				core.village.moveSpriteTo(sprite, pa.getX() + 1, pa.getY());
+				((Movable)sprite).turnTowards(Movable.LEFT);
+			}
+		});
+	}
+
+	@Override
+	public boolean isFinished() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+}

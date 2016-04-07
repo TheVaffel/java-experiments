@@ -2,7 +2,6 @@
 <qualifiedTypeNameHistroy>
 <fullyQualifiedTypeName name="priv.hkon.theseq.misc.Notification"/>
 <fullyQualifiedTypeName name="priv.hkon.theseq.sprites.Mayor"/>
-<fullyQualifiedTypeName name="priv.hkon.theseq.sprites.Villager"/>
 <fullyQualifiedTypeName name="priv.hkon.theseq.sprites.Gardener"/>
 <fullyQualifiedTypeName name="java.util.Random"/>
 <fullyQualifiedTypeName name="priv.hkon.theseq.nonblocks.NonBlock"/>
@@ -17,26 +16,30 @@
 <fullyQualifiedTypeName name="java.util.Arrays"/>
 <fullyQualifiedTypeName name="priv.hkon.theseq.sprites.Prophet"/>
 <fullyQualifiedTypeName name="priv.hkon.theseq.sprites.Nobody"/>
-<fullyQualifiedTypeName name="priv.hkon.theseq.misc.Sentence"/>
 <fullyQualifiedTypeName name="priv.hkon.theseq.sprites.Player"/>
 <fullyQualifiedTypeName name="priv.hkon.theseq.structures.MayorHouse"/>
 <fullyQualifiedTypeName name="priv.hkon.theseq.blocks.Marble"/>
 <fullyQualifiedTypeName name="priv.hkon.theseq.misc.Conversation"/>
 <fullyQualifiedTypeName name="priv.hkon.theseq.filters.NightFilter"/>
-<fullyQualifiedTypeName name="priv.hkon.theseq.main.Controller"/>
-<fullyQualifiedTypeName name="java.awt.event.KeyEvent"/>
 <fullyQualifiedTypeName name="priv.hkon.theseq.blocks.Wall"/>
 <fullyQualifiedTypeName name="java.io.InputStream"/>
 <fullyQualifiedTypeName name="java.io.File"/>
 <fullyQualifiedTypeName name="priv.hkon.theseq.filters.DarkenFilter"/>
-<fullyQualifiedTypeName name="priv.hkon.theseq.sprites.Movable"/>
 <fullyQualifiedTypeName name="javax.sound.sampled.FloatControl"/>
 <fullyQualifiedTypeName name="java.lang.Math"/>
 <fullyQualifiedTypeName name="priv.hkon.theseq.sprites.Woodcutter"/>
-<fullyQualifiedTypeName name="priv.hkon.theseq.sprites.Sprite"/>
-<fullyQualifiedTypeName name="priv.hkon.theseq.world.Tile"/>
 <fullyQualifiedTypeName name="priv.hkon.theseq.structures.Building"/>
 <fullyQualifiedTypeName name="priv.hkon.theseq.misc.VillageEvent"/>
 <fullyQualifiedTypeName name="priv.hkon.theseq.sprites.TalkativeSprite"/>
 <fullyQualifiedTypeName name="priv.hkon.theseq.structures.WoodcutterHouse"/>
+<fullyQualifiedTypeName name="priv.hkon.theseq.sprites.Painter"/>
+<fullyQualifiedTypeName name="priv.hkon.theseq.sprites.Movable"/>
+<fullyQualifiedTypeName name="priv.hkon.theseq.sprites.Sprite"/>
+<fullyQualifiedTypeName name="priv.hkon.theseq.filters.Filter"/>
+<fullyQualifiedTypeName name="priv.hkon.theseq.sprites.Villager"/>
+<fullyQualifiedTypeName name="priv.hkon.theseq.main.Screen"/>
+<fullyQualifiedTypeName name="priv.hkon.theseq.misc.Sentence"/>
+<fullyQualifiedTypeName name="priv.hkon.theseq.world.Tile"/>
+<fullyQualifiedTypeName name="priv.hkon.theseq.main.Controller"/>
+<fullyQualifiedTypeName name="java.awt.event.KeyEvent"/>
 </qualifiedTypeNameHistroy>

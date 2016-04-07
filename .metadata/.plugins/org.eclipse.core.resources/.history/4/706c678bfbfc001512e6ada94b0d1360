@@ -1,0 +1,49 @@
+package priv.hkon.theseq.cutscenes;
+
+import priv.hkon.theseq.cutscenes.Cutscene.Happening;
+import priv.hkon.theseq.filters.ColoredSquaresFilter;
+import priv.hkon.theseq.main.Core;
+import priv.hkon.theseq.main.Screen;
+import priv.hkon.theseq.sprites.Movable;
+import priv.hkon.theseq.sprites.Painter;
+import priv.hkon.theseq.sprites.Player;
+import priv.hkon.theseq.sprites.TalkativeSprite;
+
+public class PlayerFinishedPainterChallengeCutscene extends Cutscene {
+	
+	Painter pa;
+	Player pl;
+	
+	ColoredSquaresFilter csf = new ColoredSquaresFilter(0, Screen.W, Screen.H);
+	
+	int warpTime = (int) 10000;
+
+	public PlayerFinishedPainterChallengeCutscene(Painter p1, Player p2, Core core) {
+		super(core);
+		
+		pa = p1;
+		pl = p2;
+		
+		pl.isPartOfCutscene = true;
+		pa.isPartOfCutscene = true;
+		
+		happenings.add(new Happening(pl, 0){
+			public void happen(){
+				((TalkativeSprite)sprite).showDialog("Oh wow!", 2*60);
+				((Movable)sprite).turnTowards(Movable.UP);
+			}
+		});
+	}
+	
+	public void tick(){
+		if(tickCount < 2*60)
+		
+		super.tick();
+	}
+
+	@Override
+	public boolean isFinished() {
+		return false;
+	}
+
+}

@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <typeInfoHistroy>
 <typeInfo handle="=The_Sequence/src&lt;priv.hkon.theseq.blocks{Plant.java[Plant" modifiers="1025" timestamp="1458398760000"/>
-<typeInfo handle="=The_Sequence/src&lt;priv.hkon.theseq.nonblocks{NonBlock.java[NonBlock" modifiers="1025" timestamp="1458398670000"/>
-<typeInfo handle="=The_Sequence/src&lt;priv.hkon.theseq.sprites{Sprite.java[Sprite" modifiers="1025" timestamp="1459153340000"/>
-<typeInfo handle="=The_Sequence/src&lt;priv.hkon.theseq.world{Village.java[Village" modifiers="1" timestamp="1459876469000"/>
-<typeInfo handle="=The_Sequence/src&lt;priv.hkon.theseq.sprites{Villager.java[Villager" modifiers="1025" timestamp="1459875765000"/>
-<typeInfo handle="=The_Sequence/src&lt;priv.hkon.theseq.filters{Filter.java[Filter" modifiers="1" timestamp="1458939264000"/>
+<typeInfo handle="=The_Sequence/src&lt;priv.hkon.theseq.sprites{Sprite.java[Sprite" modifiers="1025" timestamp="1460049889000"/>
+<typeInfo handle="=The_Sequence/src&lt;priv.hkon.theseq.world{Village.java[Village" modifiers="1" timestamp="1460061223000"/>
 <typeInfo handle="=The_Sequence/src&lt;priv.hkon.theseq.blocks{Block.java[Block" modifiers="1025" timestamp="1458398734000"/>
+<typeInfo handle="=The_Sequence/src&lt;priv.hkon.theseq.sprites{Villager.java[Villager" modifiers="1025" timestamp="1460060371000"/>
+<typeInfo handle="=The_Sequence/src&lt;priv.hkon.theseq.blocks{Wall.java[Wall" modifiers="1" timestamp="1458398822000"/>
 <typeInfo handle="=The_Sequence/src&lt;priv.hkon.theseq.structures{House.java[House" modifiers="1" timestamp="1459322286000"/>
+<typeInfo handle="=The_Sequence/src&lt;priv.hkon.theseq.nonblocks{NonBlock.java[NonBlock" modifiers="1025" timestamp="1458398670000"/>
+<typeInfo handle="=The_Sequence/src&lt;priv.hkon.theseq.structures{Building.java[Building" modifiers="1025" timestamp="1458398614000"/>
+<typeInfo handle="=The_Sequence/src&lt;priv.hkon.theseq.filters{Filter.java[Filter" modifiers="1" timestamp="1458939264000"/>
+<typeInfo handle="=The_Sequence/src&lt;priv.hkon.theseq.cutscenes{Cutscene.java[Cutscene" modifiers="1025" timestamp="1460060630000"/>
 </typeInfoHistroy>

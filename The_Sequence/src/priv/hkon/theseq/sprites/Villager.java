@@ -122,6 +122,10 @@ public abstract class Villager extends Citizen{
 		
 		//System.out.println("Made Villager at " + x + " " + y);
 	}
+	
+	public House getHome(){
+		return home;
+	}
 
 	@Override
 	public void makeData() {
@@ -974,7 +978,9 @@ public abstract class Villager extends Citizen{
 	}
 
 	public abstract String[] getPresentation();
-	public abstract Integer[] getPresentationDurations();
+	public Integer[] getPresentationDurations(){
+		return new Integer[0];
+	}
 	public abstract boolean classHasPresented();
 	
 	public abstract boolean subclassSpeechInterrupted();

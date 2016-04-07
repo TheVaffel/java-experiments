@@ -1,0 +1,18 @@
+package priv.hkon.theseq.blocks;
+
+import priv.hkon.theseq.structures.Structure;
+import priv.hkon.theseq.world.Village;
+
+public class ColoredWall extends Wall {
+
+	public ColoredWall(int nx, int ny, Village v) {
+		super(nx, ny, v);
+		// TODO Auto-generated constructor stub
+	}
+
+	public ColoredWall(int nx, int ny, Structure s, Village v) {
+		super(nx, ny, s, v);
+		// TODO Auto-generated constructor stub
+	}
+
+}

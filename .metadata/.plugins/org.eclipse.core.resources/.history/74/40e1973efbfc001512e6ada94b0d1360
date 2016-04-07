@@ -1,0 +1,29 @@
+package priv.hkon.theseq.cutscenes;
+
+import priv.hkon.theseq.filters.ColoredSquaresFilter;
+import priv.hkon.theseq.main.Core;
+import priv.hkon.theseq.main.Screen;
+import priv.hkon.theseq.sprites.Painter;
+import priv.hkon.theseq.sprites.Player;
+
+public class PlayerFinishedPainterChallengeCutscene extends Cutscene {
+	
+	Painter pa;
+	Player pl;
+	
+	ColoredSquaresFilter csf = new ColoredSquaresFilter(0, Screen.W, Screen.H);
+	
+	int warpTime = (int) 10000;
+
+	public PlayerFinishedPainterChallengeCutscene(PainterCore core) {
+		super(core);
+		
+		
+	}
+
+	@Override
+	public boolean isFinished() {
+		return false;
+	}
+
+}

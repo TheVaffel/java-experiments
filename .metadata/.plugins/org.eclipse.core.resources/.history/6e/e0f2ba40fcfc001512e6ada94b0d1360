@@ -1,0 +1,83 @@
+package priv.hkon.theseq.cutscenes;
+
+import priv.hkon.theseq.cutscenes.Cutscene.Happening;
+import priv.hkon.theseq.filters.ColoredSquaresFilter;
+import priv.hkon.theseq.main.Core;
+import priv.hkon.theseq.main.Screen;
+import priv.hkon.theseq.sprites.Movable;
+import priv.hkon.theseq.sprites.Painter;
+import priv.hkon.theseq.sprites.Player;
+import priv.hkon.theseq.sprites.TalkativeSprite;
+
+public class PlayerFinishedPainterChallengeCutscene extends Cutscene {
+	
+	Painter pa;
+	Player pl;
+	
+	ColoredSquaresFilter csf = new ColoredSquaresFilter(0, Screen.W, Screen.H);
+	
+	int warpTime = (int) 10000;
+
+	public PlayerFinishedPainterChallengeCutscene(Painter p1, Player p2, Core core) {
+		super(core);
+		
+		pa = p1;
+		pl = p2;
+		
+		pl.isPartOfCutscene = true;
+		pa.isPartOfCutscene = true;
+		
+		happenings.add(new Happening(pa, 2*60){
+			public void happen(){
+				((TalkativeSprite)sprite).showDialog("Oh wow!", 2*60);
+			}
+		});
+		
+		happenings.add(new Happening(pa, 2*60){
+			public void happen(){
+				((TalkativeSprite)sprite).addSentence(new String[]{
+						"What excactly do you think you're doing?",
+						"This place is sacred, I tell you, SACRED!!",
+						"I don't let anybody into my palace of colors!",
+						"Should probably lock my door, then...",
+						"",
+						"Probably",
+						"But, hey, do you like art?",
+						"Do you feel the intense sensation of the rainbow?",
+						"",
+						"You don't need to look so shocked.",
+						"I am not irrational, despite what others think of me",
+						"I don't pretend that life is about trees or cutting them",
+						"YOU HEAR ME??",
+						"I AM A NORMAL HUMEN BEING!",
+						"",
+						"Oh, anyways.. The colors lured you into my house, yes?",
+						"Then I'm sure you will love this!"
+					});
+			}
+		});
+	}
+	
+	public void tick(){
+		if(tickCount < 2*60){
+			if(tickCount < 60){
+				csf.out = false;
+				csf.dist = tickCount;
+			}else{
+				csf.out = true;
+				csf.dist = tickCount - 60;
+			}
+			
+			core.setCutsceneFilter(csf);
+			
+		}
+		
+		super.tick();
+	}
+
+	@Override
+	public boolean isFinished() {
+		return false;
+	}
+
+}

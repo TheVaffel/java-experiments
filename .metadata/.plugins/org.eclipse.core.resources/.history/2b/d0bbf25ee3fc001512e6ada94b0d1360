@@ -1,0 +1,30 @@
+package priv.hkon.theseq.nonblocks;
+
+import priv.hkon.theseq.structures.Structure;
+import priv.hkon.theseq.world.Village;
+
+public class BrushHolder extends NonBlock {
+
+	public BrushHolder(int nx, int ny, Village v) {
+		super(nx, ny, v);
+		// TODO Auto-generated constructor stub
+	}
+
+	public BrushHolder(int nx, int ny, Structure s, Village v) {
+		super(nx, ny, s, v);
+		// TODO Auto-generated constructor stub
+	}
+
+	@Override
+	public String getName() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void makeData() {
+		// TODO Auto-generated method stub
+
+	}
+
+}

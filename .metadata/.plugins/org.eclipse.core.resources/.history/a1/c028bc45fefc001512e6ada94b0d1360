@@ -1,0 +1,17 @@
+package priv.hkon.theseq.sprites;
+
+import priv.hkon.theseq.cutscenes.Cutscene;
+
+public class NextPainterPuzzleCutscene extends Cutscene {
+
+	public NextPainterPuzzleCutscene() {
+		// TODO Auto-generated constructor stub
+	}
+
+	@Override
+	public boolean isFinished() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+}

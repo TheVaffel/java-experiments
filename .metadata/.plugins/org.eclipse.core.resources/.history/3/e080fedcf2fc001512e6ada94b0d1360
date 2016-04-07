@@ -1,0 +1,42 @@
+package priv.hkon.theseq.structures;
+
+import priv.hkon.theseq.world.Village;
+
+public class Atelier extends Building {
+
+	public Atelier(int x, int y, int w, int h, Village v) {
+		super(x, y, w, h, v);
+		// TODO Auto-generated constructor stub
+	}
+
+	@Override
+	public void makeClosedSpace() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void makeEntrances() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void makeBlocks() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public String getName() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void makeTiles() {
+		// TODO Auto-generated method stub
+
+	}
+
+}

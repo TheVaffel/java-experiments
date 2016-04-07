@@ -96,6 +96,7 @@ public class PlayerTriesCompleteWoodcutterRequest extends Cutscene {
 					public void happen(){
 						((Villager)sprite).setMode(Villager.MODE_RELAXING, Villager.IMPORTANT_NOT, null);
 						((Villager)sprite).lastVictim = player;
+						core.village.woodcutterQuestCompleted = true;
 					}
 				});
 				return;

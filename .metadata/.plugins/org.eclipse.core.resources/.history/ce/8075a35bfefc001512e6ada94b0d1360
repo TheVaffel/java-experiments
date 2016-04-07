@@ -1,0 +1,22 @@
+package priv.hkon.theseq.sprites;
+
+import priv.hkon.theseq.cutscenes.Cutscene;
+
+public class NextPainterPuzzleCutscene extends Cutscene {
+	
+	Player pl;
+	Painter pa;
+	
+	
+
+	public NextPainterPuzzleCutscene(Painter p1, Player p2, Core c) {
+		super(c);
+	}
+
+	@Override
+	public boolean isFinished() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+}

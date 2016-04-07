@@ -1,0 +1,53 @@
+package priv.hkon.theseq.cutscenes;
+
+import priv.hkon.theseq.main.Core;
+import priv.hkon.theseq.sprites.Painter;
+import priv.hkon.theseq.sprites.Player;
+import priv.hkon.theseq.sprites.TalkativeSprite;
+
+public class PainterGuidesPlayerCutscene extends Cutscene {
+
+	Painter pa;
+	Player pl;
+	
+	
+	
+	public PainterGuidesPlayerCutscene(Painter p1, Player p2, Core core) {
+		super(core);
+		pa = p1;
+		pl = p2;
+		
+		pl.isPartOfCutscene = true;
+		pa.isPartOfCutscene = true;
+		
+		happenings.add(new Happening(pa, 0){
+			public void happen(){
+				((TalkativeSprite)sprite).showDialog("Hey!!", 2*60);
+			}
+		});
+		
+		happenings.add(new Happening(pa, 2*60){
+			public void happen(){
+				((TalkativeSprite)sprite).showDialog("What exactly do you think you're doing?", 2*60);
+			}
+		});
+		
+		happenings.add(new Happening(pa, 30){
+			public void happen(){
+				((TalkativeSprite)sprite).showDialog("Hey!!", 2*60);
+			}
+		});
+		
+	}
+	
+	public void tick(){
+		super.tick();
+	}
+
+	@Override
+	public boolean isFinished() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+}

@@ -8,12 +8,12 @@ import priv.hkon.theseq.misc.VillageEvent;
 import priv.hkon.theseq.sprites.Sprite;
 
 public abstract class Cutscene {
-	int tickCount;
+	protected int tickCount;
 	
-	LinkedList<Happening> happenings;
-	Core core;
+	protected LinkedList<Happening> happenings;
+	protected Core core;
 	
-	Cutscene(Core core){
+	protected Cutscene(Core core){
 		this.core = core;
 		tickCount = 0;
 		happenings = new LinkedList<Happening>();
@@ -46,7 +46,7 @@ public abstract class Cutscene {
 	}
 	
 	public abstract class Happening{
-		Sprite sprite;
+		protected Sprite sprite;
 		int timeStamp;
 		VillageEvent ve = null;
 		

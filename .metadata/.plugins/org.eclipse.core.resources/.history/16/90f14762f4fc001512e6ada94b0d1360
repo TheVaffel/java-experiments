@@ -1,0 +1,81 @@
+package priv.hkon.theseq.cutscenes;
+
+import priv.hkon.theseq.main.Core;
+import priv.hkon.theseq.misc.VillageEvent;
+import priv.hkon.theseq.sprites.Painter;
+import priv.hkon.theseq.sprites.Player;
+import priv.hkon.theseq.sprites.TalkativeSprite;
+import priv.hkon.theseq.structures.Atelier;
+
+public class PainterGuidesPlayerCutscene extends Cutscene {
+
+	Painter pa;
+	Player pl;
+	
+	int warpTime = 0;
+	
+	public PainterGuidesPlayerCutscene(Painter p1, Player p2, Core core) {
+		super(core);
+		pa = p1;
+		pl = p2;
+		
+		pl.isPartOfCutscene = true;
+		pa.isPartOfCutscene = true;
+		
+		Atelier at = pa.getAtelier();
+		
+		happenings.add(new Happening(pa, 0){
+			public void happen(){
+				((TalkativeSprite)sprite).showDialog("Hey!!", 2*60);
+			}
+		});
+		
+		happenings.add(new Happening(pa, 2*60){
+			public void happen(){
+				((TalkativeSprite)sprite).addSentence(new String[]{
+					"What excactly do you think you're doing?",
+					"This place is sacred, I tell you, SACRED!!",
+					"I don't let anybody into my palace of colors!",
+					"Should probably lock my door, then...",
+					"",
+					"Probably",
+					"But, hey, do you like art?",
+					"Do you feel the intense sensation of the rainbow?",
+					"",
+					"You don't need to look so shocked.",
+					"I am not irrational, despite what others think of me",
+					"I don't pretend that life is about trees or cutting them",
+					"YOU HEAR ME??",
+					"I AM A NORMAL HUMEN BEING!",
+					"",
+					"Oh, anyways.. The colors lured you into my house, yes?",
+					"Then I'm sure you will love this!"
+				});
+				((TalkativeSprite)sprite).showDialog = true;
+			}
+		});
+		
+		happenings.add(new Happening(pa, new VillageEvent(core.village, pa, 0){
+			public boolean isHappening(){
+				return !((TalkativeSprite)subject).showDialog;
+			}
+		}){
+			public void happen(){
+				core.village.moveSpriteTo(sprite, atelier.getX() + 1, atelier.getY() + atelier.getH()/2);
+			}
+		});
+		
+		
+	}
+	
+	public void tick(){
+		super.tick();
+	}
+
+	@Override
+	public boolean isFinished() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+}

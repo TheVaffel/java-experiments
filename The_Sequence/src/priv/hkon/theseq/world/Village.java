@@ -24,6 +24,7 @@ import priv.hkon.theseq.sprites.Gardener;
 import priv.hkon.theseq.sprites.Mayor;
 import priv.hkon.theseq.sprites.Movable;
 import priv.hkon.theseq.sprites.Nobody;
+import priv.hkon.theseq.sprites.Painter;
 import priv.hkon.theseq.sprites.Player;
 import priv.hkon.theseq.sprites.Prophet;
 import priv.hkon.theseq.sprites.Shadow;
@@ -35,6 +36,7 @@ import priv.hkon.theseq.structures.Building;
 import priv.hkon.theseq.structures.GardenerHouse;
 import priv.hkon.theseq.structures.House;
 import priv.hkon.theseq.structures.MayorHouse;
+import priv.hkon.theseq.structures.PainterHouse;
 import priv.hkon.theseq.structures.Structure;
 import priv.hkon.theseq.structures.WoodcutterHouse;
 
@@ -46,6 +48,9 @@ public class Village implements Serializable{
 	public static final int H = 1000;
 	
 	Random random;
+	
+	public boolean woodcutterQuestCompleted = false; 
+	public boolean painterQuestCompleted = false;
 	
 	public boolean nightBoost = false;
 	
@@ -161,7 +166,7 @@ public class Village implements Serializable{
 		
 		
 		int i;
-		for(i = 0; i< numVillagers - 4; i++){
+		for(i = 0; i< numVillagers - 5; i++){
 			villagers[villagerPermutation[i]]= new Nobody(townGrid[villagerPermutation[i]/townGridSide][villagerPermutation[i]%townGridSide].getX() + houseSide/2, 
 					townGrid[villagerPermutation[i]/townGridSide][villagerPermutation[i]%townGridSide].getY() + houseSide/2, 
 					this, townGrid[villagerPermutation[i]/townGridSide][villagerPermutation[i]%townGridSide], i);
@@ -169,6 +174,16 @@ public class Village implements Serializable{
 		}
 		
 		int vi = villagerPermutation[i];
+		
+		villagers[vi] = new Painter(townGrid[vi/townGridSide][vi%townGridSide].getX() + houseSide/2,
+				townGrid[vi/townGridSide][vi%townGridSide].getY() + houseSide/2,
+				/*this.townGridMiddleX + 100, this.townGridMiddleY + 10,*/ this, townGrid[vi/townGridSide][vi%townGridSide], i);
+		addSprite(villagers[vi]);
+		
+		
+		i++;
+		vi = villagerPermutation[i];
+		
 		//System.out.println("Making woodcutter");
 		villagers[vi] = new Woodcutter(townGrid[vi/townGridSide][vi%townGridSide].getX() + houseSide/2,
 				townGrid[vi/townGridSide][vi%townGridSide].getY() + houseSide/2,
@@ -217,6 +232,8 @@ public class Village implements Serializable{
 			townGrid[i][j] = new GardenerHouse(getTownStartX() + houseSpread*j, getTownStartY() + houseSpread*i, houseSide, houseSide, this);
 		}else if(s instanceof Woodcutter){
 			townGrid[i][j] = new WoodcutterHouse(getTownStartX() + houseSpread*j, getTownStartY() + houseSpread*i, houseSide, houseSide, this);
+		}else if(s instanceof Painter){
+			townGrid[i][j] = new PainterHouse(getTownStartX() + houseSpread*j, getTownStartY() + houseSpread*i, houseSide, houseSide, this);
 		}else{
 			townGrid[i][j] = new House(getTownStartX() + houseSpread*j, getTownStartY() + houseSpread*i, houseSide, houseSide, this);
 		}
@@ -239,7 +256,7 @@ public class Village implements Serializable{
 			}
 		}
 		
-		int villageri = villagerPermutation[numVillagers-4];
+		int villageri = villagerPermutation[numVillagers-5];
 		player = new Player(/*townGrid[6][6].getX() + houseSide/2,
 				townGrid[6][6].getY() + houseSide/2,*/
 				/*villagers[villageri].getX() - 2,
@@ -253,8 +270,8 @@ public class Village implements Serializable{
 		villagers[villagerPermutation[i]] = p;
 		addSprite(villagers[villagerPermutation[i]]);
 		
-		//currScene = new OpeningScene(player, p, core);
-		//inCutscene = true;
+		currScene = new OpeningScene(player, p, core);
+		inCutscene = true;
 	}
 	
 	public int[][] getScreenData(int w, int h){
@@ -312,7 +329,7 @@ public class Village implements Serializable{
 							}
 						}
 					}
-					if(nonBlocks[beginTileY + i][beginTileX + j] != null){
+					if(nonBlocks[beginTileY + i][beginTileX + j] != null && (!closed[beginTileY + i + 1][beginTileX + j] ^ shouldDrawInside)){
 						Screen.draw(rawdata, tilesInWidth*Tile.WIDTH, tilesInHeight*Tile.HEIGHT, nonBlocks[beginTileY + i][beginTileX+ j].getData(), Sprite.W, Sprite.H, j*Tile.WIDTH, (i + 1)*Tile.HEIGHT - Sprite.H - Sprite.DRAW_OFFSET_Y);
 					}
 					
@@ -372,7 +389,7 @@ public class Village implements Serializable{
 	}
 	
 	public void breakPoint(){
-		System.out.println("Break");
+		System.out.print("");
 	}
 	
 	public void tick(){
@@ -576,7 +593,7 @@ public class Village implements Serializable{
 	}
 	
 	public void moveSpriteTo(Sprite s, int x, int y){
-		if(getSpriteAt(x, y) != null){
+		if(getSpriteAt(x, y) != null && getSpriteAt(x,y ) != s){
 			moveSpriteTo(getSpriteAt(x, y), x - 1, y);
 		}
 		sprites[s.getY()][s.getX()] = null;

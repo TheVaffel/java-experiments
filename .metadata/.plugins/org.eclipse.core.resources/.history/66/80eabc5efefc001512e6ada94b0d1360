@@ -1,0 +1,24 @@
+package priv.hkon.theseq.sprites;
+
+import priv.hkon.theseq.cutscenes.Cutscene;
+import priv.hkon.theseq.main.Core;
+import priv.hkon.theseq.main.Screen;
+
+public class NextPainterPuzzleCutscene extends Cutscene {
+	
+	Player pl;
+	Painter pa;
+	
+	ColoredSquaresFilter csf = new ColoredSquaresFilter(0, Screen.W, Screen.H);
+
+	public NextPainterPuzzleCutscene(Painter p1, Player p2, Core c) {
+		super(c);
+	}
+
+	@Override
+	public boolean isFinished() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+}

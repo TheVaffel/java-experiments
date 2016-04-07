@@ -95,6 +95,14 @@ public abstract class Sprite implements Serializable{
 		return b < 0? -b: b;
 	}
 	
+	public static int multiplyColor(int rgb, float f){
+		rgb = ((int)((rgb&(255 << 16))*f)& (255 << 16)) | 
+				((int)((rgb&(255 << 8))*f)& (255 << 8)) |
+				((int)((rgb&(255 ))*f)& (255 )) | (255 << 24);
+		
+		return rgb;
+	}
+	
 	
 	public void setX(int nx){
 		x = nx;
